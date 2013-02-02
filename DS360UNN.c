@@ -1,3 +1,8 @@
+/****************************************************************
+*
+* void RUN_7920_NET(int UNIT) (network 7920)
+*
+****************************************************************/
 #include <stdio.h>
 #include <dos.h>
 #include <io.h>
@@ -16,7 +21,7 @@
 //#include "ds360trn.h"
 
 
-void RUN_7920_N(int UNIT)
+void RUN_7920_NET(int UNIT)
 {
  static int flag_reader_open=0;
  static int RDFILE;
@@ -61,28 +66,28 @@ void RUN_7920_N(int UNIT)
 	 {
 		case 0x01:
 									/*   áÄèàëú            */
-				RUN_7920_WR_N(CSW_ADRESS[UNIT],CSW_COUNT[UNIT],UNIT);
+				RUN_7920_WR_NET(CSW_ADRESS[UNIT],CSW_COUNT[UNIT],UNIT);
 				CSW_COUNT[UNIT]=0;
 				IO_STATUS[UNIT][1]=U4|U5;
 				//tt(UNIT);
 				break;
 
 		case 0x05:    /*  ëíàêÄçàÖ_áÄèàëú*/
-				RUN_7920_CLWR_N(CSW_ADRESS[UNIT],CSW_COUNT[UNIT],UNIT);
+				RUN_7920_CLWR_NET(CSW_ADRESS[UNIT],CSW_COUNT[UNIT],UNIT);
 				CSW_COUNT[UNIT]=0;
 				IO_STATUS[UNIT][1]=U4|U5;
 				//tt(UNIT);
 				break;
 
 		case 0x02:    /* óàíÄíú ÅìîÖê    */
-				RUN_7920_RD_N(CSW_ADRESS[UNIT],CSW_COUNT[UNIT],UNIT);
+				RUN_7920_RD_NET(CSW_ADRESS[UNIT],CSW_COUNT[UNIT],UNIT);
 				IO_STATUS[UNIT][1]=U4|U5;
 				//tt(UNIT);
 				break;
 
 		case 0x06:    /* óàíÄíú åéÑàîàñàêìÖåéÖ */
 
-				RUN_7920_RDMD_N(CSW_ADRESS[UNIT],CSW_COUNT[UNIT],UNIT);
+				RUN_7920_RDMD_NET(CSW_ADRESS[UNIT],CSW_COUNT[UNIT],UNIT);
 				IO_STATUS[UNIT][1]=U4|U5;
 				//tt(UNIT);
 				break;
@@ -94,7 +99,7 @@ void RUN_7920_N(int UNIT)
 				break;
 
 		case 0x1f:    /* ëíÖêÖíú ÇëÖ çÖáÄôàôÖççéÖ */
-				RUN_7920_CLNZ_N(CSW_ADRESS[UNIT],CSW_COUNT[UNIT],UNIT);
+				RUN_7920_CLNZ_NET(CSW_ADRESS[UNIT],CSW_COUNT[UNIT],UNIT);
 				CSW_COUNT[UNIT]=0;
 				IO_STATUS[UNIT][1]=U4|U5;
 				tt(UNIT);

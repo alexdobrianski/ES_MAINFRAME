@@ -1,3 +1,8 @@
+/*****************************************************
+* DISPLAY 7920
+*
+*
+******************************************************/
 #include <stdio.h>
 #include <dos.h>
 #include <io.h>
@@ -22,46 +27,47 @@ int NET_OK;
 typedef unsigned short WORD;
 typedef char far *     ADDRESS;
 
-#include "funcdef.h"
+//#include "funcdef.h"
 
 /* global variables */
 
-extern NCB  Ncb;			/* NCB used for all commands	      */
-extern char Lana;			/* 0 or 1			      */
+//extern NCB  Ncb;			/* NCB used for all commands	      */
+//extern char Lana;			/* 0 or 1			      */
 
-#define  NET_LSN	 6	/* maximum number of local sessions   */
-#define  NET_NUM	12	/* maximum number of outstanding NCBs */
-#define  SEND		 0	/* Mode flag for SEND		      */
-#define  RECV		 1	/* Mode flag for RECEIVE	      */
+//#define  NET_LSN	 6	/* maximum number of local sessions   */
+//#define  NET_NUM	12	/* maximum number of outstanding NCBs */
+//#define  SEND		 0	/* Mode flag for SEND		      */
+//#define  RECV		 1	/* Mode flag for RECEIVE	      */
 
 
 
-void TEST_CONNECTION(int unit)
-{if (NET_OK<0) return;
- if (NET_OK==0)
-	{Lana=0;
-	 NetReset(Lana,NET_LSN,NET_NUM);
-	 if (Ncb.retcode)
-		 {NET_OK=-1;
-			return;
-		 }
-	 NetAddName(Lana,"MAIN_FRM_IBM_360");
-	 if (Ncb.retcode)
-		 {NET_OK=-1;
-			return;
-		 }
-
-	}
-
-}
-void CLOSE_CONNECTION(void)
-{
- NetReset(Lana,NET_LSN,NET_NUM);
-}
+//void TEST_CONNECTION(int unit)
+//{
+//if (NET_OK<0) return;
+// if (NET_OK==0)
+//	{Lana=0;
+//	 NetReset(Lana,NET_LSN,NET_NUM);
+//	 if (Ncb.retcode)
+//		 {NET_OK=-1;
+//			return;
+//		 }
+//	 NetAddName(Lana,"MAIN_FRM_IBM_360");
+//	 if (Ncb.retcode)
+//		 {NET_OK=-1;
+//			return;
+//		 }
+//
+//	}
+//
+//}
+//void CLOSE_CONNECTION(void)
+//{
+// NetReset(Lana,NET_LSN,NET_NUM);
+//}
 
 
 /*************************************************************/
-void RUN_7920_WR_N(unsigned long BUFER,int count,int unit)
+void RUN_7920_WR_NET(unsigned long BUFER,int count,int unit)
 {static int i,j;
  static unsigned long ar;
  static char COUT;
@@ -136,13 +142,13 @@ FILL:              if (POINT_BUFER==NEXT_POINT_BUFER) break;
 
 }
 /*************************************************************/
-void RUN_7920_CLWR_N(unsigned long BUFER,int count,int unit)
+void RUN_7920_CLWR_NET(unsigned long BUFER,int count,int unit)
 {static int i;
  for(i=0;i<1924;i++) AREA_7920[unit][i]=0;
  RUN_7920_WR(BUFER,count,unit);
 }
 /*************************************************************/
-int  RUN_7920_RD_N(unsigned long BUFER,int count,int unit)
+int  RUN_7920_RD_NET(unsigned long BUFER,int count,int unit)
 {static unsigned long ar;
  static unsigned int ADC;
  static int i,flag_write;
@@ -225,7 +231,7 @@ WRRD:
 
 }
 /***********************************************************/
-int RUN_7920_RDMD_N(unsigned long BUFER,int count,int unit)
+int RUN_7920_RDMD_NET(unsigned long BUFER,int count,int unit)
 {static unsigned long ar;
  static unsigned int ADC;
  static int i,flag_write,k;
@@ -331,6 +337,6 @@ WRRD:
 
 }
 /***************************************************************/
-void RUN_7920_CLNZ_N(unsigned long BUFER,int count,int unit)
+void RUN_7920_CLNZ_NET(unsigned long BUFER,int count,int unit)
 {
 }

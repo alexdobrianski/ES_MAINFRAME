@@ -213,7 +213,7 @@ FILL:              if (POINT_BUFER==NEXT_POINT_BUFER) break;
 /*************************************************************/
 void RUN_7920_CLWR(unsigned long BUFER,int count,int unit)
 {static int i;
- AREA_7920[unit][1926]=1;
+
  for(i=0;i<1924;i++) AREA_7920[unit][i]=0;
  RUN_7920_WR(BUFER,count,unit);
 }

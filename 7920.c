@@ -73,7 +73,7 @@ void Putchar(int CH)
 #ifdef DIRECT_VGA
 *POSITION++=CH;*POSITION++=ATR_EGA;
 #else
- if (CH!=7) putchar(CH);
+ putchar(CH);
 #endif
 }
 /*************************************************************/

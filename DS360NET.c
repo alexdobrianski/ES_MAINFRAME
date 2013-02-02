@@ -86,7 +86,6 @@ char far* OPEN_CONNECTION(int unit)
        fINI=fopen("C:\NETDSPL.INI","w");
        if (fINI)
          {
-          printf("OK");getch();
           fprintf(fINI,"%ld",addr);
           fclose(fINI);
          }

@@ -654,6 +654,24 @@ BEGIN:
 																 “€‚‹Ÿ…ŒŽ… …›‚€ˆ…) ŽŠ€†…’‘Ÿ
 																 €‚›Œ 1 Ž…€–ˆŸ …Š€™€…’‘Ÿ
 																 */
+    if (TraceOut)
+       {
+        fprintf(TraceOut,"=%04x<",
+							CSW_COUNT[cikl_unit]);
+			  if (CSW_COD[cikl_unit]==0x29 ||
+					 CSW_COD[cikl_unit]==0x49 ||
+					 CSW_COD[cikl_unit]==0x69)
+			  for(i=0,adr=CSW_ADRESS[cikl_unit];i<16;i++,adr++)
+				 {fprintf(TraceOut,"%01c",EBCDIC_ASCII[GET_BYTE(adr)]);
+				 }
+
+			  else
+
+			  for(i=0,adr=CSW_ADRESS[cikl_unit];i<8;i++,adr++)
+				 {fprintf(TraceOut,"%02x",GET_BYTE(adr));
+				 }
+       }
+
 		if (IO_STATUS[cikl_unit][0] &0x7f)
 					 {CAW=CSW_CAW[cikl_unit];
 						CAW+=8;
@@ -675,23 +693,6 @@ BEGIN:
 						goto END_CAW;
 					 }
 
-    if (TraceOut)
-       {
-        fprintf(TraceOut,"=%04x<",
-							CSW_COUNT[cikl_unit]);
-			  if (CSW_COD[cikl_unit]==0x29 ||
-					 CSW_COD[cikl_unit]==0x49 ||
-					 CSW_COD[cikl_unit]==0x69)
-			  for(i=0,adr=CSW_ADRESS[cikl_unit];i<16;i++,adr++)
-				 {fprintf(TraceOut,"%01c",EBCDIC_ASCII[GET_BYTE(adr)]);
-				 }
-
-			  else
-
-			  for(i=0,adr=CSW_ADRESS[cikl_unit];i<8;i++,adr++)
-				 {fprintf(TraceOut,"%02x",GET_BYTE(adr));
-				 }
-       }
 
 
 		if (RQ_TRACE&0x02)

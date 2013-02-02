@@ -107,7 +107,7 @@ void RUN_7920(int UNIT)
 				break;
 
 		case 0x0b:
-				putchar(7);
+				//putchar(7);
 				CSW_COUNT[UNIT]=0;
 				IO_STATUS[UNIT][1]=U4|U5;
 				//tt(UNIT);

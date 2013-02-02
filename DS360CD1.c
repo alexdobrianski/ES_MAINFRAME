@@ -1,5 +1,11 @@
-//#ifdef INCLUDE
-//#else
+/*************************************************************************
+*
+* DS360CD0.C - коды 10-1f
+*
+* Copyright (C) 1994 - 1997 Alex Dobrianski.  All Rights Reserved.
+*
+**************************************************************************/
+
 #include "ds360opt.h"
 #include <stdio.h>
 #include <dos.h>
@@ -10,7 +16,6 @@
 
 #include "ds360psw.h"
 #include "ds360dfn.h"
-//#endif
 
 void SR(unsigned long *RR1,unsigned long *RR1_PLUS_1,
 				unsigned long *RR2,unsigned long *RR2_PLUS_1)

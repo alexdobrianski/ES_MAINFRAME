@@ -1166,7 +1166,7 @@ ABNREAD:
 				break;
 		case 0x96:     /* åí-óíÖçàÖ R0
 									 */
-//				DASD_SEEK(UNIT);
+				DASD_SEEK(UNIT);
 				KEY_READ_R0=READ_R0;
 				KEY_READ_MT=READ_MT;
 				KEY_READ=READ_COUNT|READ_KEY|READ_DATA;

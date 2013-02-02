@@ -115,6 +115,7 @@ void RUN_CONSOLE(int UNIT)
         if (DEFAULT_RDR_STRING[0])
           {strcpy(BUFER,DEFAULT_RDR_STRING);
            DEFAULT_RDR_STRING[0]=0;
+           printf(BUFER);
           }
         else gets(BUFER);
 

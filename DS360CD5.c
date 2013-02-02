@@ -180,10 +180,10 @@ void CODE50(char far *COM)
 				RR1=&R[R1];
 
         RREZ=GET_WORD(ADRESS);        /* A */
-        if (TraceOutCmd)
-        {
-         fprintf(TraceOutCmd,"REG =%lx ADR=%lx VAl =%lx ",*RR1,ADRESS,RREZ);
-        }
+//        if (TraceOutCmd)
+//        {
+//         fprintf(TraceOutCmd,"REG =%lx ADR=%lx VAl =%lx ",*RR1,ADRESS,RREZ);
+//        }
 				Dtaret;
 				*(RR1)+=RREZ;
 #include "ds360sr.c"

@@ -96,7 +96,7 @@ void print_regs(void)
  {
      if (PSW_AMWP&0x02) return;
 
-     fprintf(TraceOutCmd,"\n\n  ");
+     fprintf(TraceOutCmd,"\n\n   ");
  		 for (i=0;i<8;i++)
 				 {wd=R[i];
 					fprintf(TraceOutCmd," %08lx",wd);

@@ -289,6 +289,7 @@ void CODE4G(char far*);
 void CODE41(char far*);
 void CODE42(char far*);
 void CODE43(char far*);
+void CODE44(char far*);
 void CODE45(char far*);
 void CODE46(char far*);
 void CODE47(char far*);

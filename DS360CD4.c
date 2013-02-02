@@ -332,9 +332,10 @@ void CODE44(char far *COM)                 /*** EX */
 //															 command[2],command[3],
 //															 command[4],command[5]);
 //         psw_ilc=PSW_ILC;
-				 PSW_ILC=0;
+         PSW_ADRESS-=PSW_ILC;
+				 //PSW_ILC=0;
 				 (*POINT[command[0]])(command);
-				 PSW_ILC=2;//psw_ilc;
+				 //PSW_ILC=2;//psw_ilc;
 
 //T();
 }

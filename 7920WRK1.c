@@ -101,21 +101,21 @@ NEXT:if (fgets(STRING,80,FIL)!=NULL)
 
            int iFile;
            char szTemp[100];
-           INTERRUPT=ATOX(&STRING[10]);
-           PT_MAIN_POINTER=MK_FP(0,INTERRUPT*4);
-           addr= *((unsigned long far*)PT_MAIN_POINTER);
-           if (addr!=0)
+           //INTERRUPT=ATOX(&STRING[10]);
+           //PT_MAIN_POINTER=MK_FP(0,INTERRUPT*4);
+           //addr= *((unsigned long far*)PT_MAIN_POINTER);
+           //if (addr!=0)
 
-           //iFile=open("$NETDSPL",O_BINARY|O_RDONLY);
-           //if (iFile)
+           iFile=open("$NETDSPL",O_BINARY|O_RDONLY);
+           if (iFile)
              {
-           //   szTemp[0]=5;
-           //   read(iFile,szTemp,20);
-           //   addr = *(unsigned long*)szTemp;
-           //   close(iFile);
-           //
-           //
-           //
+              szTemp[0]=5;
+              read(iFile,szTemp,20);
+              addr = *(unsigned long*)szTemp;
+              close(iFile);
+
+
+
               AREA_7920[UNIT] = ((char far*)addr)+((unsigned long)UNIT*200l);
               AREA_7920[UNIT][1926]=1;
 					    goto NEXT;

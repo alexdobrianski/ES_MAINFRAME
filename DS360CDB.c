@@ -80,8 +80,8 @@ void CODEB0(char far *COM)
 													*/
 							switch(RX)
 								 {
-									case 0x02:PUT_WORD(ADRESS,  0xff100220);
-														PUT_WORD(ADRESS+4,0x10520000);/*T();*/break; /*STIDP*/
+									case 0x02:PUT_WORD(ADRESS,  0x00100220);
+														PUT_WORD(ADRESS+4,0x10450000);/*T();*/break; /*STIDP*/
 									case 0x03:    /* STIDC*/
 											switch(ADRESS&0xf00)
 													{
