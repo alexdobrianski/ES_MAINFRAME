@@ -1,0 +1,1166 @@
+                                                                                                                                    
+                                                                                                                                    
+//RDR      JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC RDR                                                                                                                 
+XXIEFPROC  EXEC PGM=IEFIRC,                    READER FIRST LOAD       ,00010000                                                    
+XX       REGION=54K,                          READER BASIC REGION      ,00020060                                                    
+XX       PARM='80103005001024905010SYSDA   E00001A'   DEFAULT OPTIONS  ,00030000                                                    
+XX*            BPPTTTOOOMMMIIICCCRLSSSSSSSSAAAAEFH   PARM FIELD         00040000                                                    
+***       B    PROGRAMMER NAME AND ACCOUNT NUMBER NOT NEEDED            00050000                                                    
+***            PROGRAM CAN BE ROLLED OUT                                00060000                                                    
+***       PP   PRIORITY=01                                              00070000                                                    
+***       TTT  JOB STEP INTERVAL=30 MINUTES                             00080000                                                    
+***       OOO  PRIMARY SYSOUT SPACE=50 TRACKS                           00090000                                                    
+***       MMM  SECONDARY SYSOUT SPACE=10 TRACKS                         00100000                                                    
+***       III  READER/INTERPRETER DISPATCHING PRIORITY=249              00110000                                                    
+***       CCC  JOB STEP DEFAULT REGION=50K                              00120060                                                    
+***       R    DISPLAY AND EXECUTE COMMANDS=1                           00130000                                                    
+***       L    BYPASS LABEL OPTION=0                                    00140000                                                    
+***       SSSSSSSS  SYSOUT UNIT NAME=SYSDA                              00150000                                                    
+***       AAAA COMMAND AUTHORITY FOR MCS=E000-ALL COMMANDS              00160000                                                    
+***            MUST BE AUTHORIZED                                       00170000                                                    
+***       EF   JCL AND ALLOCATION MESSAGE LEVEL DEFAULTS=01             00180000                                                    
+***       H    DEFAULT MSGCLASS                                         00190000                                                    
+//IEFPROC.IEFRDER DD UNIT=00C                                                                                                       
+X/IEFRDER   DD  UNIT=5010,                       INPUT TAPE            ,00200000                                                    
+XX             LABEL=(,NL),                      UNLABELED             ,00210000                                                    
+XX             VOLUME=SER=SYSIN,                 VOLUME NAME           ,00220000                                                    
+XX             DISP=OLD,                         OLD DATA SET          ,00230000                                                    
+XX             DCB=(BLKSIZE=80,LRECL=80,BUFL=80,BUFNO=1,RECFM=F)        00240000                                                    
+XXIEFPDSI   DD  DSNAME=SYS1.PROCLIB,DISP=SHR     PROCEDURE LIBRARY      00250000                                                    
+XXIEFDATA   DD  UNIT=SYSDA,                      SPOOL DEVICE          ,00260000                                                    
+XX             SPACE=(80,(500,500),RLSE,CONTIG),     AMOUNT            ,00270000                                                    
+XX          DCB=(BLKSIZE=80,LRECL=80,BUFL=80,BUFNO=2,RECFM=F,DSORG=PS)  00280000                                                    
+                                                                                                                                    
+                                                                                                                                    
+//MYFIRST JOB MSGLEVEL=1                                                                                                            
+// EXEC FORTGCLG                                                                                                                    
+XXFORT     EXEC PGM=IEYFORT,REGION=100K,PARM='MAP,LIST,NODESK,LOAD'     00010000                                                    
+XXSYSPRINT DD  SYSOUT=A                                                 00020000                                                    
+XXSYSPUNCH DD  SYSOUT=B                                                 00030000                                                    
+XXSYSLIN   DD  DSNAME=&LOADSET,DISP=(MOD,PASS),UNIT=SYSSQ,             X00040000                                                    
+XX             SPACE=(80,(200,100),RLSE),DCB=BLKSIZE=80                 00050000                                                    
+//FORT.SYSIN DD *                                                                                                                   
+//FORT.SYSABEND DD SYSOUT=A                                                                                                         
+IEF236I ALLOC. FOR MYFIRST  FORT                                                                                                    
+IEF237I 131   ALLOCATED TO SYSPRINT                                                                                                 
+IEF237I 131   ALLOCATED TO SYSPUNCH                                                                                                 
+IEF237I 131   ALLOCATED TO SYSLIN                                                                                                   
+IEF237I 131   ALLOCATED TO SYSIN                                                                                                    
+IEF237I 131   ALLOCATED TO SYSABEND                                                                                                 
+                                                                                                                                    
+                                                                                                                                    
+  OC EC FORTRAN ST  56-02.79             MAIN               DATE 18.10.97(291)-20.36.06            PAGE 0001                        
+               C      READ (5,23) A, B,C                                                                                            
+   0001           23 FORMAT (3F10.0)                                                                                                
+   0002           05 A = 1                                                                                                          
+   0003              GOTO 5                                                                                                         
+   0004              B = 2                                                                                                          
+               $                                                                                                                    
+***********01)  IEY002I LABEL******************************************************************************************             
+   0005              C = 3                                                                                                          
+   0006              S = (A+B+C)/2.0                                                                                                
+   0007           10 AREA = (S*(S-A)*(S-B)*(S-C))                                                                                   
+   0008              GOTO 10                                                                                                        
+               C      WRITE (6,17) A, B, C, AREA                                                                                    
+   0009           17 FORMAT(4E16.8)                                                                                                 
+   0010              STOP                                                                                                           
+   0011              END                                                                                                            
+  OC EC FORTRAN ST  56-02.79             MAIN               DATE 18.10.97(291)-20.36.06            PAGE 0002                        
+                                                                                                                                    
+                               SUBPROGRAMS CALLED                                                                                   
+ SYMBOL    LOCATION      SYMBOL    LOCATION      SYMBOL    LOCATION      SYMBOL    LOCATION      SYMBOL    LOCATION                 
+ IBCOM#        A0                                                                                                                   
+                                                                                                                                    
+                               SCALAR MAP                                                                                           
+ SYMBOL    LOCATION      SYMBOL    LOCATION      SYMBOL    LOCATION      SYMBOL    LOCATION      SYMBOL    LOCATION                 
+ A             A4        B             A8        C             AC        S             B0        AREA          B4                   
+                                                                                                                                    
+                               FORMAT STATEMENT MAP                                                                                 
+ SYMBOL    LOCATION      SYMBOL    LOCATION      SYMBOL    LOCATION      SYMBOL    LOCATION      SYMBOL    LOCATION                 
+     23        B8            17        BF                                                                                           
+                                                                                                                                    
+  OC EC FORTRAN ST  56-02.79             MAIN               DATE 18.10.97(291)-20.36.06            PAGE 0003                        
+  LOCATION   STA NUM     LABEL   OP         OPERAND                  IDENTIFIER                                                     
+   000000                        BC         15,12(0,15)                                                                             
+   000004                        DC         06D4C1C9                                                                                
+   000008                        DC         D5404040                                                                                
+   00000C                        STM        14,12,12(13)                                                                            
+   000010                        LM         2,3,40(15)                                                                              
+   000014                        LR         4,13                                                                                    
+   000016                        L          13,36(0,15)                                                                             
+   00001A                        ST         13,8(0,4)                                                                               
+   00001E                        STM        3,4,0(13)                                                                               
+   000022                        BCR        15,2                                                                                    
+   000024                        DC         00000000                 A4                                                             
+   000028                        DC         00000000                 A20                                                            
+   00002C                        DC         00000000                 A36                                                            
+   00010C                A36     L          13,4(0,13)                                                                              
+   000110                        L          14,12(0,13)                                                                             
+   000114                        LM         2,12,28(13)                                                                             
+   000118                        MVI        12(13),255                                                                              
+   00011C                        BCR        15,14                                                                                   
+   00011E                A20     L          15,112(0,13)             IBCOM#                                                         
+   000122                        LR         12,13                                                                                   
+   000124                        LR         13,4                                                                                    
+   000126                        BAL        14,64(0,15)                                                                             
+   00012A                        LR         13,12                                                                                   
+   00012C        2       5       LE         0,208(0,13)                                                                             
+   000130                        STE        0,116(0,13)              A                                                              
+   000134        3               L          14,96(0,13)              5                                                              
+   000138                        BCR        15,14                                                                                   
+   00013A        4               LE         0,212(0,13)                                                                             
+   00013E                        STE        0,120(0,13)              B                                                              
+   000142        5               LE         0,216(0,13)                                                                             
+   000146                        STE        0,124(0,13)              C                                                              
+   00014A        6               LE         0,116(0,13)              A                                                              
+   00014E                        AE         0,120(0,13)              B                                                              
+   000152                        AE         0,124(0,13)              C                                                              
+   000156                        DE         0,212(0,13)                                                                             
+   00015A                        STE        0,128(0,13)              S                                                              
+   00015E        7       10      LE         0,128(0,13)              S                                                              
+   000162                        SE         0,116(0,13)              A                                                              
+   000166                        ME         0,128(0,13)              S                                                              
+   00016A                        LE         2,128(0,13)              S                                                              
+   00016E                        SE         2,120(0,13)              B                                                              
+   000172                        MER        2,0                                                                                     
+   000174                        LE         0,128(0,13)              S                                                              
+   000178                        SE         0,124(0,13)              C                                                              
+   00017C                        MER        0,2                                                                                     
+   00017E                        STE        0,132(0,13)              AREA                                                           
+   000182        8               L          14,100(0,13)             10                                                             
+   000186                        BCR        15,14                                                                                   
+   000188       10               L          15,112(0,13)             IBCOM#                                                         
+   00018C                        BAL        14,52(0,15)                                                                             
+   000190                        DC         05404040                                                                                
+   000194                        DC         40F0                                                                                    
+                                 END                                                                                                
+    *OPTIONS IN EFFECT*  ID,DKOI,SOURCE,LIST,NODECK,LOAD,MAP                                                                        
+    *OPTIONS IN EFFECT*  NAME = MAIN    , LINECNT =       64                                                                        
+    *STATISTICS*    SOURCE STATEMENTS =       11,PROGRAM SIZE =      406                                                            
+    *STATISTICS* 001 DIAGNOSTICS GENERATED, HIGHEST SEVERITY CODE IS 0                                                              
+                                                                                                                                    
+                                                                                                                                    
+IEF142I - STEP WAS EXECUTED - COND CODE 0000                                                                                        
+IEF285I   SYS97291.T203540.SV000.MYFIRST.R0000001      SYSOUT                                                                       
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.SV000.MYFIRST.R0000002      DELETED                                                                      
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.RV000.MYFIRST.LOADSET       PASSED                                                                       
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.RV000.MYFIRST.S0000003      SYSIN                                                                        
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.RV000.MYFIRST.S0000003      DELETED                                                                      
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.SV000.MYFIRST.R0000004      DELETED                                                                      
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF373I STEP /FORT    / START 97291.2036                                                                                            
+IEF374I STEP /FORT    / STOP  97291.2036 CPU   0MIN 49.54SEC MAIN  82K                                                              
+XXLKED EXEC PGM=IEWL,REGION=96K,PARM=(XREF,LET,LIST),COND=(4,LT,FORT)   00060000                                                    
+XXSYSLIB   DD  DSNAME=SYS1.FORTLIB,DISP=SHR                             00070000                                                    
+XXSYSLMOD  DD  DSNAME=&&GOSET(GO),DISP=(MOD,PASS),UNIT=SYSDA,          X00080000                                                    
+XX             SPACE=(1024,(20,10,1),RLSE),DCB=BLKSIZE=1024             00090000                                                    
+XXSYSPRINT DD  SYSOUT=A                                                 00100000                                                    
+XXSYSUT1   DD  UNIT=SYSDA,SPACE=(1024,(100,10),RLSE),DCB=BLKSIZE=1024, X00110000                                                    
+XX             DSNAME=&SYSUT1                                           00120000                                                    
+XXSYSLIN   DD  DSNAME=&LOADSET,DISP=(OLD,DELETE)                        00130000                                                    
+XX         DD  DDNAME=SYSIN                                             00140000                                                    
+//LKED.SYSDUMP DD SYSOUT=A                                                                                                          
+//LKED.SYSABEND DD SYSOUT=A                                                                                                         
+//LKED.SYSUDUMP DD SYSOUT=A                                                                                                         
+IEF236I ALLOC. FOR MYFIRST  LKED                                                                                                    
+IEF237I 130   ALLOCATED TO SYSLIB                                                                                                   
+IEF237I 131   ALLOCATED TO SYSLMOD                                                                                                  
+IEF237I 131   ALLOCATED TO SYSPRINT                                                                                                 
+IEF237I 131   ALLOCATED TO SYSUT1                                                                                                   
+IEF237I 131   ALLOCATED TO SYSLIN                                                                                                   
+IEF237I 131   ALLOCATED TO SYSDUMP                                                                                                  
+IEF237I 131   ALLOCATED TO SYSABEND                                                                                                 
+IEF237I 131   ALLOCATED TO SYSUDUMP                                                                                                 
+                                                                                                                                    
+                                                                                                                                    
+                                                                                                                                    
+128K LINKAGE EDITOR       OPTIONS SPECIFIED XREF,LET,LIST                                                                           
+                          DEFAULT OPTION(S) USED - SIZE=(131072,28672)                                                              
+                                                                                                                                    
+                                                CROSS REFERENCE TABLE                                                               
+                                                                                                                                    
+  CONTROL SECTION                       ENTRY                                                                                       
+    NAME    ORIGIN  LENGTH                NAME   LOCATION     NAME   LOCATION     NAME   LOCATION     NAME   LOCATION               
+  MAIN          00     196                                                                                                          
+  IHCECOMH*    198     F61                                                                                                          
+                                        IBCOM#       198    FDIOCS#      254    INTSWTCH    10DE                                    
+  IHCCOMH2*   1100     665                                                                                                          
+                                        SEQDASD     1480                                                                            
+  IHCFCVTH*   1768    119D                                                                                                          
+                                        ADCON#      1768    FCVAOUTP    1812    FCVLOUTP    18A2    FCVZOUTP    19F2                
+                                        FCVIOUTP    1DA0    FCVEOUTP    22A2    FCVCOUTP    24BC    INT6SWCH    27A3                
+  IHCEFNTH*   2908     53A                                                                                                          
+                                        ARITH#      2908    ADJSWTCH    2CA4                                                        
+  IHCEFIOS*   2E48     F28                                                                                                          
+                                        FIOCS#      2E48    FIOCSBEP    2E4E                                                        
+  IHCFIOS2*   3D70     52E                                                                                                          
+  IHCUOPT *   42A0     3A0                                                                                                          
+  IHCERRM *   4640     5DC                                                                                                          
+                                        ERRMON      4640    IHCERRE     4658                                                        
+  IHCUATBL*   4C20     328                                                                                                          
+  IHCETRCH*   4F48     28E                                                                                                          
+                                        IHCTRCH     4F48    ERRTRA      4F50                                                        
+                                                                                                                                    
+  LOCATION  REFERS TO SYMBOL  IN CONTROL SECTION             LOCATION  REFERS TO SYMBOL  IN CONTROL SECTION                         
+       A0            IBCOM#          IHCECOMH                     254            SEQDASD         IHCCOMH2                           
+      FE4            ADCON#          IHCFCVTH                     FDC            FIOCS#          IHCEFIOS                           
+      FE8            ARITH#          IHCEFNTH                    1008            ADJSWTCH        IHCEFNTH                           
+     1004            IHCUOPT         IHCUOPT                      FEC            FCVEOUTP        IHCFCVTH                           
+      FF0            FCVLOUTP        IHCFCVTH                     FF4            FCVIOUTP        IHCFCVTH                           
+      FF8            FCVCOUTP        IHCFCVTH                     FFC            FCVAOUTP        IHCFCVTH                           
+     1000            FCVZOUTP        IHCFCVTH                     F90            IHCERRE         IHCERRM                            
+      FBC            IHCCOMH2        IHCCOMH2                     FC0            IHCERRM         IHCERRM                            
+      F94            IHCCOMH2        IHCCOMH2                     F98            IHCCOMH2        IHCCOMH2                           
+      F9C            IHCCOMH2        IHCCOMH2                     FA0            IHCCOMH2        IHCCOMH2                           
+     13A5            IHCECOMH        IHCECOMH                    13A8            IHCECOMH        IHCECOMH                           
+     1148            IHCERRM         IHCERRM                     1144            IBCOM#          IHCECOMH                           
+     15C5            IHCECOMH        IHCECOMH                    15D5            IHCECOMH        IHCECOMH                           
+     15E5            IHCECOMH        IHCECOMH                    2764            IBCOM#          IHCECOMH                           
+     2760            IHCERRM         IHCERRM                     2CF4            IBCOM#          IHCECOMH                           
+     2CF8            INTSWTCH        IHCECOMH                    2CA0            INT6SWCH        IHCFCVTH                           
+     2C9C            IHCUOPT         IHCUOPT                     2D00            ADCON#          IHCFCVTH                           
+     2CFC            FIOCS#          IHCEFIOS                    2D6C            IHCERRM         IHCERRM                            
+     2FB4            IHCERRM         IHCERRM                     2FB8            IHCFIOS2        IHCFIOS2                           
+     3BC0            IHCUATBL        IHCUATBL                    3BCC            IBCOM#          IHCECOMH                           
+     3BE1            IHCFIOS2        IHCFIOS2                    3BF8            IHCFIOS2        IHCFIOS2                           
+                                                                                                                                    
+  LOCATION  REFERS TO SYMBOL  IN CONTROL SECTION             LOCATION  REFERS TO SYMBOL  IN CONTROL SECTION                         
+     3D69            IHCFIOS2        IHCFIOS2                    4C0C            IHCUOPT         IHCUOPT                            
+     4C10            IBCOM#          IHCECOMH                    4C14            IHCTRCH         IHCETRCH                           
+     4C18            FIOCSBEP        IHCEFIOS                    50BC            IBCOM#          IHCECOMH                           
+     50C0            ADCON#          IHCFCVTH                    50C4            FIOCSBEP        IHCEFIOS                           
+                                                                                                                                    
+ ENTRY ADDRESS       00                                                                                                             
+ TOTAL LENGTH      51D8                                                                                                             
+****GO        DOES NOT EXIST BUT HAS BEEN ADDED TO DATA SET                                                                         
+AUTHORIZATION CODE IS        00.                                                                                                    
+                                                                                                                                    
+                                                                                                                                    
+                                                                                                                                    
+IEF142I - STEP WAS EXECUTED - COND CODE 0000                                                                                        
+IEF285I   SYS1.FORTLIB                                 KEPT                                                                         
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+IEF285I   SYS97291.T203540.RV000.MYFIRST.GOSET         PASSED                                                                       
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.SV000.MYFIRST.R0000005      SYSOUT                                                                       
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.RV000.MYFIRST.SYSUT1        DELETED                                                                      
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.RV000.MYFIRST.LOADSET       DELETED                                                                      
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.SV000.MYFIRST.R0000006      DELETED                                                                      
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.SV000.MYFIRST.R0000007      DELETED                                                                      
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.SV000.MYFIRST.R0000008      DELETED                                                                      
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF373I STEP /LKED    / START 97291.2036                                                                                            
+IEF374I STEP /LKED    / STOP  97291.2036 CPU   1MIN 47.59SEC MAIN  96K                                                              
+XXGO EXEC PGM=*.LKED.SYSLMOD,COND=((4,LT,FORT),(4,LT,LKED))             00150000                                                    
+//GO.FT05F001 DD *                                                                                                                  
+X/FT05F001 DD  DDNAME=SYSIN                                             00160000                                                    
+XXFT06F001 DD  SYSOUT=A                                                 00170000                                                    
+XXFT07F001 DD  SYSOUT=B                                                 00180000                                                    
+//GO.SYSUDUMP DD SYSOUT=A                                                                                                           
+//                                                                                                                                  
+IEF236I ALLOC. FOR MYFIRST  GO                                                                                                      
+IEF237I 131   ALLOCATED TO PGM=*.DD                                                                                                 
+IEF237I 131   ALLOCATED TO FT05F001                                                                                                 
+IEF237I 131   ALLOCATED TO FT06F001                                                                                                 
+IEF237I 130   ALLOCATED TO FT07F001                                                                                                 
+IEF237I 130   ALLOCATED TO SYSUDUMP                                                                                                 
+                                                                                                                                    
+                                                                                                                                    
+JOB MYFIRST          STEP GO              TIME 203811   DATE 97291                                           PAGE 0001              
+COMPLETION CODE      SYSTEM = 0C1                                                                                                   
+PSW AT ENTRY TO ABEND  FFF5000D D00B5822                                                                                            
+TCB  0240F0  RBP   00024678   PIE    00000000   DEB  00023BBC   TIO 00025EF0   CMP   800C1000   TRN  00000000                       
+             MSS   01029ED8   PK-FLG F0850400   FLG  00001F1B   LLS 00028400   JLB   00000000   JPQ  00027870                       
+             FSA   010C0F68   TCB    00000000   TME  00000000   JST 000240F0   NTC   00000000   OTC  000253F8                       
+             LTC   00000000   IQE    00000000   ECB  00026614   TSF 20000000   D-PQE 0002A0B8   SQS  00023900                       
+             NSTAE 00000000   TCT    800234B8   USER 00000000   DAR 00000000   RESV  00000000   JSCB 87023D64                       
+             RESV  00000000   IOB    00000000                                                                                       
+ACTIVE RBS                                                                                                                          
+PRB  027058  RESV   00000000   APSW   D00B5822   WC-SZ-STAB 00040082   FL-CDE 00027888   PSW FFF5000D D00B5822                      
+             Q/TTR  00000000   WT-LNK 000240F0                                                                                      
+SVRB 024BA0  TAB-LN 00180400   APSW   F9F0F1C3   WC-SZ-STAB 0012D002   TQN    00000000   PSW 00040033 5000C528                      
+             Q/TTR  00008809   WT-LNK 00027058                                                                                      
+             RG 0-7   FD000008    1B9A1829    000172B2    00000008    000254C0    000253F8    00025F70    00027500                  
+             RG 8-15  000265F0    000234B8    00026618    000269E8    400FE052    000B57C6    000172BA    010B5628                  
+             EXTSA    000021BE    8F0C0F10    00000000    00000000    FF030000    00024C1C    00024C24    E2E8E2C9                  
+                      C5C1F0F1    C9C5C1F0    C1C2C5D5    C4F90C10                                                                  
+SVRB 024678  TAB-LN 00580400   APSW   F1F0F5C1   WC-SZ-STAB 0012D002   TQN    00000000   PSW FF04000C 500C0792                      
+             Q/TTR  00008401   WT-LNK 00024BA0                                                                                      
+             RG 0-7   00000000    00024C00    8000C42A    0000DD44    000240F0    00024BA0    030240F0    00024BA0                  
+             RG 8-15  000240F0    4000C36A    000240F0    8F0C0F10    00025F5C    00024C24    4000CA5C    00000000                  
+             EXTSA    E2E8E2C9    C5C1F0F1    00000079    C2C2C2C1    C3C40000    00000000    00000000    00000000                  
+                      00000000    00000000    00000000    200C0F48                                                                  
+LOAD LIST                                                                                                                           
+        NE 00028408   RSP-CDE 02027870         NE 00029E68   RSP-CDE 01029B68         NE 00029EB8   RSP-CDE 01029A58                
+        NE 00000000   RSP-CDE 01029A28                                                                                              
+CDE                                                                                                                                 
+     027888       ATR1 0B   NCDE 000000   ROC-RB 00027058   NM GO         USE 01   EPA 0B5628   ATR2 20   XL/MJ 0287C0              
+     027870       ATR1 31   NCDE 027888   ROC-RB 00000000   NM IGC0A05A   USE 02   EPA 0C0000   ATR2 20   XL/MJ 028068              
+     029B68       ATR1 B0   NCDE 029B98   ROC-RB 00000000   NM IGG019CD   USE 01   EPA 0FD560   ATR2 20   XL/MJ 029B58              
+     029A58       ATR1 B0   NCDE 029A88   ROC-RB 00000000   NM IGG019BA   USE 01   EPA 0FD030   ATR2 20   XL/MJ 029A48              
+     029A28       ATR1 B0   NCDE 029A58   ROC-RB 00000000   NM IGG019BB   USE 01   EPA 0FC9D0   ATR2 20   XL/MJ 029A18              
+XL                                               LN          ADR         LN          ADR         LN          ADR                    
+     0287C0   SZ 00000010   NO 00000001       800051D8    000B5628                                                                  
+     028068   SZ 00000010   NO 00000001       80000800    000C0000                                                                  
+     029B58   SZ 00000010   NO 00000001       800002A0    000FD560                                                                  
+                                                                                                            PAGE 0002               
+     029A48   SZ 00000010   NO 00000001       800001C0    000FD030                                                                  
+     029A18   SZ 00000010   NO 00000001       80000178    000FC9D0                                                                  
+DEB                                                                                                                                 
+023B80                                                            000045FC 000045FC   *................................*            
+023BA0   000045FC 000045FC 000045FC 00000000    63000D0A 00002BE0 11000000 030240F0   *.............................. 0*            
+023BC0   10000000 88000000 8F000000 01000000    1B000000 FF0C0F10 04023B98 18000664   *................................*            
+023BE0   000000BA 000000BC 00090032 00010001    00000000 00000000 0000007D C2C2C2C1   *............................BBBA*            
+023C00   C3C40000 00000000 00000000 00000000    00000000 00000000 00000000 00000000   *CD..............................*            
+TIOT   JOB  MYFIRST    STEP GO                                                                                                      
+     DD            14040140    PGM=*.DD    004C1000    800006AC                                                                     
+     DD            14040100    FT05F001    004C1900    800006AC                                                                     
+     DD            14040100    FT06F001    004D1000    800006AC                                                                     
+     DD            14040100    FT07F001    004B1800    80000664                                                                     
+     DD            14040140    SYSUDUMP    004D1200    80000664                                                                     
+MSS            ************ SPQE ************     *************** DQE ***************     ************ FQE *************            
+               FLGS  NSPQE     SPID     DQE         BLK      FQE       LN      NDQE         NFQE         LN       AREA              
+     029ED8    00    02A1B8    251     028478     000B5000 000B5000 00005800 00000000     00000000    00000628  000B5000            
+     02A1B8    00    029EC0    252     029EE0     000C1000 000C1000 00000800 00027CF8     00000000    000007F8  000C1000            
+                                                  000C0000 00000000 00000800 00000000                                               
+     029EC0    C0    000000    000     02A080                                                                                       
+     02A080    60    000000    000     028948     000C0800 000C0800 00000800 000271E0     00000000    000005D8  000C0800            
+                                                  000BF800 000BF800 00000800 00000000     00000000    000001A0  000BF800            
+D-PQE  0002A0B8   FIRST 00027B90   LAST 00027B90                                                                                    
+PQE  027B90   FFB 000BA800   LFB 000BA800   NPQ 00000000   PPQ 00000000                                                             
+              TCB 000253F8   RSI 0000C800   RAD 000B5000   FLG 0000                                                                 
+FBQE 0BA800   NFB 00027B90   PFB 00027B90   SZ 00005000   AREA 00000001                                                             
+QCB TRACE                                                                                                                           
+MAJ 0281A0   NMAJ 00027650   PMAJ 0000DE80   FMIN 00024D48   NM  SYSDSN                                                             
+MIN 024D48   FQEL 00027640   PMIN 000281A0   NMIN 00000000   NM FF  SYS1.FORTLIB                                                    
+             NQEL 00000000   PQEL 80024D48   TCB  000253F8   SVRB 00023390                                                          
+MAJ 027650   NMAJ 00000000   PMAJ 000281A0   FMIN 00027040   NM  SYSIEA01                                                           
+MIN 027040   FQEL 00027850   PMIN 00027650   NMIN 00000000   NM F0  IEA                                                             
+             NQEL 00000000   PQEL 00027040   TCB  000240F0   SVRB 00024678                                                          
+SAVE AREA TRACE                                                                                                                     
+SA   0C0F68  WD1 00000000   HSA 00000000   LSA 00000000   RET 00000000   EPA 00000000   R0  00000000                                
+                                                                                                            PAGE 0003               
+             R1  00000000   R2  00000000   R3  00000000   R4  00000000   R5  00000000   R6  00000000                                
+             R7  00000000   R8  00000000   R9  00000000   R10 00000000   R11 00000000   R12 00000000                                
+INTERRUPT AT 0B5822                                                                                                                 
+REGS AT ENTRY TO ABEND                                                                                                              
+     FLTR 0-6      FFC0FF0000246A80      FF24100800240E00              FF23FF0000000500      FF26A20000000C00                       
+     REGS 0-7      FD000008   1B9A1829   000172B2   00000008           000254C0   000253F8   00025F70   00027500                    
+     REGS 8-15     000265F0   000234B8   00026618   000269E8           400FE052   000B57C6   000172BA   010B5628                    
+LOAD MODULE    GO                                                                                                                   
+0B5620                     47F0F11C 47F0F124    47F0F512 47F0F54A 47F0F68C 47F0FB04   *.........01..01..05..05..06..0..*            
+0B5640   47F0FB0C 47F0FB52 47F0FBA0 47FC531C    47FC5392 47FC53B8 47F0FDA4 47F0FDB8   *.0...0...0...............0...0..*            
+0B5660   47F0FDCC 10084710 47F0FDE0 47F0FDF0    00005810 FE445810 FE685810 FE5C5810   *.0.......0...0.0................*            
+0B5680   FE545810 FE545810 FE585810 FE605810    FE640000 000001F4 000092FF FF469200   *.......................4........*            
+0B56A0   FF5156AC 000172BA 010B5628 FD000008    000C0FF8 00026708 5C026618 000254C0   *...................8............*            
+0B56C0   000253F8 00025F70 00027500 000265F0    000234B8 00026618 000269E8 400FE052   *...8...........0...........Y ...*            
+0B56E0   000C0F68 000012E8 06204221 0000013C    E36CD201 E0D2E372 45E00000 58EE0008   *.......Y........T.K..KT.........*            
+0B5700   47F0E0E0 00000000 182E4110 E0EE0511    00000480 0C000A0E 18E25010 E3885820   *.0.......................S..T...*            
+0B5720   E3645810 E3C05410 E3C81BFF 95FFE3E3    4780E130 00000000 00000000 00000000   *T...T...TH....TT................*            
+0B5740   00000000 92F0F1A5 47F0F128 92FFF1A5    95FFF07C 4770F1F4 90EDF07C 41300008   *.....01..01...1...0...14..0.....*            
+0B5760   41D0F19E 50E0FE18 9200FE43 1B111B22    9012F10C 5810FE44 182ED207 FEA0E000   *..1...............1.......K.....*            
+0B5780   9180FEA0 4780F168 5810F0BC 41303004    9110FEA0 4780F17C 58532000 5050F10C   *......1...0...........1.......1.*            
+0B57A0   41303004 9120FEA0 4780F190 58532000    5050F110 41303004 41E23000 50E0F07C   *..........1.......1......S....0.*            
+0B57C0   47F0F11C 47F0F124 47F0F512 47F0F54A    47F0F68C 47F0FB04 47F0FB0C 47F0FB52   *.01..01..05..05..06..0...0...0..*            
+0B57E0   47F0FBA0 47F0FCF4 47F0FD6A 47F0FD90    47F0FDA4 47F0FDB8 47F0FDCC 10084710   *.0...0.4.0...0...0...0...0......*            
+0B5800   47F0FDE0 47F0FDF0 00005810 FE445810    FE685810 FE5C5810 FE545810 FE545810   *.0...0.0........................*            
+0B5820   FE585810 FE605810 FE640000 000B59B4    000092FF FF469200 FF460084 FF000000   *................................*            
+0B5840   00000000 00000000 00000000 00000000    00000000 00000000 00000000 00000000   *................................*            
+0B5860   00000000 00000000 00000000 00000000    00000000 00000000 00000000 000B6AA8   *................................*            
+0B5880   06204221 000B58FC E36CD201 E0D2E372    45E00000 58EE0008 47F0E0E0 00000000   *........T.K..KT..........0......*            
+0B58A0   182E4110 E0EE0511 00000480 0C000A0E    18E25010 E3885820 E3645810 E3C05410   *.................S..T...T...T...*            
+0B58C0   E3C81BFF 95FFE3E3 4780E130 43F0E3C1    54F0E3CC 00000000 00000000 92F0F1A5   *TH....TT.....0TA.0T..........01.*            
+0B58E0   47F0F128 92FFF1A5 95FFF07C 4770F1F4    90EDF07C 41300008 41D0F19E 50E0FE18   *.01...1...0...14..0.......1.....*            
+0B5900   9200FE43 1B111B22 9012F10C 5810FE44    182ED207 FEA0E000 9180FEA0 4780F168   *..........1.......K...........1.*            
+0B5920   5810F0BC 41303004 9110FEA0 4780F17C    58532000 5050F10C 41303004 9120FEA0   *..0...........1.......1.........*            
+0B5940   4780F190 58532000 5050F110 41303004    41E23000 50E0F07C 5010FE48 07FD41E0   *..1.......1......S....0.........*            
+0B5960   F1B60501 000047F0 F1D45020 FEB04183    20001892 07FE1B77 5070FF18 5070FE34   *1......01M......................*            
+0B5980   5070FF1C 58A0FEA4 91FFFEA4 4750F7E4    47F0F1FC 92FFFF18 4120F6A8 41660000   *..............7U.01.......6.....*            
+0B59A0   19260786 92FFFE43 9200FF19 9200FE42    47F0F4F8 5850FE24 47F05346 1B554350   *.................048.....0......*            
+0B59C0   A0008B50 00014950 F25E47A0 F26047F5    F21247F0 F9B247F0 F29447F0 F2A647F0   *........2...2..52..09..02..02..0*            
+0B59E0   F2D847F0 F2E647F0 F48E47F0 F49447F0    F49447F0 F4AC47F0 F2F047F0 F4B447F0   *2Q.02W.04..04..04..04..020.04..0*            
+0B5A00   F4BC47F0 F32047F0 F35647F0 F3B047F0    F3F247F0 F47847F0 F40647F0 F4C4004C   *4..03..03..03..032.04..04..04D..*            
+0B5A20   5830FDFC D2073080 30549240 30A450A0    300C9280 300C45E0 F70447F0 F28247F0   *....K...... ............7..02..0*            
+0B5A40   F1FC49D0 FF144740 F406D209 FE2CFE38    47F0F406 41A0A001 1BDD50A0 FE2C50D0   *1...... 4.K......04.............*            
+0B5A60   FE3047F0 F1FC4370 A00141D0 D00149D0    FF144740 F2C8D203 FE38FE2C D201FE40   *...01.............. 2HK.....K.. *            
+0B5A80   FE34D203 FE3CFE30 4270FE34 4270FE35    41A0A002 47F0F29A D200FE36 A00141A0   *..K..................02.K.......*            
+0B5AA0   A00247F0 F1FCD200 FE37A001 47F0F2DE    4370A001 06705840 FEB01A47 1B484740   *...01.K......02........ ....... *            
+0B5AC0   F30C4550 F6BA1A49 47F0F30E 1A485990    FF1C47C0 F31A5090 FF1C1894 47F0F2DE   *3...6....03.........3........02.*            
+0B5AE0   4370A001 41A0A002 910FF1A5 4710F33C    1A971998 4720F6BA 47F0F1FC 19984740   *..........1...3.......6..01.... *            
+                                                                                                            PAGE 0004               
+0B5B00   F3464550 F6BA9240 90004190 90014670    F33C47F0 F1FC4370 A00141A0 A0021848   *3...6.. ........3..01...........*            
+0B5B20   1B491974 47D0F38E 910FF1A5 4780F6BA    12444780 F3861B74 06404440 FEFA4194   *......3...1...6.....3.... . ....*            
+0B5B40   900141A4 A0014550 F6BA47F0 F35E0670    910FF1A5 4710F3A0 4470FEF4 47F0F3A4   *........6..03.....1...3....4.03.*            
+0B5B60   4470FEFA 41979001 41A7A001 47F0F1FC    41A0A001 91FEFE34 4750F3DC 06D049D0   *.............01...........3.....*            
+0B5B80   FF124740 F1FCD203 FE2CFE38 D201FE34    FE40D203 FE30FE3C 47F0F1FC 58A0FE2C   *... 1.K.....K.... K......01.....*            
+0B5BA0   58D0FE30 4370FE34 06704270 FE3447F0    F1FC5060 FF304560 F42C5860 FF3041A0   *...............01.......4.......*            
+0B5BC0   A00147F0 F1FC92FF FF1847F0 F4F891FF    FE434710 F4F84560 F42CD200 FE34FE35   *...01......048......48..4.K.....*            
+0B5BE0   58A0FE2C 58D0FE30 47F0F1FC 9023FEA8    910FF1A5 4710F440 9201F462 47F0F45C   *.........01.......1...4 ..4..04.*            
+0B5C00   9202F462 18295920 FF1C47A0 F4525820    FF1CD703 FF1CFF1C 5B20FEB0 5810FE48   *..4.........4.....P.............*            
+0B5C20   05010000 47F0F1D4 5020FEB0 41832000    18929823 FEA807F6 92FFFF1B D200F48C   *.....01M...............6....K.4.*            
+0B5C40   A002D200 F48DFE37 47F0F49E 00001B55    47F0F498 41500001 D200F631 FE37D201   *..K.4....04......04.....K.6...K.*            
+0B5C60   F62FA001 41A0A003 47F0F4D8 41500005    47F0F4C8 4150000A 47F0F4C8 41500003   *6........04Q.....04H.....04H....*            
+0B5C80   47F0F4C8 4150000B D200F62F A001D201    F630FF10 41A0A002 8B500003 910FF1A5   *.04H....K.6...K.6.............1.*            
+0B5CA0   4780F4E8 41505004 91FFFF18 4780F4F8    9200FF18 4560F5B6 91FFFE42 4710F5B6   *..4Y..........48......5.......5.*            
+0B5CC0   91FFFF19 4710F5A8 904DFE78 98EDF07C    07FED203 FEA8E000 41E0E004 90EDF07C   *......5.......0...K...........0.*            
+0B5CE0   D200F62E FEA8D300 FF20FEA9 9400FEA8    940FFEA9 D603FEA8 FF0C4400 FEA8984D   *K.6...L.............O...........*            
+0B5D00   FE784560 F5B647F0 F4F8D207 FEA8E000    41E0E008 90EDF07C 984DFE78 D200F62E   *....5..048K...........0.....K.6.*            
+0B5D20   FEACD300 FF20FEAD 9400FEAC 940FFEAD    58C0FEAC 5820FEA8 92FFFF19 1BBB43B0   *..L.............................*            
+0B5D40   F62E91FF FEA84780 F58E43B0 FEA89180    FF204780 F5A44370 F62E8A70 00014270   *6.......5...........5...6.......*            
+0B5D60   F62E1BB7 4560F5B6 1A2B46C0 F5A49200    FF1947F0 F4F891FF FF184710 F40E9180   *6.....5.....5......048......4...*            
+0B5D80   FF204710 F65A91FF FF1B4780 F5FAD201    F630F48C 41500060 9560FF20 47A0F5EA   *....6.......5.K.6.4...........5.*            
+0B5DA0   D201F630 FF104350 FF208A50 0001910F    F1A54780 F5FA4150 50044370 F62F1277   *K.6.............1...5.......6...*            
+0B5DC0   47C0F636 41479000 194847D0 F6221842    9057FE0C 4550F6BA 9857FE0C 182447F0   *..6.........6.........6........0*            
+0B5DE0   F6041839 5810FE4C 58151000 05010000    00004197 900091FE FE364780 F6524370   *6...........................6...*            
+0B5E00   FE360670 4270FE36 91FFFE42 4710F67E    07F69200 FF1B47F0 F1FC91FF FE424710   *..............6..6.....01.......*            
+0B5E20   F67E92FF FE4291FF FF194710 F5C64370    F62E8A70 00014270 F62E47F0 F5C69200   *6...........5F..6.......6..05F..*            
+0B5E40   FE424370 F62E1A27 47F0F5C6 90EDF07C    984DFE78 910FF1A5 4780F6A8 91FFFE43   *....6....05F..0.......1...6.....*            
+0B5E60   4710F6A8 4560F42C 1B221B33 9023F10C    980DF084 92FFF07C 07FE910F F1A54780   *..6...4.......1...0...0.....1...*            
+0B5E80   F6C64560 F42C5830 FE005020 FEA845E0    F75047F0 F6DA47F0 F1D4910F F1A54780   *6F..4...........7..06..01M..1...*            
+0B5EA0   F1D45810 FE445820 FE1845E0 F1A258E0    FE6C9180 E0334780 F6FE4190 90015820   *1M..........1...........6.......*            
+0B5EC0   FEA807F5 90BFFE7C 18CF18B3 9280300C    9180CEA0 4710C770 910FC1A5 4780C770   *...5..................G...A...G.*            
+0B5EE0   18195B10 CEB01211 4780C770 5020CEA8    18211801 4510C738 0A0A5010 CE1C58D0   *..........G...........G.........*            
+0B5F00   CEB00620 4420C7DE 4020CE78 47F0C770    90BFFE7C 18CF18B3 58303000 58E03000   *......G. ....0G.................*            
+0B5F20   4133E000 4120C03C 4400C052 05010404    181B58D0 C0B8D20F D00CC07C 50D0C0C8   *......................K........H*            
+0B5F40   41D0C0C4 58F0CE28 05EF58D0 CE1C12DD    4780C7CA 5810CE44 5820CE18 18FC45E0   *...D.0............G.............*            
+0B5F60   C1A25810 CEB04820 CE784420 C7DE4120    20014192 90001802 181D4111 00000A0A   *A...........G...................*            
+0B5F80   1B225020 CE1C5820 CEA85830 B00498BF    CE7C5830 30001233 078E47F0 E004D200   *...........................0..K.*            
+0B5FA0   1000D000 9016FEBC 1B331B44 5040FEB8    4160F9B1 5060FE2C 9200F9AD D203F9AE   *............. ....9.......9.K.9.*            
+0B5FC0   F9AD181A 1B225860 FE24DDFF 100063A8    4772F818 41101100 47F0F806 47F0F8B8   *9.................8......08..08.*            
+0B5FE0   47F0F8DA 47F0FA38 47F0FA40 47F0FA48    47F0FA30 47F0F9C6 47F0F9CE 47F0FA50   *.08..0...0. .0...0...09F.09..0..*            
+0B6000   47F0FA58 47F0FA60 47F0FA68 47F0FA1E    47F0F9E0 47F0FA70 47F0FA7E 47F0FA02   *.0...0...0...0...09..0...0...0..*            
+0B6020   47F0F9FA 47F0F90C 47F0F91C 47F0F870    4160F806 9016FED4 5830FDFC D2073080   *.09..09..09..08...8....M....K...*            
+0B6040   305CD200 30A41000 5010300C 9280300C    45E0F704 47F0F89C 47F0F9C0 9816FED4   *..K...............7..08..09....M*            
+0B6060   4930FF14 47D0F924 D205FE30 FE3CD203    FEECFE38 47F0F924 D100FEB7 10008B40   *......9.K.....K......09.J...... *            
+0B6080   00035A40 FEB85A40 FEB85A40 FEB45040    FEB84110 100147F0 F8064130 30014930   *... ... ... ... .......08.......*            
+0B60A0   FF1447C0 F8F8D203 FE38FEEC D201FE40    FE34D203 FE3CFE30 5010FEEC 4240FE34   *....88K.....K.. ..K.......... ..*            
+0B60C0   4240FE35 5030FE30 47F0FA26 4560F96C    921EF9AE 4560F990 47F0FA26 4560F96C   *. .......0....9...9...9..0....9.*            
+0B60E0   4630F938 9222F9AE 4560F990 5810FEEC    5830FE30 47F0FA26 91FEFE34 4750F95E   *..9...9...9..........0........9.*            
+0B6100   4930FF12 47C0FA26 D203FEEC FE38D201    FE34FE40 D203FE30 FE3C47F0 FA264340   *........K.....K.... K......0... *            
+0B6120   FE340640 4240FE34 47F0F92C 91FFF9AE    078691FF FF214780 F9864240 F9B09200   *... . ...09...9.........9.. 9...*            
+0B6140   FF2147F0 F98A4240 F9AF91FF F9AF0786    9016FED4 9816FEBC 41A0F9AE 91FEF9AD   *...09.. 9...9......M......9...9.*            
+0B6160   4780F1FC 41A0F9AC 47F0F1FC 06000000    00009200 F9ADD203 F9AEF9AD 9016FEBC   *..1...9..01.........9.K.9.9.....*            
+0B6180   9816FED4 07F69280 F9AF47F0 F8D29208    F9AED600 F9AFFEBB 4560F990 47F0FA26   *...M.6..9..08K..9.O.9.....9..0..*            
+0B61A0   12444720 F9EA4140 00019218 F9AE4240    F9AF4560 F99047F0 FA264560 F96C47F0   *....9.. ....9.. 9...9..0....9..0*            
+0B61C0   FA2691FF FF214710 FA164240 F9AF92FF    FF2147F0 FA269200 FF2147F0 F8709212   *........... 9......0.......08...*            
+                                                                                                            PAGE 0005               
+0B61E0   F9AE4240 F9AD1B44 5040FEB8 47F0F8D2    9210F9AE 47F0FA22 9214F9AE 47F0FA22   *9.. 9.... ...08K..9..0....9..0..*            
+0B6200   9216F9AE 47F0FA22 9224F9AE 47F0FA22    920AF9AE 47F0FA22 920CF9AE 47F0FA22   *..9..0....9..0....9..0....9..0..*            
+0B6220   920EF9AE 47F0FA22 9220F9AE 47F0FA22    4560FADA 1B445040 FEB847F0 F8069200   *..9..0....9..0......... ...08...*            
+0B6240   FF22D200 FF231000 5010FEF0 1B44D500    1001FF23 4780FAA4 41404001 41101001   *..K........0..N..........  .....*            
+0B6260   47F0FA8E D5001002 FF234770 FAC24140    40014110 1001910F F1A54780 FA9847F0   *.0..N........B.  .......1......0*            
+0B6280   FAC692FF FF225810 FEF04560 FADA91FF    FF224710 FA2647F0 FA881244 41101001   *.F.......0.............0........*            
+0B62A0   07C618A1 0640910F F1A54710 FAF64440    FEF447F0 FAFA4440 FEFA4194 90014114   *.F... ..1....6. .4.0... ........*            
+0B62C0   A00107F6 9200FB27 47F0FB10 920FFB27    95FFF07C 4770F1F4 90EDF07C 41300004   *...6.....0........0...14..0.....*            
+0B62E0   45D0F13C 05010000 92FFFE43 41A20000    41832000 189A1BBB 1B77910F FB274780   *..1.............................*            
+0B6300   FB464170 00061B55 904CFE78 98EDF07C    07FE90ED F07CD203 FEA8E000 D200FF24   *..............0.....0.K.....K...*            
+0B6320   FEA89400 FEA8940F FEA9D603 FEA8FF0C    4400FEA8 984CFE78 9200FF25 43B0FF24   *..........O.....................*            
+0B6340   18C81BC9 19CB4740 FBE006B0 44B7FF00    419B9001 904CFE78 980CF084 47F0E004   *.H.I... ..................0..0..*            
+0B6360   90EDF07C 984CFE78 D207FEA8 E0005820    FEA858B0 FEAC54B0 FF28D200 FF27E004   *..0.....K.................K.....*            
+0B6380   4CB0FF26 4830FF26 41400100 11635060    FF2C18C8 1BC919C3 47B0FC10 92FFFF25   *......... .........H.I.C........*            
+0B63A0   12774770 FC549180 FEA04710 FC5412CC    4780FC54 06C044C0 FF00412C 20011BBC   *................................*            
+0B63C0   46B0FC54 91FFFF25 4780FB94 47F0FC48    186C19BC 4720FC1A 186B1964 47D0FC22   *.............0..................*            
+0B63E0   18641277 4770FC30 9180FEA0 47C0FC34    5460FF2C 06604467 FF004196 90014126   *................................*            
+0B6400   20011BB6 46B0FBD2 904CFE78 980CF084    47F0E008 9023FEA8 91FFFE43 4780FC6C   *.......K......0..0..............*            
+0B6420   91FFFF25 4780FB94 47F0FC48 12774770    FCA89201 FCD49180 FEA04710 FCCE4BA0   *.........0...........M..........*            
+0B6440   000172B2 A0024710 FCCE5830 FE0445E0    F7504700 000058E0 F07C1898 92FFFE43   *................7.......0.......*            
+0B6460   9823FEA8 47F0FC60 9202FC00 1B9A1829    9180FEA0 4710FCCE 4BA0FF16 9601A002   *.....0..........................*            
+0B6480   12554780 FCCA9602 A0024150 50015810    FE480501 000047F0 FC9A41A2 00004183   *.......................0........*            
+0B64A0   2000189A 9823FEA8 91FFFF25 4780FB8A    47F0FBD2 90EDF07C 984CFE78 91FFFE43   *.................0.K..0.........*            
+0B64C0   4710FD58 910FFB27 0A039104 40A04780    4710FD58 4BA0FF16 9101A002 4780FD58   *............ ...................*            
+0B64E0   5810FE44 05010100 47F0FD58 18A247F0    FD141B9A 18299180 FEA04710 FD4C4BA0   *.........0.....0................*            
+0B6500   FF161255 4780FD4C 9602A002 5810FE48    05010200 47000000 1B221B33 9023F10C   *..............................1.*            
+0B6520   980CF084 92FFF07C 07FE95FF F07C4770    F1F490ED F07C182E 5810FE44 05010300   *..0...0.....0...14..0...........*            
+0B6540   47000000 9804F084 92FFF07C 47F0E004    95FFF07C 4770F1F4 90EDF07C 5850FE24   *......0...0..0....0...14..0.....*            
+0B6560   47F051DA 95FFF07C 4770F1F4 90EDF07C    5850FE24 47F051E2 95FFF07C 4770F1F4   *.0....0...14..0......0.S..0...14*            
+0B6580   90E6F07C 5850FE24 47F05202 95FFF07C    4770F1F4 90E6F07C 5850FE24 47F0520C   *.W0......0....0...14.W0......0..*            
+0B65A0   50D0FF34 90E5F07C 5850FE24 47F0514E    5850FE24 47F0509C 000B9C80 000B6BD0   *.....V0......0.......0..........*            
+0B65C0   000B6BE0 000B6BF0 000B6C00 512A5810    6CF49824 1020986F 10300700 00000000   *.......0.........4..............*            
+0B65E0   04000000 000B6728 000B9C68 6CC858E0    D00C18F4 00000000 07FE182F 584D0010   *.............H.....4............*            
+0B6600   00000000 000B8470 58302BE4 000B6D90    000B7F30 000B78CA 000B6ECA 000B73C8   *...........U...................H*            
+0B6620   000B7AE4 000B6E3A 000B701A 000B98C8    000B82CC 07004300 51885030 51884200   *...U...........H................*            
+0B6640   51884110 518E0511 02000000 005D0A0E    50102C08 58102BD8 18424120 2BB40501   *.......................Q........*            
+0B6660   00FF4700 00001824 92FF207C 451051B8    04000D00 00000000 00000000 00000A3C   *................................*            
+0B6680   98E5207C 07FE9201 51DD47F0 51D29202    51DD186F 182E5810 6BD80501 03004700   *.V.........0.K...........Q......*            
+0B66A0   000092FF 607C9806 608447F0 00000000    92FF6CDD D200A000 9000D200 9000A000   *...........0........K.....K.....*            
+0B66C0   D2002000 9000D200 90002000 41200000    07000001 00020004 00000000 00000000   *K.....K.........................*            
+0B66E0   00000000 00000000 000FFFFF 494052E8    47C05238 483052E8 00000000 00000000   *............. .Y.......Y........*            
+0B6700   00000000 000000F2 C940E2E3 D6D74040    F1C140D7 C1E4E2C5 40000000 00000000   *.......2I STOP  1A PAUSE .......*            
+0B6720   00985A20 530891FF 90ECD00C 5880F044    50D0F058 18CD41D0 F05450D0 C0081871   *..............0...0.....0.......*            
+0B6740   18604130 8F5C5030 F04CD203 F0508F34    4100F030 47F0F038 C9C8C3E2 E3C1C540   *........0.K.0.....0..00.IHCSTAE *            
+0B6760   1B110A08 92FF8F60 18F0053F 000B57C0    000B9C68 40404040 40404040 40404040   *.........0..........            *            
+0B6780   40404040 40404040 40404040 40404040    40404040 40404040 40404040 40404040   *                                *            
+0B67A0   40404040 1B984740 003A0200 40000A23    92FF607C 91FF6CDD 4780530C 98E6607C   *    ... .... ................W..*            
+0B67C0   45E0F044 186F4840 E00041D0 60C458F0    6DF805EF 58106E44 05010400 47F050A2   *..0.... .....D.0.8...........0..*            
+0B67E0   41005380 581060BC 19014780 50CE0501    040047F0 50A25810 6E709500 10004780   *...................0............*            
+0B6800   50EC9200 10004500 50EAC9C8 C3C1C4D1    E2E30A09 58106E74 12114780 50FE0A0E   *..........IHCADJST..............*            
+0B6820   47F0510C 07004110 510A0511 00000000    00000A0E 41000004 0A3C95FF 6F604770   *.0..............................*            
+0B6840   51365810 6F5C9824 1020986F 10300700    47F05130 800000F0 5810512C 0A0D58D0   *.................0.....0........*            
+0B6860   6F3458E0 D00C5820 6E289200 201318F4    980CD014 07FE182F 584D0010 504020C0   *...............4............. ..*            
+0B6880   58402E6C 58302E50 91404004 4780518A    07004300 517C5030 517C4200 517C4110   *. .......  .....................*            
+0B68A0   51820511 02000000 025D0A0E 47F051A4    07004300 519C5030 519C4200 519C4110   *.............0..................*            
+                                                                                                            PAGE 0006               
+0B68C0   51A20511 02000000 005D0A0E 50102E74    58102E44 18424120 2E200501 00FF4700   *................................*            
+0B68E0   00001824 92FF207C 451051CC 040B6728    00000000 1B004111 00000A3C 98E5207C   *.............................V..*            
+0B6900   07FE9201 51F147F0 51E69202 51F1186F    182E5810 6E440501 03004700 000092FF   *.....1.0.W...1..................*            
+0B6920   607C9806 608447F0 E004186F 92FF6F45    47F05216 186F9200 6F4594BF 6F400750   *.......0.........0........... ..*            
+0B6940   91FF6F45 4710522E D20852B5 6F504110    52A447F0 5238D208 52B56F47 411052AC   *........K..........0..K.........*            
+0B6960   1B444340 E0001834 494052FC 47C0524C    483052FC 06304430 53409500 6F454780   *... ..... ............... ......*            
+0B6980   526EF224 6F3D52BE 4F406F38 40405318    12444780 53104120 30134020 52AC5A20   *..2...... ..  ............ .....*            
+0B69A0   531C91FF 6F454710 5290D201 20005300    92802002 47F0529A D2012000 52FE9240   *..........K..........0..K...... *            
+0B69C0   20029200 200347F0 53020700 010B6704    000B6700 00008000 C9C8C3F0 F0404040   *.......0................IHC00   *            
+0B69E0   40404040 40404040 40404040 40404040    40404040 40404040 40404040 40404040   *                                *            
+      LINE 0B6A00 SAME AS ABOVE                                                                                                     
+0B6A20   00000000 003A0200 40000A23 92FF607C    91FF6F45 47805320 98E6607C 45E0F044   *........ ................W....0.*            
+0B6A40   00000000 000B69D4 58E0607C 41E4E001    50E0607C 92FF607C 41106F40 41000001   *.......M.....U............. ....*            
+0B6A60   0A0198E6 607C07FE D20052BE E0014120    FE201B00 5000F110 5810FE44 050100FF   *...W....K.............1.........*            
+0B6A80   47F05376 D2432001 562192F0 20004120    00455810 FE440501 02004700 000092FF   *.0..K......0....................*            
+0B6AA0   F07C45E0 F0440010 91012000 58202000    47801010 58202000 4020F03E 5830FE08   *0...0................... .0.....*            
+0B6AC0   189045E0 F7504700 00001B33 47F09002    54545454 54545454 54545454 54545454   *....7........0..................*            
+0B6AE0   54545454 54545454 54545454 54545454    54545454 54545454 54545454 54545454   *................................*            
+0B6B00   54545454 54545454 54545454 54545454    00545454 54545454 54445444 50085454   *................................*            
+0B6B20   54545454 54545454 54545454 54505454    1C4C5454 54545454 54485448 08545454   *................................*            
+0B6B40   54545454 54545454 54545454 40405454    54545454 54545454 54545454 54545454   *............  ..................*            
+0B6B60   54545454 54545454 54545454 54545454    54545454 54545454 54545454 54545454   *................................*            
+0B6B80   54545454 54545454 54545454 54545454    540C5454 2C282430 3C185454 54545454   *................................*            
+0B6BA0   54545410 54545420 54545454 54545454    54545434 54545438 54145454 54545454   *................................*            
+0B6BC0   04040404 04040404 04045454 54545454    000B6C34 000B6C20 000B6C10 00000000   *................................*            
+0B6BE0   000B6C78 000B6C20 000B6C14 800B57FC    000B6CB8 000B6C20 000B6C18 800B57FC   *................................*            
+0B6C00   000B6CF8 000B6C20 000B6C1C 800B57FC    000000D3 000000D4 000000D5 000000E7   *...8...............L...M...N...X*            
+0B6C20   00000000 C3D6D4D7 C9D3C5C4 E5C1D9C9    C1C2D3C5 0000003D C9C8C3F2 F1F1C940   *....COMPILEDVARIABLE....IHC211I *            
+0B6C40   C9C2C3D6 D4406040 C9D3D3C5 C7C1D340    40404040 40404040 40C6D6D9 D4C1E340   *IBCOM . ILLEGAL          FORMAT *            
+0B6C60   C3C8C1D9 C1C3E3C5 D940E2D7 C5C3C9C6    C9C5C440 40000000 00000039 C9C8C3F2   *CHARACTER SPECIFIED  .......IHC2*            
+0B6C80   F1F2C940 C9C2C3D6 D4406040 C6D6D9D4    C1E3E3C5 C440C961 D66B40C5 D5C440D6   *12I IBCOM . FORMATTED I.O. END O*            
+0B6CA0   C640D9C5 C3D6D9C4 40D6D540 E4D5C9E3    40404040 40000000 0000003C C9C8C3F2   *F RECORD ON UNIT     .......IHC2*            
+0B6CC0   F1F3C940 C9C2C3D6 D4406040 E4D5C6D6    D9D4C1E3 E3C5C440 D9C5C1C4 6B40C5D5   *13I IBCOM . UNFORMATTED READ. EN*            
+0B6CE0   C440D6C6 40D9C5C3 D6D9C440 D6D540E4    D5C9E340 40404040 0000004D C9C8C3F2   *D OF RECORD ON UNIT     ....IHC2*            
+0B6D00   F3F1C940 C9C2C3D6 D4406040 C4C9D9C5    C3E340C1 C3C3C5E2 E240E2E3 C1E3C5D4   *31I IBCOM . DIRECT ACCESS STATEM*            
+0B6D20   C5D5E340 E4E2C5C4 40E6C9E3 C8D6E4E3    40C4C5C6 C9D5C540 C6C9D3C5 40D6D540   *ENT USED WITHOUT DEFINE FILE ON *            
+0B6D40   E4D5C9E3 40404040 40C9C8C3 F9F0F4C9    40C1E3E3 C5D4D7E3 40E3D640 C4D640C9   *UNIT     IHC904I ATTEMPT TO DO I*            
+0B6D60   61D640C4 E4D9C9D5 C740C6C9 E7E4D740    D9D6E4E3 C9D5C540 C6D6D940 C1D540C9   *.O DURING FIXUP ROUTINE FOR AN I*            
+0B6D80   61D640E3 E8D7C540 C5D9D9D6 D9000000    50EC6114 501C6120 904961A4 D2176198   *.O TYPE ERROR...............K...*            
+0B6DA0   10203F97 F44B7D9C 588C617C 189CB5D0    1011FF50 1013B510 F0EBB8D0 F3DBF8D0   *....4...................0...3.8.*            
+0B6DC0   000DB510 F055B6D0 F083B530 F351C630    F3FBFF8F A00BB4A0 F15BB584 F05C2F92   *....0...0...3.F.3.......1...0...*            
+0B6DE0   47FC60DC 47FC60D6 47FC5FB2 47FC5E3E    47F0F222 47F0F0AE 47F0F07A 47F0F094   *.......O.........02..00..00..00.*            
+0B6E00   47F0F222 47F0F0AE 002892FF 804896F0    807A92CF F4BB92F7 F4C5D20B F4E7F469   *.02..00........0....4..74EK.4X4.*            
+0B6E20   47F0F150 920F8048 92D0F4BB 92F8F4C5    D20BF4E7 F475960F 807A47F0 F15092FF   *.01.......4..84EK.4X4......01...*            
+0B6E40   804992D1 F4BB92F9 F4C5D20B F4E7F481    950F1007 4770F0CC 47F0F150 9400F3EB   *...J4..94EK.4X4.......0..01...3.*            
+0B6E60   91FFF468 4710F150 92D7F4E3 47F0F222    58A0F3F0 91FFA000 4710F346 89400014   *..4...1..P4T.02...30......3.. ..*            
+0B6E80   5040F3E8 96FFF468 9110F3E8 4780F108    45A0F094 45A0F222 9120F3E8 4780F118   *. 3Y..4...3Y..1...0...2...3Y..1.*            
+0B6EA0   45A0F07A 45A0F222 9140F3E8 4780F128    45A0F0AE 45A0F222 9101F3E8 4780F138   *..0...2.. 3Y..1...0...2...3Y..1.*            
+0B6EC0   45A0F0AE 45A0F222 9104F3E8 4780F148    45A0F0AE 45A0F222 9400F468 47F0F346   *..0...2...3Y..1...0...2...4..03.*            
+0B6EE0   91FFF468 4780F15E 92C9F4E3 07FA92D7    F4E3950C 10074770 F1724170 000147F0   *..4...1..I4T...P4T......1......0*            
+0B6F00   F1764170 00095860 100896FF F3EB1B55    1BBB4120 00021F62 126647B0 F1901F62   *1...........3...............1...*            
+0B6F20   95446000 4770F1EC 1B554110 F4084840    60028C40 00104340 60018D40 001041B0   *......1.....4.. ... ... ... ....*            
+0B6F40   003C4130 0FFF1434 88400006 41000002    88400004 182B1424 4780F1D0 4400F3E4   *......... ....... ........1...3U*            
+0B6F60   4600F1C0 88400004 1863182B 14244780    F1E64352 10034300 60011650 41000003   *..1.. ..........1W..............*            
+0B6F80   96FFF3EA 91106000 4710F204 9400F3EA    41000007 413000F0 1A7012BB 4770F214   *..3.......2...3........0......2.*            
+                                                                                                            PAGE 0007               
+0B6FA0   43506001 14534450 F3C291FF A0004710    F2B25820 F3EC41D0 20C45830 F43C5830   *........3B......2...3....D..4...*            
+0B6FC0   30045030 D0045840 F3F85810 405C4130    F4FE5820 F3904120 20040501 08125810   *....... 38.. ...4...3...........*            
+0B6FE0   405C4130 F5264120 F4000501 08124110    F49CD200 F4B7F400 947FF4B7 184F180E   * ...5...4.......4.K.4.4...4.....*            
+0B7000   95FF43EB 4780429E 41F00050 50F044BC    928044A4 58F04464 05EF9200 44A441F0   *.........0...0.......0.........0*            
+0B7020   007850F0 44BC92F0 44C447F0 42A458F0    446405EF 18F418E0 91FFF468 4780F2B2   *...0...0.D.0...0.....4....4...2.*            
+0B7040   07FA95FF F3EB4770 F3469501 F4B34770    F3064270 F3E89407 F3E84370 F3E84457   *....3...3...4...3...3Y..3Y..3Y..*            
+0B7060   F3D6910A 600047E0 F34694CF 90089180    F4004780 F2EE9610 900847F0 F3461845   *3O......3.......4...2......03...*            
+0B7080   88400004 16544457 F3DE4780 F3469620    900847F0 F346950F 90074780 F346950D   *. ......3...3......03.......3...*            
+0B70A0   90074780 F31A4457 F3C21845 88400004    1654950D 90074770 F33A4457 F3C2910A   *....3...3B... ..........3...3B..*            
+0B70C0   600047E0 F33A94CF 90089180 F4004780    F3464450 F3D4983D F41407FE 9500F39C   *....3.......4...3...3M..4.....3.*            
+0B70E0   4780F39E D201F4C4 F53892D2 F4BBD20B    F4E7F48D 92D7F4E3 9400F3EB 5820F3F4   *..3.K.4D5..K4.K.4X4..P4T..3...34*            
+0B7100   4110F384 98EFF37C 07FE4180 601C07F4    00000408 92808004 00000000 0000F222   *..3...3........4..............2.*            
+0B7120   000858F1 00000000 00000000 0000182F    4100F3A8 47F0F3B0 C9C8C3C1 C4D1E2E3   *...1..............3..03.IHCADJST*            
+0B7140   1B110A08 18F29201 F39C5000 F37C47F0    F3546000 F4007800 F4486800 F4483B00   *.....2..3...3..03...4...4...4...*            
+0B7160   00062B00 31006800 F4007800 F4002200    00003200 5E321000 41300004 00000000   *........4...4...................*            
+0B7180   00000000 00000000 00000000 60004710    C486D200 6000C085 96106003 91086001   *................D.K.............*            
+0B71A0   4780C452 91046001 4780C452 91026001    4710C436 D5016012 703E47B0 C43694F7   *..D.......D.......D.N.......D..7*            
+0B71C0   600147F0 C45245A0 C33A4590 C3BC45A0    C2FC47F0 C47A9501 7FFFFFFF FFFFFFFF   *...0D...C...C...B..0D...........*            
+0B71E0   04000000 F0C9C8C3 F2F1F0C9 40D7D9D6    C7D9C1D4 00000000 004040D6 E5C5D9C6   *....0IHC210I PROGRAM.....  OVERF*            
+0B7200   D3D6E640 4040E4D5 C4C5D9C6 D3D6E640    40C4C9E5 C9C4C540 C3C8C5C3 D240C1D3   *LOW   UNDERFLOW  DIVIDE CHECK AL*            
+0B7220   C9C7D5D4 C5D5E340 40000000 000004BC    000004B0 000004B8 00000400 800004B4   *IGNMENT  .......................*            
+0B7240   00000000 00000000 00000000 00000078    C9C8C3F2 F040C940 C9C2C3D6 D4406040   *................IHC20 I IBCOM . *            
+0B7260   D7D9D6C7 D9C1D440 C9D5E3C5 D9D9E4D7    E3404D40 5D604040 40404040 40404040   *PROGRAM INTERRUPT . ..          *            
+0B7280   40404040 D6D3C440 D7E2E640 C9E24040    40404040 40404040 40404040 40404040   *    OLD PSW IS                  *            
+0B72A0   404B40D9 C5C7C9E2 E3C5D940 C3D6D5E3    C1C9D5C5 C4404040 40404040 40404040   * . REGISTER CONTAINED           *            
+0B72C0   40404040 40404040 F1F09868 C09C9106    C9D5C740 C4E4C540 E3D640E2 C5C3D6D5   *        10......ING DUE TO SECON*            
+0B72E0   C4C1D9E8 40C5D5E3 D9E840E3 D640C5D9    D9D6D940 D4D6D5C9 E3D6D940 C6D6D940   *DARY ENTRY TO ERROR MONITOR FOR *            
+0B7300   C5D9D9D6 D9404040 404040E6 C8C9D3C5    40D7D9D6 C3C5E2E2 C9D5C740 C5D9D9D6   *ERROR      WHILE PROCESSING ERRO*            
+0B7320   D9404040 40E2E4D4 D4C1D9E8 40D6C640    C5D9D9D6 D9E240C6 D6D940E3 C8C9E240   *R    SUMMARY OF ERRORS FOR THIS *            
+0B7340   D1D6C240 4040C5D9 D9D6D940 D5E4D4C2    C5D94040 40D5E4D4 C2C5D940 D6C640C5   *JOB   ERROR NUMBER   NUMBER OF E*            
+0B7360   D9D9D6D9 E2C9C8C3 F9F0F0C9 40C5E7C5    C3E4E3C9 D6D540E3 C5D9D4C9 D5C1E3C9   *RRORSIHC900I EXECUTION TERMINATI*            
+0B7380   D5C740C4 E4C540E3 D640C5D9 D9D6D940    C3D6E4D5 E340C6D6 D940C5D9 D9D6D940   *NG DUE TO ERROR COUNT FOR ERROR *            
+0B73A0   D5E4D4C2 C5D94040 404040E2 E3C1D5C4    C1D9C440 C6C9E7E4 D74040E4 E2C5D940   *NUMBER     STANDARD FIXUP  USER *            
+0B73C0   C6C9E7E4 D7404040 E3C1D2C5 D5406B40    C5E7C5C3 E4E3C9D6 D540C3D6 D5E3C9D5   *FIXUP   TAKEN . EXECUTION CONTIN*            
+0B73E0   E4C9D5C7 183047F0 00000000 00000000    00000000 00000000 00000000 91407024   *UING...0..................... ..*            
+0B7400   00000320 06050607 00000001 70000320    C0028000 00000001 00000001 70000320   *................................*            
+0B7420   C0028000 00000001 00000001 70000320    C0028000 00000001 00000001 70000320   *................................*            
+0B7440   C0028000 00000001 00000001 70000050    80020050 00000001 00000001 70000079   *................................*            
+0B7460   C4028000 00000001 00000001 70000050    80020050 00000001 00000001 70000320   *D...............................*            
+0B7480   C0028000 00000001 00000001 70000320    C0028000 00000001 00000001 70000320   *................................*            
+      LINES 0B74A0-0B7700 SAME AS ABOVE                                                                                             
+0B7720   C0028000 00000001 92FFF1FC 41F0F008    47F0F00A 05E3D9C1 C3C590EC D00C5880   *..........1..00..00..TRACE......*            
+0B7740   F16C91FF F1F44710 F02E95FF 807C4780    F02E18F8 58E0F06C 980CD014 07FE50D0   *1...14..0.......0..8..0.........*            
+0B7760   F1B041D0 F1AC4120 F1785810 F1740501    00FF4700 000092F0 20004030 F250D24E   *1...1...1...1..........0.. .2.K.*            
+0B7780   2001F1FA 4570F152 589D0004 91FFF1F4    4780F068 58909004 41A00004 1BBB5859   *..1...1.......14..0.............*            
+0B77A0   00101958 4780F138 1A5A9500 50004780    F0984365 00009508 500047D0 F0924160   *......1.........0...........0...*            
+0B77C0   00080660 4460F280 5859000C D5015000    F24E4770 F0B84865 00024E60 F258F332   *......2.....N...2...0.......2.3.*            
+0B77E0   201FF25D 96F02022 41502025 41C00004    18354120 900C4570 F1441A9A 4150500B   *..2..0..................1.......*            
+0B7800   46C0F0C0 4B90F1F8 4570F152 D5039010    80C04780 F1064150 002C875A F0FC1BCC   *..0...18..1.N.......1.......0...*            
+0B7820   86CAF12A 599CF178 4770F0F0 D2132016    F2604570 F152D20B 2001F274 4132000D   *..1...1...00K...2...1.K...2.....*            
+0B7840   412800C0 4570F144 4570F152 58D0D004    9200F1F4 98ECD00C 07FE509B F17C5890   *......1...1.......14........1...*            
+0B7860   900418BC 47F0F06E 41600005 4150F248    47F0F092 5810F170 5811005C 0501040A   *.....00.......2..00...1.........*            
+0B7880   07F74820 F2505810 F1740501 02004700    000092F0 20004030 F25007F7 00000000   *.7..2...1..........0.. .2..7....*            
+0B78A0   00000000 00000000 04000000 00000001    00000000 00000000 00000000 00000000   *................................*            
+0B78C0   00000000 00000000 00000000 00000000    00000000 00000000 00000000 B0649501   *................................*            
+                                                                                                            PAGE 0008               
+0B78E0   C83E4780 C1409202 B0649620 B00191C0    C83D4740 C27C5840 C8C6910F 40014780   *H...A ..........H.. B.. HF.. ...*            
+0B7900   C36A4150 B05059B0 C9464770 C0F0943F    C83D9640 C83D9201 B0989502 B0644770   *C.......I....0..H.. H...........*            
+0B7920   C1789202 000000F0 0010E3D9 C1C3C5C2    C1C3D240 40D9D6E4 E3C9D5C5 4040C3C1   *A......0..TRACEBACK  ROUTINE  CA*            
+0B7940   D3D3C5C4 40C6D9D6 D440C9E2 D5404040    D9C5C74B 4040F1F4 404040D9 C5C74B40   *LLED FROM ISN   REG.  14   REG. *            
+0B7960   40F1F540 4040D9C5 C74B4040 40F04040    40D9C5C7 4B404040 F1C9C2C3 D6D44700   * 15   REG.   0   REG.   1IBCOM..*            
+0B7980   0000B008 4150B034 00000000 00000000    E3D9C1C3 C5C2C1C3 D240E3C5 D9D4C9D5   *................TRACEBACK TERMIN*            
+0B79A0   C1E3C5C4 C5D5E3D9 E840D7D6 C9D5E37E    D200200C 5001C6C6 441E925C 30004130   *ATEDENTRY POINT.K.....FF........*            
+0B79C0   30014660 407847F0 409E4260 409B1A63    D2036000 455E5810 449A0501 00000000   *.... ..0 ... ...K...............*            
+0B79E0   92004568 47F040B6 D20340B2 50005810    449E0501 00000000 6840450E 68604516   *.....0 .K. .............. ......*            
+0B7A00   980744A2 181047F0 10049029 13FA1850    1B441B66 43405000 43605001 8A400001   *.......0............. ....... ..*            
+0B7A20   424010B2 D20110B4 5002954D 30004780    103C956C 30004780 103C4130 30014660   *. ..K...........................*            
+0B7A40   102047F0 10BC4130 30015030 148A1B77    47F0105A 956B3000 47801062 41707001   *...0.............0..............*            
+0B7A60   41303001 4660104A 47F010BC 4590109E    41303001 5030148A 1B771A24 47F0108E   *.........0...................0..*            
+0B7A80   955D3000 47801096 954C3000 47801096    41707001 41303001 46601076 47F010BC   *.............................0..*            
+0B7AA0   4590109E 47F010D0 427010B3 9003141A    05805830 83E25810 83220501 00000000   *.....0...............S..........*            
+0B7AC0   98038372 07F95820 13FA4340 50009200    20004120 20014640 10C49829 13FA1810   *.....9..... ........... .D......*            
+0B7AE0   47F01004 90291320 92FF13C7 18501B44    1B664340 50004360 50018A40 00014240   *.0.........G....... ....... ... *            
+0B7B00   106CD201 106E5002 1A241A36 0630925D    30004590 10521B24 0630926B 30004590   *..K.............................*            
+0B7B20   10520630 924D3000 920013C7 98291320    181047F0 10044B60 127647C0 10444260   *...........G.......0............*            
+0B7B40   106D1B36 90011340 05805810 828E0501    00000000 980182DA 1B669540 30004770   *....... ................... ....*            
+0B7B60   108A4160 60014130 300147F0 10761266    47C01044 07F9D66B 41100000 41A00000   *...........0.........9O.........*            
+0B7B80   42640000 433E8000 44271000 45186A00    45F42400 46989680 475F5E10 483B9ACA   *.................4..............*            
+0B7BA0   508AC723 0489E800 492540BE 40000000    5156BC75 E2D63100 59C9F2C9 CD04674F   *..G...Y... . .......SO...I2I....*            
+0B7BC0   621D6329 F1C35CA5 6A446C3B 15F99267    729F4F27 26179A23 7B172EBA D6DDC73C   *....1C.......9..............O.G.*            
+0B7BE0   4E000000 00000000 C6C9D6C3 E2406040    D4C9E2E2 C9D5C740 C4C440C3 C1D9C440   *........FIOCS . MISSING DD CARD *            
+0B7C00   C6D6D940 40404040 7B172EBA D6DDC73C    729F4F27 26179A23 6A446C3B 15F99267   *FOR     ....O.G..............9..*            
+0B7C20   621D6329 F1C35CA5 621D6329 F1C35CA5    59C9F2C9 CD04674F 5156BC75 E2D63100   *....1C......1C...I2I........SO..*            
+0B7C40   492540BE 40000000 41100000 00000000    3944B82F A09B5A52 302F3942 19248446   *.. . ...........................*            
+0B7C60   2814484B FEEBC2A1 1F8B6131 3BBABCF9    173BDCF4 95A97046 0F19B604 AAACA62B   *......B........9...4............*            
+0B7C80   06B0AF48 EC79AD21 41100000 00000000    40199999 9999999A 3F28F5C2 8F5C28F6   *................ .........5B...6*            
+0B7CA0   3E418937 4BC6A7F0 3D68DB8B AC710CB2    3C10C6F7 A0B5ED8D 3B1AD7F2 9ABCAF48   *.....F.0..........F7......P2....*            
+0B7CC0   3A2AF31D C4611873 3944B82F A09B5A52    483B9ACA 00000000 475F5E10 00000000   *..3.D...........................*            
+0B7CE0   46989680 00000000 45186A00 00000000    44271000 00000000 433E8000 00000000   *................................*            
+0B7D00   42640000 00000000 3CA7C5AC 471B4784    45F42400 00000000 46000000 00000000   *..........E......4..............*            
+0B7D20   40000000 00000004 7FFFFFFF FFFFFFFF    000000F0 0000000F FFBAFFC4 FFCEFFD8   * ..................0.......D...Q*            
+0B7D40   FFD8FFE2 FFECFFF6 00000009 0014001E    00280032 003C0046 00000001 00020003   *.Q.S...6........................*            
+0B7D60   00040005 00070008 0009FFF7 FFF8FFF9    FFFAFFFC FFFDFFFE 0006FFFB D2002000   *...........7.8.9............K...*            
+0B7D80   3000D200 30002000 000B9C68 000B57C0    47F05120 9480900C 58F0CD78 45E0F044   *..K..............0.......0....0.*            
+0B7DA0   001005EF 18E15830 100058F0 3000413F    300058F0 CD784120 C1F49501 C0864770   *...........0.......0....A4......*            
+0B7DC0   00000000 00FAFBFC FDFEFF00 000B70BE    000B74C8 000B7288 000B7934 000B74AA   *...................H............*            
+0B7DE0   000B78CA F0C45830 C1244300 C08558F0    C16805EF 4200C085 41D0C120 5030C124   *....0D..A......0A.........A...A.*            
+0B7E00   07FA9110 60020789 181758F0 10149601    10171BEE 43E0F005 4CE0F006 4100E008   *...........0..........0...0.....*            
+0B7E20   9140F004 47E0517C 4100E010 4110F000    0A0A94EF 600207F9 1B004300 70148900   *. 0...........0........9........*            
+0B7E40   00104A00 703E1817 40001018 88000010    40001016 41000000 13110700 45F051C0   *........ ....... ............0..*            
+0B7E60   000010D8 00000000 C9C5C3D8 C2C6C7F1    0A064540 C84E9610 004B0013 0010C080   *...Q....IECQBFG1... H...........*            
+0B7E80   477051E6 9500C085 477051E6 91046001    071A47F0 527494BF 0FFFFFFF 0000000A   *...W.......W.......0............*            
+0B7EA0   40404040 D2003000 90000000 F0F1F2F3    F4F5F6F7 F8F9C1C2 C3C4C5C6 40F04BF0   *    K.......0123456789ABCDEF 0.0*            
+0B7EC0   000B7EF8 000B7ED4 000B7ED0 00000000    00000000 00000000 60034710 000B707E   *...8...M........................*            
+0B7EE0   4040C4C5 C3C9D4C1 D34040C8 C5E7C1C4    C5C3C9D4 C1D30000 00000031 C9C8C3F2   *  DECIMAL  HEXADECIMAL......IHC2*            
+0B7F00   40F5C940 C3D6D5E5 C5D9E340 6040C9D3    D3C5C7C1 D3404040 40404040 40404040   * 5I CONVERT . ILLEGAL           *            
+0B7F20   4040C3C8 C1D9C1C3 E3C5D940 4003C080    50E0F384 5010F390 903DF414 D20BF408   *  CHARACTER  .....3...3...4.K.4.*            
+0B7F40   1014D207 F440100C 5880F3EC 18914840    100691C0 10084780 F0E04B40 F3D08B40   *..K.4 ....3.... ........0.. 3.. *            
+0B7F60   00024780 F04A4940 F07847A0 F34658A0    F3F091FF A0004710 F15047F4 F050C202   *....0.. 0...3...30......1..40.B.*            
+0B7F80   47F0F34C 47F0F346 47F0F222 47F0F0AE    47F0F222 47F0F0AE 47F0F07A 47F0F094   *.03..03..02..00..02..00..00..00.*            
+0B7FA0   47F0F222 47F0F0AE 002892FF 804896F0    807A92CF F4BB92F7 F4C5D20B F4E7F469   *.02..00........0....4..74EK.4X4.*            
+                                                                                                            PAGE 0009               
+0B7FC0   47F0F150 920F8048 92D0F4BB 92F8F4C5    D20BF4E7 F475960F 807A47F0 F15092FF   *.01.......4..84EK.4X4......01...*            
+0B7FE0   804992D1 F4BB92F9 F4C5D20B F4E7F481    950F1007 4770F0CC 47F0F150 9400F3EB   *...J4..94EK.4X4.......0..01...3.*            
+0B8000   91FFF468 4710F150 92D7F4E3 47F0F222    58A0F3F0 91FFA000 4710F346 89400014   *..4...1..P4T.02...30......3.. ..*            
+0B8020   5040F3E8 96FFF468 9110F3E8 4780F108    45A0F094 45A0F222 9120F3E8 4780F118   *. 3Y..4...3Y..1...0...2...3Y..1.*            
+0B8040   45A0F07A 45A0F222 9140F3E8 4780F128    45A0F0AE 45A0F222 9101F3E8 4780F138   *..0...2.. 3Y..1...0...2...3Y..1.*            
+0B8060   45A0F0AE 45A0F222 9104F3E8 4780F148    45A0F0AE 45A0F222 9400F468 47F0F346   *..0...2...3Y..1...0...2...4..03.*            
+0B8080   91FFF468 4780F15E 92C9F4E3 07FA92D7    F4E3950C 10074770 F1724170 000147F0   *..4...1..I4T...P4T......1......0*            
+0B80A0   F1764170 00095860 100896FF F3EB1B55    1BBB4120 00021F62 126647B0 F1901F62   *1...........3...............1...*            
+0B80C0   95446000 4770F1EC 1B554110 F4084840    60028C40 00104340 60018D40 001041B0   *......1.....4.. ... ... ... ....*            
+0B80E0   003C4130 0FFF1434 88400006 41000002    88400004 182B1424 4780F1D0 4400F3E4   *......... ....... ........1...3U*            
+0B8100   4600F1C0 88400004 1863182B 14244780    F1E64352 10034300 60011650 41000003   *..1.. ..........1W..............*            
+0B8120   96FFF3EA 91106000 4710F204 9400F3EA    41000007 413000F0 1A7012BB 4770F214   *..3.......2...3........0......2.*            
+0B8140   43506001 14534450 F3C291FF A0004710    F2B25820 F3EC41D0 20C45830 F43C5830   *........3B......2...3....D..4...*            
+0B8160   30045030 D0045840 F3F85810 405C4130    F4FE5820 F3904120 20040501 08125810   *....... 38.. ...4...3...........*            
+0B8180   405C4130 F5264120 F4000501 08124110    F49CD200 F4B7F400 947FF4B7 184F180E   * ...5...4.......4.K.4.4...4.....*            
+0B81A0   95FF43EB 4780429E 41F00050 50F044BC    928044A4 58F04464 05EF9200 44A441F0   *.........0...0.......0.........0*            
+0B81C0   007850F0 44BC92F0 44C447F0 42A458F0    446405EF 18F418E0 91FFF468 4780F2B2   *...0...0.D.0...0.....4....4...2.*            
+0B81E0   07FA95FF F3EB4770 F3469501 F4B34770    F3064270 F3E89407 F3E84370 F3E84457   *....3...3...4...3...3Y..3Y..3Y..*            
+0B8200   F3D6910A 600047E0 F34694CF 90089180    F4004780 F2EE9610 900847F0 F3461845   *3O......3.......4...2......03...*            
+0B8220   88400004 16544457 F3DE4780 F3469620    900847F0 F346950F 90074780 F346950D   *. ......3...3......03.......3...*            
+0B8240   90074780 F31A4457 F3C21845 88400004    1654950D 90074770 F33A4457 F3C2910A   *....3...3B... ..........3...3B..*            
+0B8260   600047E0 F33A94CF 90089180 F4004780    F3464450 F3D4983D F41407FE 9500F39C   *....3.......4...3...3M..4.....3.*            
+0B8280   4780F39E D201F4C4 F53892D2 F4BBD20B    F4E7F48D 92D7F4E3 9400F3EB 5820F3F4   *..3.K.4D5..K4.K.4X4..P4T..3...34*            
+0B82A0   4110F384 98EFF37C 07FE4180 601C07F4    000B8338 92808004 000B7F30 0000F222   *..3...3........4..............2.*            
+0B82C0   000858F1 000B98C8 000B7DCB 0000182F    4100F3A8 47F0F3B0 C9C8C3C1 C4D1E2E3   *...1...H..........3..03.IHCADJST*            
+0B82E0   1B110A08 18F29201 F39C5000 F37C47F0    F3546000 F4007800 F4486800 F4483B00   *.....2..3...3..03...4...4...4...*            
+0B8300   00062B00 31006800 F4007800 F4002200    00003200 5E321000 41300004 000B57C0   *........4...4...................*            
+0B8320   000B6706 000B8470 000B6D90 60004710    C486D200 6000C085 96106003 91086001   *................D.K.............*            
+0B8340   4780C452 91046001 4780C452 91026001    4710C436 D5016012 703E47B0 C43694F7   *..D.......D.......D.N.......D..7*            
+0B8360   600147F0 C45245A0 C33A4590 C3BC45A0    C2FC47F0 C47A9501 7FFFFFFF FFFFFFFF   *...0D...C...C...B..0D...........*            
+0B8380   04000000 F0C9C8C3 F2F1F0C9 40D7D9D6    C7D9C1D4 000B9C68 004040D6 E5C5D9C6   *....0IHC210I PROGRAM.....  OVERF*            
+0B83A0   D3D6E640 4040E4D5 C4C5D9C6 D3D6E640    40C4C9E5 C9C4C540 C3C8C5C3 D240C1D3   *LOW   UNDERFLOW  DIVIDE CHECK AL*            
+0B83C0   C9C7D5D4 C5D5E340 40000000 000B83EC    000B83E0 000B83E8 000B8330 800B83E4   *IGNMENT  ..............Y.......U*            
+0B83E0   00000000 00000000 00000000 00000078    C9C8C3F2 F040C940 C9C2C3D6 D4406040   *................IHC20 I IBCOM . *            
+0B8400   D7D9D6C7 D9C1D440 C9D5E3C5 D9D9E4D7    E3404D40 5D604040 40404040 40404040   *PROGRAM INTERRUPT . ..          *            
+0B8420   40404040 D6D3C440 D7E2E640 C9E24040    40404040 40404040 40404040 40404040   *    OLD PSW IS                  *            
+0B8440   404B40D9 C5C7C9E2 E3C5D940 C3D6D5E3    C1C9D5C5 C4404040 40404040 40404040   * . REGISTER CONTAINED           *            
+0B8460   40404040 40404040 F1F09868 C09C9106    91026001 071A91F0 C085071A 9103C080   *        10.............0........*            
+0B8480   071A4110 C17841A0 C21A47F0 50F49200    C0909103 C0804710 504A910F C0854710   *....A...B..0.4..................*            
+0B84A0   504A0700 4510503C 00000000 50710000    92831000 0A1347F0 505E0700 45105054   *.......................0........*            
+0B84C0   00000000 50710000 92871000 0A134190    C1849140 90004710 50E495FF C0904780   *................A.. .....U......*            
+0B84E0   C21A9110 70304710 C834D500 B001B004    477050CE 92FFC204 9200C086 5810C16C   *B.......H.N...........B.......A.*            
+0B8500   92FF1013 9500C204 478050B2 D207CE80    7028D203 CE58CE8C 4110CE58 0A2347F0   *......B.....K.....K............0*            
+0B8520   50C45810 C198D203 1000C200 D203106C    CE938E93 58F0CD84 45E0F044 00104110   *.D..A.K...B.K........0....0.....*            
+0B8540   C1AC58A0 1000D207 A0287028 41A0C21A    47F05120 9480900C 58F0CD84 45E0F044   *A.....K.......B..0.......0....0.*            
+0B8560   0010301E 18E15830 100058F0 3000413F    300058F0 CD844120 C1F89501 C0864770   *...........0.......0....A8......*            
+0B8580   51164120 C1FC4400 F0520501 0404181E    58F0CD84 58D0F0B8 D21B547C F07C50D0   *....A...0........0....0.K...0...*            
+0B85A0   F0C841D0 F0C45830 C1284300 C08558F0    C16C05EF 4200C085 41D0C124 5030C128   *0H..0D..A......0A.........A...A.*            
+0B85C0   07FA9110 60020789 181758F0 10149601    10171BEE 43E0F005 4CE0F006 000B9C68   *...........0..........0...0.....*            
+0B85E0   000B9398 47E0517C 410C6480 411C7470    0A16195F 600D8C69 1B0BC770 70200D70   *..........................G.....*            
+0B8600   001BCE70 70499C87 40001018 880B8480    400B9486 410B8470 13110700 45FBD630   *........ ....... .............O.*            
+0B8620   000B9550 000B8470 C9D14848 C2D24C61    0A11C9B0 C85E1A80 600D8C6A 950F44F0   *........IJ..BK....I.H..........0*            
+0B8640   477BD656 950C44F5 477BD656 91046001    071A47F0 527494BF 60039500 C0804770   *..O....5..O........0............*            
+0B8660   52689102 60034710 521A9104 60014780    5268910F C0854710 52229180 60034710   *................................*            
+0B8680   525694F7 600147F0 C276947D 600347F0    527445A0 52A09180 60034710 52529501   *...7...0B......0................*            
+                                                                                                            PAGE 0010               
+0B86A0   70144780 52529610 600345A0 C33E45A0    C30047F0 524E94EF 600345A0 CAE045A0   *............C...C..0............*            
+0B86C0   C33E45A0 CAE0947F 60039420 60019103    C080071A 47F0C844 947F6003 91046001   *C....................0H.........*            
+0B86E0   47105256 91106002 47805286 9103C080    071A47F0 C84050A0 C0705850 C17045A0   *...................0H ......A...*            
+0B8700   518858A0 C0709103 C080071A 47F0C834    91F0C085 078A5890 800C5A90 60109240   *.............0H..0............. *            
+0B8720   90004830 703E5B30 60104540 C64607FA    91C07024 471052F4 91407024 478052D4   *........... F..........4. .....M*            
+0B8740   96026001 91107024 478052F4 96046001    91086001 471052F4 910F6000 4710C492   *...........4...........4......D.*            
+0B8760   47F05338 9103C080 4710C892 4180601C    50806014 9501C086 47805310 5080C0A8   *.0........H.....................*            
+0B8780   92006033 9200604B 95017014 47805324    96206001 9103C080 4710C930 910FC085   *..........................I.....*            
+0B87A0   47105348 45A0C384 95017014 4780C2C8    45A0C33E 47F0C2C0 4540C634 91066001   *......C.......BH..C..0B.. F.....*            
+0B87C0   4780CD2C 47F0C492 05509650 60019180    600107EE 184E5000 C1A89280 C1A841F0   *.....0D.................A...A..0*            
+0B87E0   F0000700 56F05022 47F05026 02000000    0A4418A1 41000070 45105032 0A0A5010   *0....0...0......................*            
+0B8800   C198D21A 10045062 D24C101F A03241A0    006850A0 100041F0 F0000700 56F0505A   *A.K.....K..............00....0..*            
+0B8820   47F0505E FF000000 0A4407F4 C9C8C3F2    F1F8C940 C6C9D6C3 E2406040 C961D640   *.0.........4IHC218I FIOCS . I.O *            
+0B8840   C5D9D9D6 D9404000 5850C170 50A0C0B8    4590CB94 92006033 9200604B 91106003   *ERROR  ...A.....................*            
+0B8860   478053FC 94EF6003 47F05404 94BF6002    45905152 58A0C0B8 07FA0530 41503090   *.........0......................*            
+0B8880   91F0C085 07159103 C0800715 95007024    4770301E 96487024 07F591C0 70244710   *.0.......................5......*            
+0B88A0   30409148 70240715 910FC085 47103040    91407024 47803040 47F0308C 45903060   *. ............. . ..... .0......*            
+0B88C0   12114770 308691C0 70244710 305A9140    70244710 308C9248 702407F5 4110C178   *............... ...........5..A.*            
+0B88E0   184250E0 C0B85030 C1745850 C17045A0    50F45830 C17458E0 C0B81824 5810C1F4   *........A...A....4..A.........A4*            
+0B8900   07F992FF C09007F5 96087024 41202004    1B994990 703E4770 30A4D201 703E2002   *.9.....5..................K.....*            
+0B8920   95007024 477030B2 D2007024 20049501    70144780 30C29202 70149202 70484990   *........K............B..........*            
+0B8940   70524770 30D0D201 70522006 48A0703E    91807024 471030E0 4BA0C078 49907052   *......K.........................*            
+0B8960   47803112 91F0C085 471030F8 91487024    47103116 D5017052 C09A4780 311291C0   *.....0.....8........N...........*            
+0B8980   70244710 311249A0 705247B0 311640A0    70529180 6002078E 96026002 07FE0000   *.............. .................*            
+0B89A0   4470FEF4 47F0F3A4 4470FEFA 41979001    41A7A001 47F0F1FC 41A0A001 91FEFE34   *...4.03..............01.........*            
+0B89C0   4750F3DC 06D049D0 FF124740 F1FCD203    FE2CFE38 D201FE34 FE40D203 FE30FE3C   *..3........ 1.K.....K.... K.....*            
+0B89E0   47F0F1FC 58A0FE2C 58D0FE30 4370FE34    06704270 FE3447F0 F1FC5060 FF304560   *.01....................01.......*            
+0B8A00   F42C5860 FF3041A0 A00147F0 F1FC92FF    FF1847F0 F4F891FF FE434710 F4F84560   *4..........01......048......48..*            
+0B8A20   F42CD200 FE34FE35 58A0FE2C 58D0FE30    47F0F1FC 9023FEA8 910FF1A5 4710F440   *4.K..............01.......1...4 *            
+0B8A40   9201F462 47F0F45C 9202F462 18295920    FF1C47A0 F4525820 FF1CD703 FF1CFF1C   *..4..04...4.........4.....P.....*            
+0B8A60   5B20FEB0 5810FE48 05010000 47F0F1D4    5020FEB0 41832000 18929823 FEA807F6   *.............01M...............6*            
+0B8A80   92FFFF1B D200F48C A002D200 F48DFE37    47F0F49E 00001B55 47F0F498 41500001   *....K.4...K.4....04......04.....*            
+0B8AA0   D200F631 FE37D201 F62FA001 41A0A003    47F0F4D8 41500005 47F0F4C8 4150000A   *K.6...K.6........04Q.....04H....*            
+0B8AC0   47F0F4C8 41500003 47F0F4C8 4150000B    D200F62F A001D201 F630FF10 41A0A002   *.04H.....04H....K.6...K.6.......*            
+0B8AE0   8B500003 910FF1A5 4780F4E8 41505004    91FFFF18 4780F4F8 9200FF18 4560F5B6   *......1...4Y..........48......5.*            
+0B8B00   91FFFE42 4710F5B6 91FFFF19 4710F5A8    904DFE78 98EDF07C 07FED203 FEA8E000   *......5.......5.......0...K.....*            
+0B8B20   41E0E004 90EDF07C D200F62E FEA8D300    FF20FEA9 9400FEA8 940FFEA9 D603FEA8   *......0.K.6...L.............O...*            
+0B8B40   FF0C4400 FEA8984D FE784560 F5B647F0    F4F8D207 FEA8E000 41E0E008 90EDF07C   *............5..048K...........0.*            
+0B8B60   984DFE78 D200F62E FEACD300 FF20FEAD    9400FEAC 940FFEAD 58C0FEAC 5820FEA8   *....K.6...L.....................*            
+0B8B80   92FFFF19 1BBB43B0 F62E91FF FEA84780    F58E43B0 FEA89180 FF204780 F5A44370   *........6.......5...........5...*            
+0B8BA0   F62E8A70 00014270 F62E1BB7 4560F5B6    1A2B46C0 F5A49200 FF1947F0 F4F891FF   *6.......6.....5.....5......048..*            
+0B8BC0   FF184710 F40E9180 FF204710 F65A91FF    FF1B4780 F5FAD201 F630F48C 41500060   *....4.......6.......5.K.6.4.....*            
+0B8BE0   9560FF20 47A0F5EA D201F630 FF104350    FF208A50 0001910F F1A54780 F5FA4150   *......5.K.6.............1...5...*            
+0B8C00   50044370 F62F1277 47C0F636 41479000    194847D0 F6221842 9057FE0C 4550F6BA   *....6.....6.........6.........6.*            
+0B8C20   9857FE0C 182447F0 F6041839 5810FE4C    58151000 05010000 00004197 900091FE   *.......06.......................*            
+0B8C40   FE364780 F6524370 FE360670 4270FE36    91FFFE42 4710F67E 07F69200 FF1B47F0   *....6.................6..6.....0*            
+0B8C60   F1FC91FF FE424710 F67E92FF FE4291FF    FF194710 F5C64370 F62E8A70 00014270   *1.......6...........5F..6.......*            
+0B8C80   F62E47F0 F5C69200 FE424370 F62E1A27    47F0F5C6 90EDF07C 984DFE78 910FF1A5   *6..05F......6....05F..0.......1.*            
+0B8CA0   4780F6A8 91FFFE43 4710F6A8 4560F42C    1B221B33 9023F10C 980DF084 92FFF07C   *..6.......6...4.......1...0...0.*            
+0B8CC0   07FE910F F1A54780 F6C64560 F42C5830    FE005020 FEA845E0 F75047F0 F6DA47F0   *....1...6F..4...........7..06..0*            
+0B8CE0   F1D4910F F1A54780 F1D45810 FE445820    FE1845E0 F1A258E0 FE6C9180 E0334780   *1M..1...1M..........1...........*            
+0B8D00   F6FE4190 90015820 FEA807F5 90BFFE7C    18CF18B3 9280300C 9180CEA0 4710C770   *6..........5..................G.*            
+0B8D20   910FC1A5 4780C770 18195B10 CEB01211    4780C770 5020CEA8 18211801 4510C738   *..A...G...........G...........G.*            
+0B8D40   0A0A5010 CE1C58D0 CEB00620 4420C7DE    4020CE78 47F0C770 90BFFE7C 18CF18B3   *..............G. ....0G.........*            
+0B8D60   58303000 58E03000 4133E000 4120C03C    4400C052 05010404 181B58D0 C0B8D20F   *..............................K.*            
+                                                                                                            PAGE 0011               
+0B8D80   D00CC07C 50D0C0C8 41D0C0C4 58F0CE28    05EF58D0 CE1C12DD 4780C7CA 5810CE44   *.......H...D.0............G.....*            
+0B8DA0   5820CE18 18FC45E0 C1A25810 CEB04820    CE784420 C7DE4120 20014192 90001802   *........A...........G...........*            
+0B8DC0   181D4111 00000A0A 1B225020 CE1C5820    CEA85830 B00498BF CE7C5830 30001233   *................................*            
+0B8DE0   078E47F0 E004D200 1000D000 9016FEBC    1B331B44 5040FEB8 4160F9B1 5060FE2C   *...0..K.............. ....9.....*            
+0B8E00   9200F9AD D203F9AE F9AD181A 1B225860    FE24DDFF 100063A8 4772F818 41101100   *..9.K.9.9.................8.....*            
+0B8E20   47F0F806 47F0F8B8 47F0F8DA 47F0FA38    47F0FA40 47F0FA48 47F0FA30 47F0F9C6   *.08..08..08..0...0. .0...0...09F*            
+0B8E40   47F0F9CE 47F0FA50 47F0FA58 47F0FA60    47F0FA68 47F0FA1E 47F0F9E0 47F0FA70   *.09..0...0...0...0...0...09..0..*            
+0B8E60   47F0FA7E 47F0FA02 47F0F9FA 47F0F90C    47F0F91C 47F0F870 4160F806 9016FED4   *.0...0...09..09..09..08...8....M*            
+0B8E80   5830FDFC D2073080 305CD200 30A41000    5010300C 9280300C 45E0F704 47F0F89C   *....K.....K...............7..08.*            
+0B8EA0   47F0F9C0 9816FED4 4930FF14 47D0F924    D205FE30 FE3CD203 FEECFE38 47F0F924   *.09....M......9.K.....K......09.*            
+0B8EC0   D100FEB7 10008B40 00035A40 FEB85A40    FEB85A40 FEB45040 FEB84110 100147F0   *J...... ... ... ... ... .......0*            
+0B8EE0   F8064130 30014930 FF1447C0 F8F8D203    FE38FEEC D201FE40 FE34D203 FE3CFE30   *8...........88K.....K.. ..K.....*            
+0B8F00   5010FEEC 4240FE34 4240FE35 5030FE30    47F0FA26 4560F96C 921EF9AE 4560F990   *..... ... .......0....9...9...9.*            
+0B8F20   47F0FA26 4560F96C 4630F938 9222F9AE    4560F990 5810FEEC 5830FE30 47F0FA26   *.0....9...9...9...9..........0..*            
+0B8F40   91FEFE34 4750F95E 4930FF12 47C0FA26    D203FEEC FE38D201 FE34FE40 D203FE30   *......9.........K.....K.... K...*            
+0B8F60   FE3C47F0 FA264340 FE340640 4240FE34    47F0F92C 91FFF9AE 078691FF FF214780   *...0... ... . ...09...9.........*            
+0B8F80   F9864240 F9B09200 FF2147F0 F98A4240    F9AF91FF F9AF0786 9016FED4 9816FEBC   *9.. 9......09.. 9...9......M....*            
+0B8FA0   41A0F9AE 91FEF9AD 4780F1FC 41A0F9AC    47F0F1FC 06000000 00009200 F9ADD203   *..9...9...1...9..01.........9.K.*            
+0B8FC0   F9AEF9AD 9016FEBC 9816FED4 07F69280    F9AF47F0 F8D29208 F9AED600 F9AFFEBB   *9.9........M.6..9..08K..9.O.9...*            
+0B8FE0   4560F990 47F0FA26 12444720 F9EA4140    00019218 F9AE4240 F9AF4560 F99047F0   *..9..0......9.. ....9.. 9...9..0*            
+0B9000   FA264560 F96C47F0 FA2691FF FF214710    FA164240 F9AF92FF FF2147F0 FA269200   *....9..0........... 9......0....*            
+0B9020   FF2147F0 F8709212 F9AE4240 F9AD1B44    5040FEB8 47F0F8D2 9210F9AE 47F0FA22   *...08...9.. 9.... ...08K..9..0..*            
+0B9040   9214F9AE 47F0FA22 9216F9AE 47F0FA22    9224F9AE 47F0FA22 920AF9AE 47F0FA22   *..9..0....9..0....9..0....9..0..*            
+0B9060   920CF9AE 47F0FA22 920EF9AE 47F0FA22    9220F9AE 47F0FA22 4560FADA 1B445040   *..9..0....9..0....9..0......... *            
+0B9080   FEB847F0 F8069200 FF22D200 FF231000    5010FEF0 1B44D500 1001FF23 4780FAA4   *...08.....K........0..N.........*            
+0B90A0   41404001 41101001 47F0FA8E D5001002    FF234770 FAC24140 40014110 1001910F   *.  ......0..N........B.  .......*            
+0B90C0   F1A54780 FA9847F0 FAC692FF FF225810    FEF04560 FADA91FF FF224710 FA2647F0   *1......0.F.......0.............0*            
+0B90E0   FA881244 41101001 07C618A1 0640910F    F1A54710 FAF64440 FEF447F0 FAFA4440   *.........F... ..1....6. .4.0... *            
+0B9100   FEFA4194 90014114 A00107F6 9200FB27    47F0FB10 920FFB27 95FFF07C 4770F1F4   *...........6.....0........0...14*            
+0B9120   90EDF07C 41300004 45D0F13C 05010000    92FFFE43 41A20000 41832000 189A1BBB   *..0.......1.....................*            
+0B9140   1B77910F FB274780 FB464170 00061B55    904CFE78 98EDF07C 07FE90ED F07CD203   *......................0.....0.K.*            
+0B9160   FEA8E000 D200FF24 FEA89400 FEA8940F    FEA9D603 FEA8FF0C 4400FEA8 984CFE78   *....K.............O.............*            
+0B9180   9200FF25 43B0FF24 18C81BC9 19CB4740    FBE006B0 44B7FF00 419B9001 904CFE78   *.........H.I... ................*            
+0B91A0   980CF084 47F0E004 90EDF07C 984CFE78    D207FEA8 E0005820 FEA858B0 FEAC54B0   *..0..0....0.....K...............*            
+0B91C0   FF28D200 FF27E004 4CB0FF26 4830FF26    41400100 11635060 FF2C18C8 1BC919C3   *..K.............. .........H.I.C*            
+0B91E0   47B0FC10 92FFFF25 000BA248 FC6015F0    FEABCB80 000B57C0 4780FC54 06C044C0   *...............0................*            
+0B9200   FF00412C 20011BBC 46BC80C4 910B8395    4780FB94 47F0FC48 186C19BC 4720FC1A   *...........D.........0..........*            
+0B9220   18769DD4 47D0FC22 18641277 4770FC30    9180FEA0 47C0FC34 5460FF2C 06604467   *...M............................*            
+0B9240   FF004196 90014126 20011BB6 46B0FBD2    904CFE78 980CF084 47F0E008 9023FEA8   *...............K......0..0......*            
+0B9260   91FFFE43 4780FC6C 91FFFF25 4780FB94    47F0FC48 12774770 FCA89201 FCD49180   *.................0...........M..*            
+0B9280   FEA04710 FCCE4BA0 FF169101 A0024710    FCCE5830 FE0445E0 F7504700 000058E0   *........................7.......*            
+0B92A0   F07C1898 92FFFE43 9823FEA8 47F0FC60    9202FCD4 1B9A1829 9180FEA0 4710FCCE   *0............0.....M............*            
+0B92C0   4BA0FF16 9601A002 12554780 FCCA9602    A0024150 50015810 FE480501 000047F0   *...............................0*            
+0B92E0   FC9A41A2 00004183 2000189A 9823FEA8    91FFFF25 4780FB8A 47F0FBD2 90EDF07C   *.........................0.K..0.*            
+0B9300   984CFE78 91FFFE43 4710FD58 910FFB27    4710FD32 9180FEA0 4710FD58 4BA0FF16   *................................*            
+0B9320   9101A002 4780FD58 5810FE44 05010100    47F0FD58 18A247F0 FD141B9A 18299180   *.................0.....0........*            
+0B9340   FEA04710 FD4C4BA0 FF161255 4780FD4C    9602A002 5810FE48 05010200 47000000   *................................*            
+0B9360   1B221B33 9023F10C 980CF084 92FFF07C    07FE95FF F07C4770 F1F490ED F07C182E   *......1...0...0.....0...14..0...*            
+0B9380   5810FE44 05010300 47000000 9804F084    920B74EC 47F0E004 91026001 071A91F0   *..............0......0.........0*            
+0B93A0   C085071A 9103C080 071A4110 C17841A0    C21A47F0 50F49200 C0909103 C0804710   *............A...B..0.4..........*            
+0B93C0   504A910F C0854710 504A0700 4510503C    00000000 50710000 92831000 0A1347F0   *...............................0*            
+0B93E0   505E0700 45105054 00000000 50710000    92871000 0A134190 C1849140 90004710   *........................A.. ....*            
+0B9400   50E495FF C0904780 C21A9110 70304710    C834D500 B001B004 477050CE 92FFC204   *.U......B.......H.N...........B.*            
+0B9420   9200C086 5810C16C 92FF1013 9500C204    478050B2 D207CE80 7028D203 CE58CE8C   *......A.......B.....K.....K.....*            
+0B9440   4110CE58 0A2347F0 50C45810 C198D203    1000C200 D203106C CE880A23 58F0CD84   *.......0.D..A.K...B.K........0..*            
+                                                                                                            PAGE 0012               
+0B9460   45E0F044 00104110 C1AC58A0 1000D207    A0287028 41A0C21A 47F05120 9480900C   *..0.....A.....K.......B..0......*            
+0B9480   58F0CD84 45E0F044 0010301E 18E15830    100058F0 3000413F 300058F0 CD844120   *.0....0............0.......0....*            
+0B94A0   C1F89501 C0864770 51164120 C1FC4400    F0520501 0404181E 58F0CD84 58D0F0B8   *A8..........A...0........0....0.*            
+0B94C0   D20FD00C F07C50D0 F0C841D0 F0C45830    C1284300 C08558F0 C16C05EF 4200C085   *K...0...0H..0D..A......0A.......*            
+0B94E0   41D0C124 5030C128 07FA9110 60020789    181758F0 10149601 10171BEE 43E0F005   *..A...A............0..........0.*            
+0B9500   4CE0F006 4100E008 9140F004 47E0517C    4100E010 4110F000 0A0A94EF 600207F9   *..0...... 0...........0........9*            
+0B9520   1B004300 70148900 00104A00 703E1817    40001018 88000010 40001016 41000000   *................ ....... .......*            
+0B9540   13110700 45F051C0 000B9550 00000000    C9C5C3D8 C2C6C7F1 0A064540 C8529610   *.....0..........IECQBFG1... H...*            
+0B9560   600207FA 9503C080 477051E6 9500C085    477051E6 91046001 071A47F0 527494BF   *...........W.......W.......0....*            
+0B9580   60039500 C0804770 52689102 60034710    521A9104 60014780 5268910F C0854710   *................................*            
+0B95A0   52229180 60034710 525694F7 600147F0    C276947D 600347F0 527445A0 52A09180   *...........7...0B......0........*            
+0B95C0   60034710 52529501 70144780 52529610    600345A0 C33E45A0 C30047F0 524E94EF   *....................C...C..0....*            
+0B95E0   600345A0 CAE045A0 C33E45A0 CAE0947F    60039420 60019103 C080071A 47F0C844   *........C....................0H.*            
+0B9600   947F6003 91046001 47105256 91106002    47805286 9103C080 071A47F0 C84050A0   *...........................0H ..*            
+0B9620   C0705850 C17045A0 518858A0 C0709103    C080071A 47F0C834 91F0C085 078A5890   *....A................0H..0......*            
+0B9640   800C5A90 60109240 90004830 703E5B30    60104540 C64607FA 91C07024 471052F4   *....... ........... F..........4*            
+0B9660   91407024 478052D4 96026001 91107024    478052F4 96046001 91086001 471052F4   *. .....M...........4...........4*            
+0B9680   910F6000 4710C492 47F05338 9103C080    4710C892 4180601C 50806014 9501C086   *......D..0........H.............*            
+0B96A0   47805310 5080C0A8 92006033 9200604B    95017014 47805324 96206001 9103C080   *................................*            
+0B96C0   4710C930 910FC085 47105348 45A0C384    95017014 4780C2C8 45A0C33E 47F0C2C0   *..I...........C.......BH..C..0B.*            
+0B96E0   4540C634 91066001 4780CD2C 47F0C492    05509650 60019180 600107EE 184E5000   *. F..........0D.................*            
+0B9700   C1A89280 C1A841F0 F0000700 56F05022    47F05026 02000000 0A4418A1 41000070   *A...A..00....0...0..............*            
+0B9720   45105032 0A0A5010 C198D21A 10045062    D24C101F A03241A0 006850A0 100041F0   *........A.K.....K..............0*            
+0B9740   F0000700 56F0505A 47F0505E FF000000    0A4407F4 C9C8C3F2 F1F8C940 C6C9D6C3   *0....0...0.........4IHC218I FIOC*            
+0B9760   E2406040 C961D640 C5D9D9D6 D9404000    5850C170 50A0C0B8 4590CB94 92006033   *S . I.O ERROR  ...A.............*            
+0B9780   9200604B 91106003 478053FC 94EF6003    47F05404 94BF6002 45905152 58A0C0B8   *.................0..............*            
+0B97A0   07FA0530 41503090 91F0C085 07159103    C0800715 95007024 4770301E 96487024   *.........0......................*            
+0B97C0   07F591C0 70244710 30409148 70240715    910FC085 47103040 91407024 47803040   *.5....... ............. . ..... *            
+0B97E0   47F0308C 45903060 12114770 308691C0    70244710 305A9140 70244710 308C9248   *.0..................... ........*            
+0B9800   702407F5 4110C178 184250E0 C0B85030    C1745850 C17045A0 50F45830 C17458E0   *...5..A.........A...A....4..A...*            
+0B9820   C0B81824 5810C1F4 07F992FF C09007F5    96087024 41202004 1B994990 703E4770   *......A4.9.....5................*            
+0B9840   30A4D201 703E2002 95007024 477030B2    D2007024 20049501 70144780 30C29202   *..K.............K............B..*            
+0B9860   70149202 70484990 70524770 30D0D201    70522006 48A0703E 91807024 471030E0   *..............K.................*            
+0B9880   4BA0C078 49907052 47803112 91F0C085    471030F8 91487024 47103116 D5017052   *.............0.....8........N...*            
+0B98A0   C09A4780 311291C0 70244710 311249A0    705247B0 311640A0 70529180 6002078E   *...................... .........*            
+0B98C0   96026002 07FE0000 00000073 40000000    0A050042 00000001 00050042 00000001   *............ ...................*            
+0B98E0   0A050042 00000001 000A0042 00000001    0A050042 00000001 0A050052 00000001   *................................*            
+0B9900   0A050042 00000001 0A050042 00000001    00050052 00000001 0A050042 00000001   *................................*            
+0B9920   01010042 00000001 0A050052 00000001    0A050042 00000001 0A050042 00000001   *................................*            
+0B9940   0A050052 00000001 0A050052 00000001    0A050052 00000001 0A050052 00000001   *................................*            
+0B9960   0A050052 00000001 0A050042 00000001    0A050042 00000001 0A050042 00000001   *................................*            
+0B9980   0A050042 00000001 01010002 00000001    0A050042 00000001 0A050042 00000001   *................................*            
+0B99A0   0A050042 00000001 0A050042 00000001    0A050042 00000001 0A050042 00000001   *................................*            
+0B99C0   0A050042 00000001 0A050042 00000001    0A050042 00000001 01010002 00000001   *................................*            
+0B99E0   0A050042 00000001 0A050042 00000001    0A050042 00000001 0A050042 00000001   *................................*            
+      LINES 0B9A00-0B9C40 SAME AS ABOVE                                                                                             
+0B9C60   0A050042 00000001 00000320 06050607    00000001 70000320 C0028000 00000001   *................................*            
+0B9C80   00000001 70000320 C0028000 00000001    00000001 70000320 C0028000 00000001   *................................*            
+0B9CA0   00000001 70000320 C0028000 00000001    00000001 70000050 80020050 00000001   *................................*            
+0B9CC0   00000001 70000079 C4028000 00000001    00000001 70000050 80020050 00000001   *........D.......................*            
+0B9CE0   00000001 70000320 C0028000 00000001    00000001 70000320 C0028000 00000001   *................................*            
+      LINES 0B9D00-0B9F60 SAME AS ABOVE                                                                                             
+0B9F80   00000001 70000320 C0028000 00000001    F39C5000 F37C47F0 F3546000 F4007800   *................3...3..03...4...*            
+0B9FA0   F4486800 F4483B00 00062B00 31006800    F4007800 F4002200 00003200 5E321000   *4...4...........4...4...........*            
+0B9FC0   41300004 00000000 00000000 00000000    00000000 60004710 C486D200 6000C085   *........................D.K.....*            
+                                                                                                            PAGE 0013               
+0B9FE0   96106003 91086001 4780C452 91046001    4780C452 91026001 4710C436 D5016012   *..........D.......D.......D.N...*            
+0BA000   703E47B0 C43694F7 600147F0 C45245A0    C33A4590 C3BC45A0 C2FC47F0 C47A9501   *....D..7...0D...C...C...B..0D...*            
+0BA020   7FFFFFFF FFFFFFFF 04000000 F0C9C8C3    F2F1F0C9 40D7D9D6 C7D9C1D4 00000000   *............0IHC210I PROGRAM....*            
+0BA040   004040D6 E5C5D9C6 D3D6E640 4040E4D5    C4C5D9C6 D3D6E640 40C4C9E5 C9C4C540   *.  OVERFLOW   UNDERFLOW  DIVIDE *            
+0BA060   C3C8C5C3 D240C1D3 C9C7D5D4 C5D5E340    40000000 000004BC 000004B0 000004B8   *CHECK ALIGNMENT  ...............*            
+0BA080   00000400 800004B4 00000000 00000000    00000000 00000078 C9C8C3F2 F040C940   *........................IHC20 I *            
+0BA0A0   C9C2C3D6 D4406040 D7D9D6C7 D9C1D440    C9D5E3C5 D9D9E4D7 E3404D40 5D604040   *IBCOM . PROGRAM INTERRUPT . ..  *            
+0BA0C0   40404040 40404040 40404040 D6D3C440    D7E2E640 C9E24040 40404040 40404040   *            OLD PSW IS          *            
+0BA0E0   40404040 40404040 404B40D9 C5C7C9E2    E3C5D940 C3D6D5E3 C1C9D5C5 C4404040   *         . REGISTER CONTAINED   *            
+0BA100   40404040 40404040 40404040 40404040    F1F09868 C09C9106 C9D5C740 C4E4C540   *                10......ING DUE *            
+0BA120   E3D640E2 C5C3D6D5 C4C1D9E8 40C5D5E3    D9E840E3 D640C5D9 D9D6D940 D4D6D5C9   *TO SECONDARY ENTRY TO ERROR MONI*            
+0BA140   E3D6D940 C6D6D940 C5D9D9D6 D9404040    404040E6 C8C9D3C5 40D7D9D6 C3C5E2E2   *TOR FOR ERROR      WHILE PROCESS*            
+0BA160   C9D5C740 C5D9D9D6 D9404040 40E2E4D4    D4C1D9E8 40D6C640 C5D9D9D6 D9E240C6   *ING ERROR    SUMMARY OF ERRORS F*            
+0BA180   D6D940E3 C8C9E240 D1D6C240 4040C5D9    D9D6D940 D5E4D4C2 C5D94040 40D5E4D4   *OR THIS JOB   ERROR NUMBER   NUM*            
+0BA1A0   C2C5D940 D6C640C5 D9D9D6D9 E2C9C8C3    F9F0F0C9 40C5E7C5 C3E4E3C9 D6D540E3   *BER OF ERRORSIHC900I EXECUTION T*            
+0BA1C0   C5D9D4C9 D5C1E3C9 D5C740C4 E4C540E3    D640C5D9 D9D6D940 C3D6E4D5 E340C6D6   *ERMINATING DUE TO ERROR COUNT FO*            
+0BA1E0   D940C5D9 D9D6D940 D5E4D4C2 C5D94040    404040E2 E3C1D5C4 C1D9C440 C6C9E7E4   *R ERROR NUMBER     STANDARD FIXU*            
+0BA200   D74040E4 E2C5D940 C6C9E7E4 D7404040    E3C1D2C5 D5406B40 C5E7C5C3 E4E3C9D6   *P  USER FIXUP   TAKEN . EXECUTIO*            
+0BA220   D540C3D6 D5E3C9D5 E4C9D5C7 183047F0    000B9C68 000B98C8 000B57C0 000BA570   *N CONTINUING...0.......H........*            
+0BA240   000B8476 91407024 00000320 06050607    00000001 70000320 C0028000 00000001   *..... ..........................*            
+0BA260   00000001 70000320 C0028000 00000001    00000001 70000320 C0028000 00000001   *................................*            
+0BA280   00000001 70000320 C0028000 00000001    00000001 70000050 80020050 00000001   *................................*            
+0BA2A0   00000001 70000079 C4028000 00000001    00000001 70000050 80020050 00000001   *........D.......................*            
+0BA2C0   00000001 70000320 C0028000 00000001    00000001 70000320 C0028000 00000001   *................................*            
+      LINES 0BA2E0-0BA540 SAME AS ABOVE                                                                                             
+0BA560   00000001 70000320 C0028000 00000001    92FFF1FC 41F0F008 47F0F00A 05E3D9C1   *..................1..00..00..TRA*            
+0BA580   C3C590EC D00C5880 F16C91FF F1F44710    F02E95FF 807C4780 F02E18F8 58E0F06C   *CE......1...14..0.......0..8..0.*            
+0BA5A0   980CD014 07FE50D0 F1B041D0 F1AC4120    F1785810 F1740501 00FF4700 000092F0   *........1...1...1...1..........0*            
+0BA5C0   20004030 F250D24E 2001F1FA 4570F152    589D0004 91FFF1F4 4780F068 58909004   *.. .2.K...1...1.......14..0.....*            
+0BA5E0   41A00004 1BBB5859 00101958 4780F138    1A5A9500 50004780 F0984365 00009508   *..............1.........0.......*            
+0BA600   500047D0 F0924160 00080660 4460F280    5859000C D5015000 F24E4770 F0B84865   *....0.........2.....N...2...0...*            
+0BA620   00024E60 F258F332 201FF25D 96F02022    41502025 41C00004 18354120 900C4570   *....2.3...2..0..................*            
+0BA640   F1441A9A 4150500B 46C0F0C0 4B90F1F8    4570F152 D5039010 80C04780 F1064150   *1.........0...18..1.N.......1...*            
+0BA660   002C875A F0FC1BCC 86CAF12A 599CF178    4770F0F0 D2132016 F2604570 F152D20B   *....0.....1...1...00K...2...1.K.*            
+0BA680   2001F274 4132000D 412800C0 4570F144    4570F152 58D0D004 9200F1F4 98ECD00C   *..2...........1...1.......14....*            
+0BA6A0   07FE509B F17C5890 900418BC 47F0F06E    41600005 4150F248 47F0F092 5810F170   *....1........00.......2..00...1.*            
+0BA6C0   5811005C 0501040A 07F74820 F2505810    F1740501 02004700 000092F0 20004030   *.........7..2...1..........0.. .*            
+0BA6E0   F25007F7 000B57C0 000B6D90 000B8476    04000000 00000001 00000000 00000000   *2..7............................*            
+0BA700   00000000 00000000 00000000 00000000    00000000 00000000 00000000 00000000   *................................*            
+0BA720   00000000 B0649501 C83E4780 C1409202    B0649620 B00191C0 C83D4740 C27C5840   *........H...A ..........H.. B.. *            
+0BA740   C8C6910F 40014780 C36A4150 B05059B0    C9464770 C0F0943F C83D9640 C83D9201   *HF.. ...C.......I....0..H.. H...*            
+0BA760   B0989502 B0644770 C1789202 000000F0    0010E3D9 C1C3C5C2 C1C3D240 40D9D6E4   *........A......0..TRACEBACK  ROU*            
+0BA780   E3C9D5C5 4040C3C1 D3D3C5C4 40C6D9D6    D440C9E2 D5404040 D9C5C74B 4040F1F4   *TINE  CALLED FROM ISN   REG.  14*            
+0BA7A0   404040D9 C5C74B40 40F1F540 4040D9C5    C74B4040 40F04040 40D9C5C7 4B404040   *   REG.  15   REG.   0   REG.   *            
+0BA7C0   F1C9C2C3 D6D44700 0000B008 4150B034    00000000 00000000 E3D9C1C3 C5C2C1C3   *1IBCOM..................TRACEBAC*            
+0BA7E0   D240E3C5 D9D4C9D5 C1E3C5C4 C5D5E3D9    E840D7D6 C9D5E37E D200200C 5001C6C6   *K TERMINATEDENTRY POINT.K.....FF*            
+LOAD MODULE    IGC0A05A                                                                                                             
+0C0000   4180D099 1B114313 00001A81 41330001    95FF3000 47806068 1BEE1BFF 1B001B11   *................................*            
+0C0020   43E30000 43030001 8CE00004 88F0001C    8C000004 8810001C 1A2044E0 60701A1E   *.T...........0..................*            
+0C0040   41818001 44F06076 F384D069 D069DC07    D06962C6 41FFF001 44F0607C 47F0673C   *.....0..3..........F..0..0...0..*            
+0C0060   413E3003 47F06010 41330001 47F060E2    D2008000 3002D200 D0692000 D2008000   *.....0.......0.SK.....K.....K...*            
+0C0080   D0695050 D08C5000 D12094FC D1235B00    D1201A10 5800D120 41110003 5010D064   *........J...J...J.....J.........*            
+0C00A0   94FCD067 D703D06C D06C1810 54006290    19014780 60BC1B10 4010D06C 5810D064   *....P................... .......*            
+                                                                                                            PAGE 0014               
+0C00C0   4A10D06C 1B005D00 66C04000 D06A1211    4770611C 4810D06A 12114770 60E85850   *.......... ..................Y..*            
+0C00E0   D08C5860 D12407F5 4120D121 45B06236    5820D120 413062C4 48A0D06A 4BA0D06C   *....J..5..J.......J....D........*            
+0C0100   88A00002 45B0623E 46A06104 9640D112    455062DA 94BFD112 47F060DE 18A15810   *............. J.......J..0......*            
+0C0120   D1204B10 D06C5010 D0704120 D07145B0    62364810 D06C8810 00011A31 5820D120   *J.............................J.*            
+0C0140   45B0623E 5020D120 9640D112 455062DA    94BFD112 4810D06C 12114770 61984700   *......J.. J.......J.............*            
+0C0160   615E4110 0001191A 47B061A6 18125B10    66C0D51F 10002000 477061A6 4810D06E   *..................N.............*            
+0C0180   41110001 4010D06E 41220020 5020D120    46A0615E 47F061B0 1B114010 D06C46A0   *.... .........J......0.... .....*            
+0C01A0   611E47F0 60D44810 D06E1211 4780619E    5810D120 4800D06E 89000005 1B105010   *...0.M............J.............*            
+0C01C0   D0704120 D0714810 D06E0610 12114770    6202D203 D09F629D 41306294 45B0623E   *..................K.............*            
+0C01E0   D20DD0AA 62A29640 D1124550 62DA94BF    D112D701 D06ED06E 12AA4780 60D447F0   *K...... J.......J.P..........M.0*            
+0C0200   619ED204 D09F629D 41306297 45B0623E    9260D0AB 5810D120 5B1066C0 5010D070   *..K...................J.........*            
+0C0220   4120D071 4130629A 45B0623E D20DD0B2    62A247F0 61E64130 62B047F0 65AC4180   *............K......0.W.....0....*            
+0C0240   D09995FF 30004780 627C1B00 43030000    1B114313 00011A80 44106284 F384D070   *............................3...*            
+0C0260   D070DC07 D07062C6 41111001 4410628A    41330002 41220004 47F0623E 41330001   *.......F.................0......*            
+0C0280   07FB0000 D200D070 2000D200 8000D070    FFFFFFE0 0B02FF0C 02FF1302 FFD3C9D5   *....K.....K..................LIN*            
+0C02A0   C5E240E2 C1D4C540 C1E240C1 C2D6E5C5    0002FF09 0312031B 03240330 03390342   *ES SAME AS ABOVE................*            
+0C02C0   034B03FF 0903FF12 03FF1B03 FF2403FF    3003FF39 03FF4203 FF0098E0 D08012EE   *................................*            
+0C02E0   47806310 D27CF000 D09441FF 007D50F0    D084411F 007D1910 47D06332 1BFE40F0   *....K.0........0.............. 0*            
+0C0300   D090D203 E000D090 41FE0004 50F0D084    47F06766 92201005 58F10008 58F0F030   *..K..........0...0.......1...00.*            
+0C0320   05EF5817 000058E0 100858F0 E03405EF    0A030700 47F067B4 9560D098 47406348   *...........0.........0....... ..*            
+0C0340   47206346 1A011A01 1A019240 D098D277    D099D098 41100038 190147B0 636C4000   *........... ..K............... .*            
+0C0360   D05C9140 D1120715 47F060E2 4810D05E    41110001 4010D05E 92F1D098 D203D105   *... J....0.S........ ....1..K.J.*            
+0C0380   63AE4E10 D078F333 D10AD07C 96F0D10D    D201D05C 63B247F0 62DA98E0 D08012EE   *......3.J....0J.K......0........*            
+0C03A0   0785411E 0004191F 078547F0 62FCD7C1    C7C5FFFF 07FEF0F1 F2F3F4F5 F6F7F8F9   *...........0..PAGE....0123456789*            
+0C03C0   C1C2C3C4 C5C69120 D1384710 64D29101    D1384710 66D09180 D13947F0 664E910C   *ABCDEF..J....K..J.......J..0....*            
+0C03E0   D1384750 64DE9120 D1394710 64DE9118    D1394750 64EE9110 D1384710 670A9102   *J.......J.......J.......J.......*            
+0C0400   D1394710 64FA58E4 007C13EE 45506526    47F06418 47F06434 947FE020 58100010   *J......U.........0...0..........*            
+0C0420   58B010C8 58BB0028 188E18AE 47F066D8    4700640C 94FE401D D20BD098 654ED203   *...H.........0.Q...... .K.....K.*            
+0C0440   D124D128 455062DA 4550639A 9879D080    12774780 646A1B97 410000FA 89000018   *J.J.............................*            
+0C0460   16091817 41110000 0A0A47F0 679C9180    E0024780 64A24110 D070D70B 10001000   *...........0..............P.....*            
+0C0480   41E065A4 58F0D060 41FF0004 41300004    92FF1000 42301001 50E01004 50F01008   *.....0.......................0..*            
+0C04A0   0A3058A0 D1305800 65A0181D 41110000    0A0A5830 00109108 30744770 64CE4100   *....J...........................*            
+0C04C0   6598D205 A06064CC 47FA0060 0A091BFF    0A0394DF D13841A0 655C47F0 650694F3   *..K.................J......0...3*            
+0C04E0   D13894DF D13941A0 657447F0 650694E7    D13941A0 658047F0 650694FD D13994EF   *J...J......0...XJ......0....J...*            
+0C0500   D13841A0 658C41F0 D0705830 00109108    30744780 652047F0 651A58CA 000807FC   *J......0...............0........*            
+0C0520   50A0F000 0A0712EE 47A06530 13EE07F5    18FE58EF 008812EE 077558EF 008059FF   *..0............5................*            
+0C0540   007C4785 000458FF 008447F0 6536F0C5    D5C440D6 C640C4E4 D4D7C1E3 C9C7C3F0   *...........0..0END OF DUMPATIGC0*            
+0C0560   F1F0F5C1 00000000 C9C7C3F0 F4F0F5C1    00000000 C9C7C3F0 F6F0F5C1 00000000   *105A....IGC0405A....IGC0605A....*            
+0C0580   C9C7C3F0 F7F0F5C1 00000000 C9C7C3F0    F8F0F5C1 00000000 C9C7C3F0 C1F0F5C1   *IGC0705A....IGC0805A....IGC0A05A*            
+0C05A0   FD00013D E2E8E2C9 C5C1F0F1 4180D099    907AD09C 187858A0 D12088A0 000589A0   *....SYSIEA01............J.......*            
+0C05C0   0005D21F 7057A000 4187001F 4197001F    41800001 925C7056 925C7077 91C07057   *..K.............................*            
+0C05E0   471065F0 95407057 478065F4 920F7057    943F7057 877865DC DC1F7037 660C987A   *...0. .....4....................*            
+0C0600   D09CD213 D09CD09B 47F0623E 4BC1C2C3    C4C5C6C7 C8C94B4B 4B4B4B4B 4BD1D2D3   *..K......0...ABCDEFGHI.......JKL*            
+0C0620   D4D5D6D7 D8D94B4B 4B4B4B4B 4B4BE2E3    E4E5E6E7 E8E94B4B 4B4B4B4B F0F1F2F3   *MNOPQR........STUVWXYZ......0123*            
+0C0640   F4F5F6F7 F8F94B4B 4B4B4B4B 40004710    66D09180 D13A4780 6674947F D13A41A0   *456789...... .......J.......J...*            
+0C0660   666847F0 65060201 C9C7C3F0 C4F0F5C1    00000000 9140D13A 47806694 94BFD13A   *...0....IGC0D05A..... J.......J.*            
+0C0680   41A06688 47F06506 C9C7C3F0 C8F0F5C1    00000000 58A00010 9104A074 47E063DE   *.....0..IGC0H05A................*            
+0C06A0   9110D138 471066E8 9108D138 47E063DE    94F7D138 94DFD139 41A066C4 47F06506   *..J....Y..J......7J...J....D.0..*            
+0C06C0   00000020 C9C7C3F0 C2F0F5C1 00000000    41A06568 47F06506 800067F4 05EB8000   *....IGC0B05A.........0.....4....*            
+0C06E0   67F518E8 47F0640C 94EFD138 58A00010    91C0A0EC 47E06734 9108A0EC 47E066A8   *.5.Y.0....J.....................*            
+0C0700   41A067D0 1B8847F0 650658A0 001094EF    D13891C0 A0EC47E0 672C9108 A0EC47E0   *.......0........J...............*            
+0C0720   63FE1B88 41A067C4 47F06506 41A067DC    47F06506 41A067E8 47F06506 9180D13B   *.......D.0.......0.....Y.0....J.*            
+0C0740   4710674C 418F8004 47F06060 9200D13C    D200D13D D13B9407 D13D4A80 D13C418F   *.........0....J.K.J.J...J...J...*            
+0C0760   800147F0 6060507D 0008581D 0000D403    D080D080 47706786 4171005C 5071000C   *...0..........M.................*            
+0C0780   D2817000 D090187D 58DD0004 41F06314    0A0C18D7 587D0008 47F06332 581D0000   *K............0.....P.....0......*            
+                                                                                                            PAGE 0015               
+0C07A0   580067C0 18114111 00000A0A 58E0D060    47F0646E 41100001 4800D05C 47F06338   *.................0...........0..*            
+0C07C0   FA0000E0 C9C7C3F0 D1F0F5C1 00000000    C9C7C3F0 D2F0F5C1 00000000 C9C7C3F0   *....IGC0J05A....IGC0K05A....IGC0*            
+0C07E0   D5F0F5C1 00000000 C9C7C3F0 D7F0F5C1    00000000 00FFE4E3 40400201 8A2F0100   *N05A....IGC0P05A......UT  ......*            
+LOAD MODULE    IGG019CD                                                                                                             
+0FD560   909AD040 9120203C 4710F1C2 58A0200C    5810202C 48673006 9101203C 4780F052   *... ......1B..................0.*            
+0FD580   4860205A 58930018 95239000 4770F034    41990008 41990010 95869000 4770F052   *..............0...............0.*            
+0FD5A0   1B664199 00084A69 00069180 90044710    F0421266 4740F0CA 1B444340 A0071804   *................0.... 0.... ....*            
+0FD5C0   9108A009 47E0F06C 4800A006 43402004    1B049188 202447E0 F0829140 30004710   *......0...... ..........0.. ....*            
+0FD5E0   F0881E06 47F0F0BA 1B444340 10108940    00041A41 4890402C 12994720 F0B84740   *0....00.... ... ...... .....0.. *            
+0FD600   F0CA4112 00001111 0A194890 402C1299    47D0F0CA 5810202C 1E094900 201247C0   *0........... .....0.............*            
+0FD620   F1E44900 A00447C0 F0DC4810 F0DA4100    00808900 00181610 0A0D2000 18824120   *1U......0...0...................*            
+0FD640   80054273 0004183F 184E185B 186C187D    58F00010 58F0F020 05EF1890 5E003298   *.................0...00.........*            
+0FD660   5E903294 55908000 47703114 50008000    92018002 188058F0 001058F0 F01C05EF   *.......................0...00...*            
+0FD680   12FF4780 312E9620 203747F0 31889500    20004770 31889104 100847E0 31881B99   *...........0....................*            
+0FD6A0   1BAA1BBB 1BCC4392 00008990 000443A9    102943B9 102D43C2 000619CA 47403166   *.......................B..... ..*            
+0FD6C0   19BC47B0 31881808 1BBA5890 200743A0    90031BAB 46A03178 89A00010 1E0A58F0   *...............................0*            
+0FD6E0   001058F0 F01C05EF 18F34190 00051B29    58802030 58302044 58A0200C 18D71B77   *...00....3...................P..*            
+0FD700   43730004 18B518C6 18E44867 30069101    203C4780 F1BA4860 205A9120 203C4780   *.......F.U..........1...........*            
+0FD720   F1D69620 203C9601 30145843 000C9240    400047F0 F28C58A0 200CD201 2012A004   *1O.............  ..02.....K.....*            
+0FD740   9200200C 18464850 A00A1C44 8E400009    4340A006 9108A009 47E0F200 4840A006   *............. ... ........2.. ..*            
+0FD760   1E541B44 43402004 1F544840 20121B45    40402012 D2073028 20051B44 4340200C   *..... ..... ....  ..K........ ..*            
+0FD780   41440001 4240200C 91403000 4710F238    4243002F 47F0F284 43402040 18531A54   *..... ... ....2......02.. . ....*            
+0FD7A0   43402041 89400003 1A54D204 50002008    4B50F29C 91802034 4780F260 40605000   *. ... ....K.......2.......2. ...*            
+0FD7C0   1B444340 20101B64 40650008 12664770    F2844840 20120640 12444720 F2801B44   *... .... .......2.. ... ....2...*            
+0FD7E0   40402012 41430008 18140A00 989AD040    07FE0000 00000100 00010000 00020700   *  ............. ................*            
+LOAD MODULE    IGG019BA                                                                                                             
+0FD020                                          90E8D014 188F5821 00085830 20445833   *.................Y..............*            
+0FD040   000094BF 20304103 00085001 00105013    000C95FF 30044770 80349241 100098E8   *...............................Y*            
+0FD060   D01407FE 1B551B44 91C01005 4740811A    91202011 47808050 91802030 478081AC   *............. ..................*            
+0FD080   1B449680 203058F0 204C4340 20409120    20114780 80729104 203D4780 80724144   *.......0... . ..................*            
+0FD0A0   00101A43 50430018 94013000 96403000    1B444340 20431874 1A439120 201147E0   *............. ..... ............*            
+0FD0C0   80964350 20109140 20504710 80AE91C0    202447B0 80D09140 20244780 80E09120   *....... ............... ........*            
+0FD0E0   100547E0 80E05861 000C1A65 D2013006    6000D201 60028010 48630006 47F080E4   *............K.....K..........0.U*            
+0FD100   91801004 471080E0 48610006 47F080E4    4860203E 1A654064 0006D202 4001100D   *.............0.U...... ...K. ...*            
+0FD120   50302044 05EF9180 20114780 81149110    20344780 81145813 000C4110 10004100   *................................*            
+0FD140   00010A01 98E8D014 07FE4340 20421874    1A4358F0 20489401 30009620 30009120   *.....Y..... .......0............*            
+0FD160   201147E0 815C41E0 00089104 203D4780    81441BEE 410E3028 50030018 91082024   *................................*            
+0FD180   47108092 947F2030 47F08092 91402011    47808174 91B02011 47108174 47408174   *.........0... ............... ..*            
+0FD1A0   47F08178 94F04000 50430018 91401005    471081A0 96024000 91502011 47C08096   *.0...0 ...... ........ .........*            
+0FD1C0   91C02024 47C08096 96044000 47F08096    960C4000 96402030 47F08096 18514112   *.......... ..0.... .. ...0......*            
+0FD1E0   00000A19 18151B55 5013000C 47F08050                                          *.............0........0.......0.*            
+LOAD MODULE    IGG019BB                                                                                                             
+0FC9C0                                          90E8D014 185F5821 00085831 00101841   *.................Y..............*            
+0FC9E0   917F4000 47105050 4740502C 18144110    10004100 00010A01 47F05010 18121803   *.. ...... ...............0......*            
+0FCA00   4B005008 9001D040 41110000 0A3712FF    47805010 05EF9801 D0404111 00000A37   *....... ................. ......*            
+0FCA20   91C04005 4780516E 91082034 4780513C    5874000C 4860203E 91C02024 4710510C   *.. .............................*            
+0FCA40   9104203D 4710507C 4B63000E 91404005    4780508A 1B764177 00011817 18060A67   *.............  .................*            
+0FCA60   91202024 4780516E 91402050 478050EA    458050CE 48670000 1A674177 00044580   *......... ......................*            
+0FCA80   50CE1A7F 197647B0 516E9110 202447E0    516E955F 70004780 516E47F0 50AED707   *...........................0..P.*            
+                                                                                                            PAGE 0016               
+0FCAA0   30083008 F223300D 70004FF3 000840F3    0008D203 70003008 07F84060 20529104   *....2......3.. 3..K......8 .....*            
+0FCAC0   203D47E0 50FE9110 20244710 516E1A67    1B884380 20511A78 47F050AE 9104203D   *.........................0......*            
+0FCAE0   4780511E D2012052 203E47F0 507C1B88    43802042 1A834B80 50084888 00064B83   *....K......0....................*            
+0FCB00   000E4080 20521868 47F0507C 91C02024    47E0516E 9104203D 47805156 D2012052   *.. ......0..................K...*            
+0FCB20   203E47F0 516E1B88 43802042 1A834B80    50084888 00064B83 000E4080 205298E8   *...0...................... ....Y*            
+0FCB40   D01407FE 07000700                                                            *.......... ...0..K........0.....*            
+SP 252                                                                                                                              
+0C17E0                                                            000254C0 400F2C92   *.......... 0................ ...*            
+SP 000                                                                                                                              
+0C0DC0                                                            7F000000 00200000   *.M.........4....................*            
+0C0DE0   8F0C0F10 000BF9A0 000C0EC0 0BBC0C04    0C4C0C94 0CDC0D24 0D6C0DB4 0DFC0E44   *......9.........................*            
+0C0E00   400C0330 000FC9D0 000C0000 000C0DD8    000FCB48 0000DD44 000240F0 8000CD64   * .....I........Q.......... 0....*            
+0C0E20   000C0000 00023908 000239A1 00000000    00024C00 15DC1624 166C16B4 16FC1744   *................................*            
+0C0E40   178C17D4 181C1864 18AC18F4 193C1984    00000000 004E12FF 004E16FF 00000000   *...M.......4....................*            
+0C0E60   00000000 00000000 00000000 00000000    00000000 00000000 00000000 00000000   *................................*            
+      LINE 0C0E80 SAME AS ABOVE                                                                                                     
+0C0EA0   00000000 00000000 00000000 00000000    00000000 00000000 410C0EB8 4800065D   *................................*            
+0C0EC0   02000000 7F0C0DD8 000C0F08 0C000000    400C0EE8 000C0F10 00000000 00000000   *.......Q........ ..Y............*            
+0C0EE0   00000000 BA000F00 310C0EE3 40000005    080C0EE8 00000660 1D0C0F08 A0000008   *...........T ......Y............*            
+0C0F00   000BF9A0 0000065D 00BA000F 0100065D    00000100 2D000000 00BA000F 0100F3DE   *..9...........................3.*            
+0C0F20   00280E70 00000001 00004000 00000001    04000001 54000000 00680020 00023BBC   *.......... .....................*            
+0C0F40   920FD030 000FC9D0 0B000001 00000660    30040048 410C0EB8 010FD560 000FD560   *......I...................N...N.*            
+0C0F60   0000007D 00000001 00000000 00000000    00000000 00000000 00000000 00000000   *................................*            
+0C0F80   00000000 00000000 00000000 00000000    00000000 00000000 00000000 00000000   *................................*            
+0C0FA0   00000000 00000000 00000000 00000000    004E1100 00000000 000C0800 00000048   *................................*            
+0C0FC0   00000000 000255B8 00026600 000C0E50    000C0F00 0000002B 00025570 00000000   *................................*            
+0C0FE0   000C0E54 000255B8 000E13DC 0000007F    400E133E 000C0FB8 800C0FFE 00000000   *................ ...............*            
+0BF9A0   065D0000 007D0000 40F0C3F0 C6F2F040    4040F0F0 F2F8F0C5 F7F040F0 F0F0F0F0   *........ 0C0F20   00280E70 00000*            
+0BF9C0   F0F0F140 F0F0F0F0 F4F0F0F0 40F0F0F0    F0F0F0F0 F1404040 40F0F4F0 F0F0F0F0   *001 00004000 00000001    0400000*            
+0BF9E0   F140F5F4 F0F0F0F0 F0F040F0 F0F6F8F0    F0F2F040 F0F0F0F2 F3C2C2C3 4040405C   *1 54000000 00680020 00023BBC   .*            
+0BFA00   4B4B4B4B 4B4B4B4B 4B4B404B 4B4B4B4B    4B4B4B4B 4B4B4B4B 4B4B4B4B 4B4B4B4B   *.......... .....................*            
+0BFA20   5C007D00 0040F0C3 F0C6F4F0 404040F9    F2F0C6C4 F0F3F040 F0F0F0C6 C3F9C4F0   *..... 0C0F40   920FD030 000FC9D0*            
+0BFA40   40F0C2F0 F0F0F0F0 F140F0F0 F0F0F0F6    F6F04040 4040F3F0 F0F4F0F0 F4F840F4   * 0B000001 00000660    30040048 4*            
+0BFA60   F1F0C3F0 C5C2F840 F0F1F0C6 C4F5F6F0    40F0F0F0 C6C4F5F6 F0404040 5C4B4B4B   *10C0EB8 010FD560 000FD560   ....*            
+0BFA80   4B4B4BC9 4B4B4B4B 4B4B4B4B 4B4B4B4B    4B4B4B4B 4B4B4BD5 4B4B4BD5 4B5C007D   *...I...................N...N....*            
+0BFAA0   000040F0 C3F0C6F6 F0404040 F0F0F0F0    F0F0F7C4 40F0F0F0 F0F0F0F0 F140F0F0   *.. 0C0F60   0000007D 00000001 00*            
+0BFAC0   F4F0F4F0 F4F040C6 F0C6F0C6 F0C6F040    404040C6 F0C6F0C6 F7C3F440 F4F0C6F0   *404040 F0F0F0F0    F0F0F7C4 40F0*            
+0BFAE0   C6F0C6F0 40C6F0C6 F0C6F0C6 F040C6F1    F4F0C6F0 C6F04040 405C4B4B 40F0C3F0   *F0F0 F0F0F0F0 F140F0F0   ... 0C0*            
+0BFB00   C6F6F040 4040F0F0 F0F0F0F0 F7C440F0    F0F0F0F0 F0F0F140 F0F05C00 7D000040   *F60   0000007D 00000001 00..... *            
+0BFB20   F0C2C6C1 C3F04040 40C6F4C6 F0C6F4C6    F040C6F4 C6F0F4F0 C3F640C6 F0C3F6C6   *0BFAC0   F4F0F4F0 F4F040C6 F0C6F*            
+0BFB40   F0C3F640 C6F0C3F6 C6F0F4F0 40404040    F4F0F4F0 F4F0C3F6 40C6F0C3 F6C6F0C3   *0C6 F0C6F040    404040C6 F0C6F0C*            
+0BFB60   F640C6F7 C3F3C6F4 F4F040C6 F4C6F0C3    F6C6F040 40405CF4 F0F4F0F4 F040C6F0   *6 F7C3F440 F4F0C6F0   .404040 F0*            
+0BFB80   C6F0C6F0 C6F04040 4040C6F0 C6F0C6F7    C3F440F4 F0C6F05C 007D0000 40F0C2C6   *F0F0F0    F0F0F7C4 40F0..... 0BF*            
+0BFBA0   C1C5F040 4040C3F6 C6F0C3F6 C6F040F4    F0C3F6C6 F0C3F640 C6F0C3F6 C6F0C3F6   *AE0   C6F0C6F0 40C6F0C6 F0C6F0C6*            
+0BFBC0   40C6F0F4 F0C3F6C6 F1404040 40C6F4C6    F0C3F6C6 F040C3F6 C6F0F4F0 F4F040F4   * F040C6F1    F4F0C6F0 C6F04040 4*            
+0BFBE0   F0F5C3F4 C2F4C240 F4F0C6F0 C3F3C6F0    4040405C C6F0C6F0 40C6F0C6 F0C6F0C6   *05C4B4B 40F0C3F0   .F0F0 F0F0F0F*            
+0BFC00   F040C6F1 F4F0C6F0 C6F04040 404B4B4B    40F0C3F0 5C007D00 0040F0C2 C6C2F0F0   *0 F140F0F0   ... 0C0..... 0BFB00*            
+0BFC20   404040C3 F6C6F6C6 F0F4F040 F4F0F4F0    C6F0C6F0 40C6F0C6 F0C6F0C6 F040C6F7   *   C6F6F040 4040F0F0 F0F0F0F0 F7*            
+0BFC40   C3F4F4F0 C6F04040 4040C6F0 C6F0C6F0    C6F040C6 F0C6F0C6 F1F4F040 C6F0C6F0   *C440F0    F0F0F0F0 F0F0F140 F0F0*            
+0BFC60   F5C3F0F0 40F7C4F0 F0F0F0F4 F0404040    5CC6F6F0 404040F0 F0F0F0F0 F0F7C440   *5C00 7D000040   .F60   0000007D *            
+                                                                                                            PAGE 0017               
+0BFC80   F0F0F0F0 F0F0F0F1 40F0F04B 4B4B4B4B    405C007D 000040F0 C2C6C2F2 F0404040   *00000001 00..... ..... 0BFB20   *            
+0BFCA0   C6F0C3F2 C3F6C3F1 40C3F3C6 F0F4F0F4    F040F4F0 C3F6C6F4 C3F640C6 F0C3F6C6   *F0C2C6C1 C3F04040 40C6F4C6 F0C6F*            
+0BFCC0   F0C6F440 404040C6 F0F4F0C6 F4C6F040    C3F3C6F6 C3F6C6F4 40C3F3C6 F6F4F0C3   *0F4    F040F4F0 C3F6C6F4 C3F640C*            
+0BFCE0   F640C6F0 C3F3C6F6 C3F64040 405CC6F0    C3F2C3F6 C3F140C3 F3C6F0F4 F0F4F040   *6 F0C3F6C6   .F0C2C6C1 C3F04040 *            
+0BFD00   F4F0C3F6 C6F4C3F6 40C6F0C3 F6C65C00    7D000040 F0C2C6C3 C3F04040 40C6F0C3   *40C6F4C6 F0C6F..... 0BFCC0   F0C*            
+0BFD20   F6C6F4F4 F040F4F0 F4F0F4F0 C3F640C6    F0C6F4C6 F0C3F640 C6F4C3F6 C6F0F4F0   *6F440 404040C6 F0F4F0C6 F4C6F040*            
+0BFD40   40404040 C3F3C6F3 C3F6C6F6 40C3F3C6    F6C3F6C6 F440F4F0 C3F3C6F3 C3F640C6   *    C3F3C6F6 C3F6C6F4 40C3F3C6 F*            
+0BFD60   F6C6F4C6 F0C3F340 40405CF0 C6F44040    4040C6F0 F4F0C6F4 C6F040C3 F3C6F6C3   *6F4F0C3   .0F4    F040F4F0 C3F6C*            
+0BFD80   F6C6F440 C3F3C6F6 F4F0C35C 007D0000    40F0C2C6 C3C5F040 4040C6F6 F4F0C3F6   *6F4 C3F640C..... 0BFCE0   F640C6*            
+0BFDA0   C6F040C3 F3C6F3C3 F6C6F640 C3F3C6F6    F4F0F4F0 40F4F0F5 C3C3F6C6 F0404040   *F0 C3F3C6F6 C3F64040 405CC6F0   *            
+0BFDC0   40C3F3C6 F2C3F3C6 F640C3F3 C6F1F4F0    C3F340C6 F3C3F6C6 F0C6F440 C6F0C6F4   * C3F2C3F6 C3F140C3 F3C6F0F4 F0F4*            
+0BFDE0   C6F0F4F0 4040405C F640C6F0 C3F3C6F6    C3F64040 404BC6F0 C3F2C3F6 C3F140C3   *F040   .6 F0C3F6C6   .F0C2C6C1 C*            
+0BFE00   F3C6F0F4 F0F4F040 5C007D00 0040F0C2    C6C4F0F0 404040C6 F4C6F0C3 F3C6F640   *3F04040 ..... 0BFD00   F4F0C3F6 *            
+0BFE20   C3F6C6F4 C3F3C6F6 40F4F0C3 F6C6F0C3    F340C6F6 C3F6F5C3 F0F04040 4040F7C4   *C6F4C3F6 40C6F0C3 F6C65C00    7D*            
+0BFE40   F0F0F0F0 F4F040C6 F0C3F2C3 F6C3F340    C3F3C6F0 F4F0F4F0 40F4F0C3 F6C6F0C3   *000040 F0C2C6C3 C3F04040 40C6F0C*            
+0BFE60   F3404040 5CF4F0C3 F6C6F4C3 F640C6F0    C3F6C64B 4B4B4B4B 40F0C2C6 C3C3F040   *3   .40C6F4C6 F0C6F..... 0BFCC0 *            
+0BFE80   4040C6F0 C35C007D 000040F0 C2C6C4F2    F0404040 C6F6C3F6 C6F4C6F4 40C6F0F4   *  F0C..... 0BFD20   F6C6F4F4 F04*            
+0BFEA0   F0C6F4C6 F040C6F4 C6F0C6F4 C6F040C3    F3C6F6F4 F0C3F640 404040C6 F0C3F6C6   *0F4F0 F4F0F4F0 C3F640C6    F0C6F*            
+0BFEC0   F4C3F640 C6F0C3F3 C6F6F4F0 40C3F6C6    F4C3F3C6 F640C3F6 C6F0C6F4 C6F04040   *4C6 F0C3F640 C6F4C3F6 C6F0F4F0  *            
+0BFEE0   405CF4C3 F640C6F0 C3F3C6F6 F4F040C3    F6C6F4C3 F3C6F640 C3F6C6F0 C6F4C6F0   * .4C6 F0C3F640 C6F4C3F6 C6F0F4F0*            
+0BFF00   40405C00 7D000040 F0C2C6C5 C5F04040    40F4F0F5 C3C6F4C3 F340C6F6 F4F0C3F6   *  ..... 0BFEE0   405CF4C3 F640C6*            
+0BFF20   C6F040C3 F3C6F3C3 F6C6F640 C6F4C6F0    F4F0C3F3 40404040 C6F6C3F6 C6F4C3F3   *F0 C3F3C6F6 F4F040C3    F6C6F4C3*            
+0BFF40   40C6F3C3 F6C6F6F4 F040C3F3 C6F6C3F6    C6F040C3 F6C6F4C3 F6C6F040 40405C40   * F3C6F640 C3F6C6F0 C6F4C6F0   . *            
+0BFF60   4BF4C3F6 40C6F0C3 F3C6F6F4 F040C3F6    C6F4C3F3 C6F640C3 F6C6F0C6 F4C6F05C   *.4C6 F0C3F640 C6F4C3F6 C6F0F4F0.*            
+0BFF80   007D0000 40F0C2C6 C6F0F040 4040F4F0    F4F0F5C3 F0F040F7 C4F0F0F0 F0F4F040   *.... 0BFF00   40405C00 7D000040 *            
+0BFFA0   C6F0C3F2 C3F6C3F5 40C3F5C6 F0F4F0F4    F0404040 40F4F0C6 F4C6F0C6 F540C3F3   *F0C2C6C5 C5F04040    40F4F0F5 C3*            
+0BFFC0   C3F6C6F4 C3F340C6 F3F4F0C3 F6C6F640    C6F4C6F0 C3F3C6F6 4040405C 40404B4B   *C6F4C3 F340C6F6 F4F0C3F6   .  ..*            
+0BFFE0   4B4B4B40 F0C2C6C5 C5F04040 40F4F0F5    C3C6F4C3 F340C6F6 F4F0C3F6 5C000009   *... 0BFEE0   405CF4C3 F640C6....*            
+END OF DUMP                                                                                                                         
+                                                                                                                                    
+                                                                                                                                    
+COMPLETION CODE - SYSTEM=0C1  USER=0000                                                                                             
+IEF285I   SYS97291.T203540.RV000.MYFIRST.GOSET         PASSED                                                                       
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.RV000.MYFIRST.S0000009      SYSIN                                                                        
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.RV000.MYFIRST.S0000009      DELETED                                                                      
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.SV000.MYFIRST.R0000010      DELETED                                                                      
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF285I   SYS97291.T203540.SV000.MYFIRST.R0000011      DELETED                                                                      
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+IEF285I   SYS97291.T203540.SV000.MYFIRST.R0000012      SYSOUT                                                                       
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+IEF373I STEP /GO      / START 97291.2036                                                                                            
+IEF374I STEP /GO      / STOP  97291.2038 CPU   0MIN 42.31SEC MAIN  30K                                                              
+IEF285I   SYS97291.T203540.RV000.MYFIRST.GOSET         DELETED                                                                      
+IEF285I   VOL SER NOS= STORAG.                                                                                                      
+IEF375I  JOB /MYFIRST / START 97291.2036                                                                                            
+IEF376I  JOB /MYFIRST / STOP  97291.2038 CPU   3MIN 19.44SEC                                                                        

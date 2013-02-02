@@ -1,0 +1,87 @@
+Turbo Assembler	 Version 3.1	    11/29/94 23:19:58	    Page 1
+hello1.asm
+
+
+
+      1					 ; Turbo Assembler    Copyright	(c) 1988, 1991 By Borland International, Inc.
+      2
+      3					 ; HELLO.ASM - Display the message "Hello World"
+      4
+      5					 ; From	the Turbo Assembler Users Guide	- Getting started
+      6	    0000			    .MODEL huge
+      7	    0000			    .STACK 100h
+      8	    0000			    .DATA
+      9	    0000  48 65	6C 6C 6F 2C 20+	 HelloMessage DB 'Hello, world',13,10,'$'
+     10		  77 6F	72 6C 64 0D 0A+
+     11		  24
+     12	    000F  0000FFFF		 B00 DD	0ffffh
+     13	    0013  FEFEFEFE		 A00 DD	0fefefefeh
+     14	    0017  0000000000000000	 T00 DQ	 00000h
+     15	    001F  FEFEFEFE		 bb  DD	0fefefefeh
+     16	    0023  000FFFFF		 cc  DD	0fffffh
+     17	    0027  FFFF			 B000 DW 0ffffh
+     18	    0029			    .CODE
+     19	    0000  B8 0000s		    mov	 ax,@data
+     20	    0003  8E D8			    mov	 ds,ax			;set DS	to point to the	data segment
+     21	    0005  B4 09			    mov	 ah,9			;DOS print string function
+     22	    0007  BA 0000r		    mov	 dx,OFFSET HelloMessage	;point to "Hello, world"
+     23	    000A  CD 21			    int	 21h			;display "Hello, world"
+     24	    000C  1E			     push ds
+     25	    000D  07			     pop es
+     26	    000E  B9 03E8		     mov cx,1000
+     27					    .386
+     28	    0011  8B 87	0027r		    mov	ax,B000[bx]
+     29	    0015  66| 8B 87 000Fr	    mov	Eax,B00[bx]
+     30					    .386p
+     31	    001A  0F 01	06 0017r	     sgdt T00
+     32	    001F  0F 01	16 0017r	     lgdt T00
+     33	    0024  66| 8B 1E 000Fr	     mov Ebx,B00
+     34	    0029  26: 67| 8A 03		 L:  mov al,es:[Ebx]
+     35	    002D  66| 43		     inc Ebx
+     36	    002F  66| 67| 8B 83	      +	     mov Eax,B00[Ebx]
+     37		  0000000Fr
+     38					     .286
+     39	    0037  E2 F0			     loop L
+     40	    0039  B4 4C			    mov	 ah,4ch			;DOS terminate program function
+     41	    003B  CD 21			    int	 21h			;terminate the program
+     42					    END
+Turbo Assembler	 Version 3.1	    11/29/94 23:19:58	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "11/29/94"
+??FILENAME			  Text	 "hello1  "
+??TIME				  Text	 "23:19:58"
+??VERSION			  Number 030A
+@32BIT				  Text	 0
+@CODE				  Text	 HELLO1_TEXT
+@CODESIZE			  Text	 1
+@CPU				  Text	 0707H
+@CURSEG				  Text	 HELLO1_TEXT
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 2
+@FILENAME			  Text	 HELLO1
+@INTERFACE			  Text	 00H
+@MODEL				  Text	 6
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+A00				  Dword	 DGROUP:0013
+B00				  Dword	 DGROUP:000F
+B000				  Word	 DGROUP:0027
+BB				  Dword	 DGROUP:001F
+CC				  Dword	 DGROUP:0023
+HELLOMESSAGE			  Byte	 DGROUP:0000
+L				  Near	 HELLO1_TEXT:0029
+T00				  Qword	 DGROUP:0017
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  STACK				  16  0100 Para	  Stack	  STACK
+  _DATA				  16  0029 Word	  Public  DATA
+HELLO1_TEXT			  16  003D Word	  Public  CODE
+

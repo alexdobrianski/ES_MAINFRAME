@@ -1,0 +1,36 @@
+//COPYSEP JOB  5110001,P
+
+OC EC IEBCOPY 63-03.83                           DATE 18.09.96            TIME 00.20.44                       PAGE 0001              
+                     C I=I,O=O                                                                                                       
+                     S M=SEP02                                                                                                       
+IEB167I  FOLLOWING MEMBER(S) UNLOADED FROM INPUT DATA SET REFERENCED BY I        -                                                   
+         SEP02                                                                                                                       
+                                                                                                                                     
+IEB147I  END OF JOB -00 WAS HIGHEST SEVERITY CODE                                                                                    
+                                                                                                                                     
+IEF142I - STEP WAS EXECUTED - COND CODE 0000                                                                                         
+                                                                                                                                     
+//MATALIST JOB  5110001,P                                                                                                            
+                                                                                                                                     
+ CONSOLE                                                                                                                             
+LIST                                                                                                                                 
+                                                                                                                                     
+                                                                                                                                     
+     OC EC MATA-5.6   18.09.96     23  Mã ÅEá METOK  HMã=280  Åìî=65535  ER=A                                                        
+     ------------------------------------------------------------------------                                                        
+                                                                                                                                     
+                                                                                                                                     
+ N   ÅãO  îOP MAKC  KC    ÑOèOãH       à M ü            àTOÉO  MET  KOÉÑA  áA                                                        
+è/è  KOB  MAT ÅãOK       CBEÑEHàü  HAÅOPA ÑAHHõX       ÅAâTOB  PAÜ COáÑAH èàCú                                                       
+                                                                                                                                     
+  1     4 V   1870 D96B COPY 13030                       2510                                                                        
+                                                                                                                                     
+                    àTOÉO ÅãOKOB........6  (BKãûóAü MAPKà)                                                                           
+                          ÅAâTOB........2510                                                                                         
+                          METPOB........0  (32 ÅAâT/MM)                                                                              
+                                                                                                                                     
+                    KOHTPOãúHAü CìMMA...D96B                                                                                         
+                                                                                                                                     
+                                                                                                                                     
+IEC105I 280,MATALIST REDUCED ERROR RECOVERY REQUESTED                                                                                
+IEF142I - STEP WAS EXECUTED - COND CODE 0000                                                                                         

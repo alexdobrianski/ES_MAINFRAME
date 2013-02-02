@@ -1,0 +1,9 @@
+
+ Start  Stop   Length Name               Class
+
+ 00000H 00179H 0017AH _DATA              DATA
+ 0017AH 0017AH 00000H CONST              CONST
+ 0017AH 00D45H 00BCCH _BSS               BSS
+ 00D46H 010EBH 003A6H _TEXT              CODE
+
+

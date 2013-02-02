@@ -1,0 +1,77 @@
+##HELP1
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Emulator               Ver 3.6.4.      ±±±±±±  ±±±±±                        ³
+³                                        ±       ±         ±  ±  ±            ³
+³                                        ±±±     ±        ±±  ± ±±            ³
+³  for AT/486 /Pentium                   ±       ±       ± ±  ±± ±      360   ³
+³                                        ±±±±±±  ±±±±±  ±  ±  ±  ±            ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³ESC- close memory & chanel & EXIT         B  - display floating registers    ³
+³I  - IPL                                  W  - input word in memory          ³
+³D  - display memory                       S     - stop all trace             ³
+³O  - RQ PRG                               F8    - trace command              ³
+³R  - display registers & PSW              T     - on trace                   ³
+³Q  - Quit, ^C - Cansel w/o save           F     - off trace                  ³
+³L (TAB for 01F)- REQUEST/READY....        F5    - Display Unit status        ³
+³~(F10) - switch to terminals (7920,cons)                                     ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³F1 HELPÄF2     ÄF3  ÄF4   ÄF5 UStatus ÄF6  ÄF7 NEXTÄF8 TRACE-F9 RQ-F10 SWITCH³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+##
+##MAIN360
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³                                                                             ³
+³ Emulator               Ver 3.6.4.      ±±±±±±  ±±±±±                        ³
+³                                        ±       ±         ±  ±  ±            ³
+³                                        ±±±     ±        ±±  ± ±±            ³
+³  for AT/486 /Pentium                   ±       ±       ± ±  ±± ±      360   ³
+³                                        ±±±±±±  ±±±±±  ±  ±  ±  ±            ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³ CSW Û ± Û Û Û ± ± Û Û Û ± ± Û Û ± Û Û Û Û ± Û ± ± ± Û ± ± Û Û ± ± Û ± Û Û   ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³ PSW Û Û Û ± ± Û Û Û Û ± Û Û Û Û Û Û Û ± Û ± Û ± Û Û Û ± ± Û ± ± ± Û ± ± Û   ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+##
+##MAIN360_
+³ support station: 2:5030/269@fidonet.org                                     ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+##
+##MAIN370
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³                                                                             ³
+³ Emulator               Ver 3.6.4.      ±±±±±±  ±±±±±                        ³
+³                                        ±       ±         ±  ±  ±            ³
+³                                        ±±±     ±        ±±  ± ±±            ³
+³  for AT/486 /Pentium                   ±       ±       ± ±  ±± ±      370   ³
+³                                        ±±±±±±  ±±±±±  ±  ±  ±  ±            ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³ CSW Û ± Û Û Û ± ± Û Û Û ± ± Û Û ± Û Û Û Û ± Û ± ± ± Û ± ± Û Û ± ± Û ± Û Û   ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³ PSW Û Û Û ± ± Û Û Û Û ± Û Û Û Û Û Û Û ± Û ± Û ± Û Û Û ± ± Û ± ± ± Û ± ± Û   ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+##
+##MAIN370_
+³ support station: 2:5030/269@fidonet.org                                     ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+##
+##PROTECT
+‚› Ž‹œ‡“…’…‘œ …‡€…ƒˆ‘’ˆŽ‚€Ž‰ ‚…‘ˆ…‰ Žƒ€ŒŒ›
+à¥£¨áâà æ¨ï ¯®«ì§®¢ â¥«¥© ¯à®¢®¤¨âáï: 2:5030/269@fidonet
+
+ÖÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ·
+º ®¦ «ã©áâ , ­¥ áâ®¨â "«®¬ âì" "§ é¨âã" íâ®© ¯à®£à ¬¬ë -º
+º ¥á«¨ ¢ ¬ ­¥ ­à ¢¨âáï íâ® á®®¡é¥­¨¥ - ¯à®áâ® ã¡¥à¨â¥    º
+º íâ®â â¥ªáâ ¨§ help-ä ©« . *)                           º
+ÓÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ½
+##
+##IPL
+Enter IPL adress, please... >
+##
+##IPL_
+##
+##TRACE
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄtrace started    ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+ ‡€„€‰’… ’ˆ ’€‘‘›: c-command,i-i/o,u-unit,p-¡¥§®áâ ­®¢®ç­ ï âà áá 
+ b-­ ç «® ®¡à â­®© âà ááë,e-ª®­¥æ ®¡à â­®© âà ááë,k-¯ ç âì ®¡à â­®© âà ááë,
+ ESC-exit
+##

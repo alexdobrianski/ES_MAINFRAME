@@ -1,0 +1,375 @@
+                                                                                                                                    
+//WTR      JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC WTR                                                                                                                 
+XXIEFPROC EXEC PGM=IEFSD080,                                           *00010000                                                    
+XX             REGION=20K,                                             *00020000                                                    
+XX             ROLL=(NO,NO),                                           *00030000                                                    
+XX             PARM='PA'                                                00040000                                                    
+//IEFPROC.IEFRDER DD UNIT=00E                                                                                                       
+X/IEFRDER  DD  UNIT=7030,                                              *00050000                                                    
+XX             VOLUME=(,,,35),                                         *00060000                                                    
+XX             DSNAME=SYSOUT,                                          *00070000                                                    
+XX             DISP=(NEW,KEEP),                                        *00080000                                                    
+XX             DCB=(BLKSIZE=133,LRECL=133,BUFL=133,BUFNO=2,RECFM=FM)    00090000                                                    
+COMPLETION CODE - SYSTEM=2F3  USER=0000                                                                                             
+IEF242I ALLOC. FOR WTR      00E               AT ABEND                                                                              
+IEF237I 00E   ALLOCATED TO IEFRDER                                                                                                  
+                                                                                                                                    
+                                                                                                                                    
+//TTTT     JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC TTTT                                                                                                                
+XX EXEC PGM=MSRTRESZ,REGION=150K                                                                                                    
+XXSTEPLIB DD DSN=CBC1.LOAD,DISP=SHR,UNIT=SYSDA,VOL=SER=MVT617                                                                       
+COMPLETION CODE - SYSTEM=2F3  USER=0000                                                                                             
+IEF242I ALLOC. FOR TTTT     TTTT              AT ABEND                                                                              
+IEF237I 132   ALLOCATED TO STEPLIB                                                                                                  
+IEF285I   CBC1.LOAD                                    KEPT                                                                         
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+                                                                                                                                    
+                                                                                                                                    
+//WTR      JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC WTR                                                                                                                 
+XXIEFPROC EXEC PGM=IEFSD080,                                           *00010000                                                    
+XX             REGION=20K,                                             *00020000                                                    
+XX             ROLL=(NO,NO),                                           *00030000                                                    
+XX             PARM='PA'                                                00040000                                                    
+//IEFPROC.IEFRDER DD UNIT=00E                                                                                                       
+X/IEFRDER  DD  UNIT=7030,                                              *00050000                                                    
+XX             VOLUME=(,,,35),                                         *00060000                                                    
+XX             DSNAME=SYSOUT,                                          *00070000                                                    
+XX             DISP=(NEW,KEEP),                                        *00080000                                                    
+XX             DCB=(BLKSIZE=133,LRECL=133,BUFL=133,BUFNO=2,RECFM=FM)    00090000                                                    
+COMPLETION CODE - SYSTEM=2F3  USER=0000                                                                                             
+IEF242I ALLOC. FOR WTR      00E               AT ABEND                                                                              
+IEF237I 00E   ALLOCATED TO IEFRDER                                                                                                  
+                                                                                                                                    
+                                                                                                                                    
+//TTTT     JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC TTTT                                                                                                                
+XX EXEC PGM=MSRTRESZ,REGION=150K                                                                                                    
+XXSTEPLIB DD DSN=CBC1.LOAD,DISP=SHR,UNIT=SYSDA,VOL=SER=MVT617                                                                       
+COMPLETION CODE - SYSTEM=2F3  USER=0000                                                                                             
+IEF242I ALLOC. FOR TTTT     TTTT              AT ABEND                                                                              
+IEF237I 132   ALLOCATED TO STEPLIB                                                                                                  
+IEF285I   CBC1.LOAD                                    KEPT                                                                         
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+                                                                                                                                    
+                                                                                                                                    
+//WTR      JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC WTR                                                                                                                 
+XXIEFPROC EXEC PGM=IEFSD080,                                           *00010000                                                    
+XX             REGION=20K,                                             *00020000                                                    
+XX             ROLL=(NO,NO),                                           *00030000                                                    
+XX             PARM='PA'                                                00040000                                                    
+//IEFPROC.IEFRDER DD UNIT=00E                                                                                                       
+X/IEFRDER  DD  UNIT=7030,                                              *00050000                                                    
+XX             VOLUME=(,,,35),                                         *00060000                                                    
+XX             DSNAME=SYSOUT,                                          *00070000                                                    
+XX             DISP=(NEW,KEEP),                                        *00080000                                                    
+XX             DCB=(BLKSIZE=133,LRECL=133,BUFL=133,BUFNO=2,RECFM=FM)    00090000                                                    
+COMPLETION CODE - SYSTEM=2F3  USER=0000                                                                                             
+IEF242I ALLOC. FOR WTR      00E               AT ABEND                                                                              
+IEF237I 00E   ALLOCATED TO IEFRDER                                                                                                  
+                                                                                                                                    
+                                                                                                                                    
+//TTTT     JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC TTTT                                                                                                                
+XX EXEC PGM=MSRTRESZ,REGION=150K                                                                                                    
+XXSTEPLIB DD DSN=CBC1.LOAD,DISP=SHR,UNIT=SYSDA,VOL=SER=MVT617                                                                       
+COMPLETION CODE - SYSTEM=2F3  USER=0000                                                                                             
+IEF242I ALLOC. FOR TTTT     TTTT              AT ABEND                                                                              
+IEF237I 132   ALLOCATED TO STEPLIB                                                                                                  
+IEF285I   CBC1.LOAD                                    KEPT                                                                         
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+                                                                                                                                    
+                                                                                                                                    
+//WTR      JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC WTR                                                                                                                 
+XXIEFPROC EXEC PGM=IEFSD080,                                           *00010000                                                    
+XX             REGION=20K,                                             *00020000                                                    
+XX             ROLL=(NO,NO),                                           *00030000                                                    
+XX             PARM='PA'                                                00040000                                                    
+//IEFPROC.IEFRDER DD UNIT=00E                                                                                                       
+X/IEFRDER  DD  UNIT=7030,                                              *00050000                                                    
+XX             VOLUME=(,,,35),                                         *00060000                                                    
+XX             DSNAME=SYSOUT,                                          *00070000                                                    
+XX             DISP=(NEW,KEEP),                                        *00080000                                                    
+XX             DCB=(BLKSIZE=133,LRECL=133,BUFL=133,BUFNO=2,RECFM=FM)    00090000                                                    
+                                                                                                                                    
+                                                                                                                                    
+//WTR      JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC WTR                                                                                                                 
+XXIEFPROC EXEC PGM=IEFSD080,                                           *00010000                                                    
+XX             REGION=20K,                                             *00020000                                                    
+XX             ROLL=(NO,NO),                                           *00030000                                                    
+XX             PARM='PA'                                                00040000                                                    
+//IEFPROC.IEFRDER DD UNIT=00E                                                                                                       
+X/IEFRDER  DD  UNIT=7030,                                              *00050000                                                    
+XX             VOLUME=(,,,35),                                         *00060000                                                    
+XX             DSNAME=SYSOUT,                                          *00070000                                                    
+XX             DISP=(NEW,KEEP),                                        *00080000                                                    
+XX             DCB=(BLKSIZE=133,LRECL=133,BUFL=133,BUFNO=2,RECFM=FM)    00090000                                                    
+COMPLETION CODE - SYSTEM=2F3  USER=0000                                                                                             
+IEF242I ALLOC. FOR WTR      00E               AT ABEND                                                                              
+IEF237I 00E   ALLOCATED TO IEFRDER                                                                                                  
+                                                                                                                                    
+                                                                                                                                    
+//TTTT     JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC TTTT                                                                                                                
+XX EXEC PGM=MSRTRESZ,REGION=150K                                                                                                    
+XXSTEPLIB DD DSN=CBC1.LOAD,DISP=SHR,UNIT=SYSDA,VOL=SER=MVT617                                                                       
+COMPLETION CODE - SYSTEM=2F3  USER=0000                                                                                             
+IEF242I ALLOC. FOR TTTT     TTTT              AT ABEND                                                                              
+IEF237I 132   ALLOCATED TO STEPLIB                                                                                                  
+IEF285I   CBC1.LOAD                                    KEPT                                                                         
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+                                                                                                                                    
+                                                                                                                                    
+//RDR      JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC RDR                                                                                                                 
+XXIEFPROC  EXEC PGM=IEFIRC,                    READER FIRST LOAD       ,00010000                                                    
+XX       REGION=54K,                          READER BASIC REGION      ,00020060                                                    
+XX       PARM='80103005001024905010SYSDA   E00001A'   DEFAULT OPTIONS  ,00030000                                                    
+XX*            BPPTTTOOOMMMIIICCCRLSSSSSSSSAAAAEFH   PARM FIELD         00040000                                                    
+***       B    PROGRAMMER NAME AND ACCOUNT NUMBER NOT NEEDED            00050000                                                    
+***            PROGRAM CAN BE ROLLED OUT                                00060000                                                    
+***       PP   PRIORITY=01                                              00070000                                                    
+***       TTT  JOB STEP INTERVAL=30 MINUTES                             00080000                                                    
+***       OOO  PRIMARY SYSOUT SPACE=50 TRACKS                           00090000                                                    
+***       MMM  SECONDARY SYSOUT SPACE=10 TRACKS                         00100000                                                    
+***       III  READER/INTERPRETER DISPATCHING PRIORITY=249              00110000                                                    
+***       CCC  JOB STEP DEFAULT REGION=50K                              00120060                                                    
+***       R    DISPLAY AND EXECUTE COMMANDS=1                           00130000                                                    
+***       L    BYPASS LABEL OPTION=0                                    00140000                                                    
+***       SSSSSSSS  SYSOUT UNIT NAME=SYSDA                              00150000                                                    
+***       AAAA COMMAND AUTHORITY FOR MCS=E000-ALL COMMANDS              00160000                                                    
+***            MUST BE AUTHORIZED                                       00170000                                                    
+***       EF   JCL AND ALLOCATION MESSAGE LEVEL DEFAULTS=01             00180000                                                    
+***       H    DEFAULT MSGCLASS                                         00190000                                                    
+//IEFPROC.IEFRDER DD UNIT=00C                                                                                                       
+X/IEFRDER   DD  UNIT=5010,                       INPUT TAPE            ,00200000                                                    
+XX             LABEL=(,NL),                      UNLABELED             ,00210000                                                    
+XX             VOLUME=SER=SYSIN,                 VOLUME NAME           ,00220000                                                    
+XX             DISP=OLD,                         OLD DATA SET          ,00230000                                                    
+XX             DCB=(BLKSIZE=80,LRECL=80,BUFL=80,BUFNO=1,RECFM=F)        00240000                                                    
+XXIEFPDSI   DD  DSNAME=SYS1.PROCLIB,DISP=SHR     PROCEDURE LIBRARY      00250000                                                    
+XXIEFDATA   DD  UNIT=SYSDA,                      SPOOL DEVICE          ,00260000                                                    
+XX             SPACE=(80,(500,500),RLSE,CONTIG),     AMOUNT            ,00270000                                                    
+XX          DCB=(BLKSIZE=80,LRECL=80,BUFL=80,BUFNO=2,RECFM=F,DSORG=PS)  00280000                                                    
+                                                                                                                                    
+                                                                                                                                    
+//INIT     JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC INIT                                                                                                                
+XXIEFPROC  EXEC  PGM=IEFIIC,PARM='A,LIMIT=13'                           00010000                                                    
+COMPLETION CODE - SYSTEM=2F3  USER=0000                                                                                             
+IEF242I ALLOC. FOR INIT     INIT              AT ABEND                                                                              
+                                                                                                                                    
+                                                                                                                                    
+//WTR      JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC WTR                                                                                                                 
+XXIEFPROC EXEC PGM=IEFSD080,                                           *00010000                                                    
+XX             REGION=20K,                                             *00020000                                                    
+XX             ROLL=(NO,NO),                                           *00030000                                                    
+XX             PARM='PA'                                                00040000                                                    
+//IEFPROC.IEFRDER DD UNIT=00E                                                                                                       
+X/IEFRDER  DD  UNIT=7030,                                              *00050000                                                    
+XX             VOLUME=(,,,35),                                         *00060000                                                    
+XX             DSNAME=SYSOUT,                                          *00070000                                                    
+XX             DISP=(NEW,KEEP),                                        *00080000                                                    
+XX             DCB=(BLKSIZE=133,LRECL=133,BUFL=133,BUFNO=2,RECFM=FM)    00090000                                                    
+COMPLETION CODE - SYSTEM=2F3  USER=0000                                                                                             
+IEF242I ALLOC. FOR WTR      00E               AT ABEND                                                                              
+IEF237I 00E   ALLOCATED TO IEFRDER                                                                                                  
+                                                                                                                                    
+                                                                                                                                    
+//LISTCOPY  JOB MSGLEVEL=(1,1)                                                                                                      
+//    EXEC PGM=IEBCOPY,TIME=1440,REGION=200K                                                                                        
+//SYSPRINT DD SYSOUT=A                                                                                                              
+//FROM DD UNIT=5010,VOL=SER=111111,LABEL=(2,SL),                                                                                    
+//  DSN=B,DISP=(,KEEP)                                                                                                              
+//TO DD UNIT=SYSDA,VOL=SER=MVT617,DSN=CBC1.LOAD,                                                                                    
+//  DISP=OLD                                                                                                                        
+//SYSIN DD *                                                                                                                        
+//                                                                                                                                  
+IEF236I ALLOC. FOR LISTCOPY                                                                                                         
+IEF237I 132   ALLOCATED TO SYSPRINT                                                                                                 
+IEF237I 284   ALLOCATED TO FROM                                                                                                     
+IEF237I 132   ALLOCATED TO TO                                                                                                       
+IEF237I 132   ALLOCATED TO SYSIN                                                                                                    
+                                                                                                                                    
+                                                                                                                                    
+OC EC IEBCOPY  63-03.81                          DATE 30.09.94            TIME 07.02.00                       PAGE 0001             
+                     C I=TO,O=FROM                                                                                                  
+                     S M=MSRTRESZ                                                                                                   
+                                                                                                                                    
+                                                                                                                                    
+COMPLETION CODE - SYSTEM=2F3  USER=0000                                                                                             
+IEF285I   SYS94273.T065836.SV000.LISTCOPY.R0000001     SYSOUT                                                                       
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+IEF285I   B                                            KEPT                                                                         
+IEF285I   VOL SER NOS= 111111.                                                                                                      
+IEF285I   CBC1.LOAD                                    KEPT                                                                         
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+IEF285I   SYS94273.T065836.RV000.LISTCOPY.S0000002     SYSIN                                                                        
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+                                                                                                                                    
+                                                                                                                                    
+//RDR      JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC RDR                                                                                                                 
+XXIEFPROC  EXEC PGM=IEFIRC,                    READER FIRST LOAD       ,00010000                                                    
+XX       REGION=54K,                          READER BASIC REGION      ,00020060                                                    
+XX       PARM='80103005001024905010SYSDA   E00001A'   DEFAULT OPTIONS  ,00030000                                                    
+XX*            BPPTTTOOOMMMIIICCCRLSSSSSSSSAAAAEFH   PARM FIELD         00040000                                                    
+***       B    PROGRAMMER NAME AND ACCOUNT NUMBER NOT NEEDED            00050000                                                    
+***            PROGRAM CAN BE ROLLED OUT                                00060000                                                    
+***       PP   PRIORITY=01                                              00070000                                                    
+***       TTT  JOB STEP INTERVAL=30 MINUTES                             00080000                                                    
+***       OOO  PRIMARY SYSOUT SPACE=50 TRACKS                           00090000                                                    
+***       MMM  SECONDARY SYSOUT SPACE=10 TRACKS                         00100000                                                    
+***       III  READER/INTERPRETER DISPATCHING PRIORITY=249              00110000                                                    
+***       CCC  JOB STEP DEFAULT REGION=50K                              00120060                                                    
+***       R    DISPLAY AND EXECUTE COMMANDS=1                           00130000                                                    
+***       L    BYPASS LABEL OPTION=0                                    00140000                                                    
+***       SSSSSSSS  SYSOUT UNIT NAME=SYSDA                              00150000                                                    
+***       AAAA COMMAND AUTHORITY FOR MCS=E000-ALL COMMANDS              00160000                                                    
+***            MUST BE AUTHORIZED                                       00170000                                                    
+***       EF   JCL AND ALLOCATION MESSAGE LEVEL DEFAULTS=01             00180000                                                    
+***       H    DEFAULT MSGCLASS                                         00190000                                                    
+//IEFPROC.IEFRDER DD UNIT=00C                                                                                                       
+X/IEFRDER   DD  UNIT=5010,                       INPUT TAPE            ,00200000                                                    
+XX             LABEL=(,NL),                      UNLABELED             ,00210000                                                    
+XX             VOLUME=SER=SYSIN,                 VOLUME NAME           ,00220000                                                    
+XX             DISP=OLD,                         OLD DATA SET          ,00230000                                                    
+XX             DCB=(BLKSIZE=80,LRECL=80,BUFL=80,BUFNO=1,RECFM=F)        00240000                                                    
+XXIEFPDSI   DD  DSNAME=SYS1.PROCLIB,DISP=SHR     PROCEDURE LIBRARY      00250000                                                    
+XXIEFDATA   DD  UNIT=SYSDA,                      SPOOL DEVICE          ,00260000                                                    
+XX             SPACE=(80,(500,500),RLSE,CONTIG),     AMOUNT            ,00270000                                                    
+XX          DCB=(BLKSIZE=80,LRECL=80,BUFL=80,BUFNO=2,RECFM=F,DSORG=PS)  00280000                                                    
+                                                                                                                                    
+                                                                                                                                    
+//LISTCOPY  JOB MSGLEVEL=(1,1)                                                                                                      
+// EXEC PGM=IEFBR14,REGION=200K                                                                                                     
+//DD1 DD UNIT=SYSDA,VOL=SER=MVT617,DISP=(OLD,DELETE),DSN=CBC1.LOAD                                                                  
+IEF236I ALLOC. FOR LISTCOPY                                                                                                         
+IEF237I 132   ALLOCATED TO DD1                                                                                                      
+IEF142I - STEP WAS EXECUTED - COND CODE 0000                                                                                        
+IEF285I   CBC1.LOAD                                    DELETED                                                                      
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+IEF373I STEP /        / START 94273.0730                                                                                            
+IEF374I STEP /        / STOP  94273.0733 CPU   0MIN 00.65SEC MAIN   4K                                                              
+//    EXEC PGM=IEBCOPY,TIME=1440,REGION=200K                                                                                        
+//SYSPRINT DD SYSOUT=A                                                                                                              
+//FROM DD DISP=SHR,UNIT=5010,VOL=SER=111111,LABEL=(1,SL),                                                                           
+//  DSN=A                                                                                                                           
+//TO DD UNIT=SYSDA,VOL=SER=MVT617,DSN=CBC1.LOAD,                                                                                    
+//  DISP=(NEW,KEEP),DCB=(RECFM=UT,BLKSIZE=13030),                                                                                   
+// SPACE=(CYL,(5,5,170),RLSE)                                                                                                       
+//SYSIN DD *                                                                                                                        
+//                                                                                                                                  
+IEF236I ALLOC. FOR LISTCOPY                                                                                                         
+IEF237I 132   ALLOCATED TO SYSPRINT                                                                                                 
+IEF237I 284   ALLOCATED TO FROM                                                                                                     
+IEF237I 132   ALLOCATED TO TO                                                                                                       
+IEF237I 132   ALLOCATED TO SYSIN                                                                                                    
+                                                                                                                                    
+                                                                                                                                    
+OC EC IEBCOPY  63-03.81                          DATE 30.09.94            TIME 07.34.45                       PAGE 0001             
+                     C I=FROM,O=TO                                                                                                  
+IEB167I  FOLLOWING MEMBER(S)  LOADED  FROM INPUT DATA SET REFERENCED BY FROM     -                                                  
+         MEXRA730      MEXRDT        MEXRD02       MEXRD110      MEXRD115      MEXRD770      MEXRN         MEXRN110                 
+         MEXRN49       MEXRSTR       MEXRZDAT      MEXRZR        MEXRZ1        MEXRZ14       MEXRZ60       MEXRZ601                 
+         MEXRZ670      MEXRZ700      MEXR0         MEXR01        MEXR01D       MEXR02        MEXR02D       MEXR04                   
+         MEXR04D       MEXR07        MEXR10        MEXR100       MEXR102       MEXR104       MEXR111       MEXR115                  
+         MEXR123       MEXR15        MEXR150       MEXR152       MEXR154       MEXR158       MEXR159       MEXR17                   
+         MEXR171       MEXR172       MEXR173       MEXR19        MEXR191       MEXR192       MEXR20        MEXR202                  
+         MEXR203       MEXR21        MEXR23        MEXR24        MEXR240       MEXR241       MEXR250       MEXR253                  
+         MEXR26        MEXR261       MEXR262       MEXR263       MEXR271       MEXR29        MEXR30        MEXR31                   
+         MEXR311       MEXR32        MEXR321       MEXR322       MEXR33        MEXR34        MEXR35        MEXR350                  
+         MEXR351       MEXR36        MEXR37        MEXR38        MEXR381       MEXR381A      MEXR40        MEXR400                  
+         MEXR400D      MEXR400S      MEXR41        MEXR42        MEXR421       MEXR43        MEXR46        MEXR460                  
+         MEXR461       MEXR50        MEXR50B       MEXR50N       MEXR50NS      MEXR500       MEXR502       MEXR504                  
+         MEXR51        MEXR52        MEXR53        MEXR53A       MEXR54        MEXR540       MEXR550       MEXR551                  
+         MEXR553       MEXR554       MEXR556       MEXR56        MEXR60        MEXR60D       MEXR601       MEXR601D                 
+         MEXR602D      MEXR61        MEXR62        MEXR62D       MEXR62Z       MEXR662       MEXR663       MEXR663F                 
+         MEXR664       MEXR664F      MEXR670       MEXR6700      MEXR672       MEXR700       MEXR71        MEXR730N                 
+         MEXR750       MEXR750S      MEXR752       MEXR753       MEXR77        MEXR77D       MEXR770       MEXR770D                 
+         MEXR80        MEXR80D       MEXR800       MEXR81        MEXR81D       MEXR81M       MEXR81M1      MEXR83                   
+         MEXR840       MEXR86        MEXR87        MEXR88        MEXR89        MEXR90        MEXR9000      MEXR902                  
+         MEXR904       MEXR905       MEXR93        MEXR998       MEXTKTSP      MEXTP110      MEXTP752      MEXTSHNZ                 
+         MEXTSHPZ      MEXTSMEN      MEXTVPR       MEXTVPRK      MEXTVP19      MEXTVUD       MEXTV01       MEXTV02                  
+         MEXTV03       MEXTV04       MEXTV07       MEXTV100      MEXTV11       MEXTV15       MEXTV154      MEXTV155                 
+         MEXTV158      MEXTV17       MEXTV173      MEXTV19       MEXTV20       MEXTV202      MEXTV26       MEXTV261                 
+         MEXTV27       MEXTV31       MEXTV324      MEXTV34       MEXTV350      MEXTV37       MEXTV38       MEXTV381                 
+         MEXTV40       MEXTV400      MEXTV41       MEXTV500      MEXTV51       MEXTV53       MEXTV54       MEXTV550                 
+         MEXTV551      MEXTV56       MEXTV60       MEXTV601      MEXTV602      MEXTV662      MEXTV670      MEXTV672                 
+         MEXTV700      MEXTV75A      MEXTV75B      MEXTV752      MEXTV770      MEXTV80       MEXTV87       MEXTV901                 
+         MEXTV93       MEX770DS      MPCBC0        MPCB01        MPCB04        MPCB07        MPCB09        MPCB10                   
+         MPCB100       MPCB101       MPCB1010      MPCB102       MPCB103       MPCB104       MPCB105       MPCB13                   
+         MPCB14        MPCB15        MPCB150       MPCB151       MPCB152       MPCB153       MPCB154       MPCB155                  
+         MPCB156       MPCB157       MPCB158       MPCB159       MPCB16        MPCB17        MPCB171       MPCB172                  
+         MPCB173       MPCB19        MPCB191       MPCB192       MPCB20        MPCB201       MPCB202       MPCB203                  
+         MPCB22        MPCB23        MPCB230       MPCB24        MPCB240       MPCB241       MPCB25        MPCB250                  
+         MPCB251       MPCB252       MPCB253       MPCB26        MPCB261       MPCB262       MPCB263       MPCB264                  
+         MPCB265       MPCB271       MPCB28        MPCB281       MPCB29        MPCB3         MPCB30        MPCB31                   
+         MPCB311       MPCB32        MPCB320       MPCB321       MPCB322       MPCB323       MPCB324       MPCB33                   
+         MPCB34        MPCB35        MPCB350       MPCB351       MPCB36        MPCB361       MPCB37        MPCB38                   
+         MPCB381       MPCB39        MPCB40        MPCB41        MPCB410       MPCB42        MPCB421       MPCB422                  
+         MPCB43        MPCB44        MPCB444       MPCB445       MPCB45        MPCB46        MPCB460       MPCB461                  
+         MPCB47        MPCB49        MPCB50        MPCB500       MPCB501       MPCB502       MPCB503       MPCB504                  
+         MPCB505       MPCB506       MPCB51        MPCB52        MPCB53        MPCB54        MPCB540       MPCB541                  
+         MPCB550       MPCB551       MPCB552       MPCB553       MPCB554       MPCB555       MPCB556       MPCB56                   
+         MPCB560       MPCB57        MPCB602       MPCB63        MPCB631       MPCB65        MPCB66        MPCB660                  
+         MPCB661       MPCB662       MPCB663       MPCB664       MPCB665       MPCB67        MPCB670       MPCB671                  
+         MPCB672       MPCB68        MPCB69        MPCB70        MPCB70S       MPCB700       MPCB71        MPCB72                   
+         MPCB73        MPCB730       MPCB75        MPCB750       MPCB751       MPCB752       MPCB753       MPCB76                   
+         MPCB761       MPCB77        MPCB770       MPCB80        MPCB800       MPCB801       MPCB81        MPCB81M                  
+         MPCB81M1      MPCB83        MPCB84        MPCB840       MPCB85        MPCB86        MPCB87        MPCB870                  
+         MPCB88        MPCB89        MPCB90        MPCB900       MPCB9000      MPCB901       MPCB902       MPCB9020                 
+         MPCB903       MPCB904       MPCB905       MPCB91        MPCB92        MPCB93        MPCB998       MSRTRESC                 
+         MSRTRESR      MSRTRESZ      MSSC00        MSSC01        MSSC02        MSSC04        MSSC07        MSSC09                   
+OC EC IEBCOPY  63-03.81                          DATE 30.09.94            TIME 08.05.29                       PAGE 0002             
+         MSSC10        MSSC100       MSSC101       MSSC11        MSSC110       MSSC111       MSSC115       MSSC14                   
+         MSSC15        MSSC150       MSSC151       MSSC152       MSSC153       MSSC154       MSSC155       MSSC156                  
+         MSSC157       MSSC158       MSSC159       MSSC16        MSSC172       MSSC173       MSSC19        MSSC191                  
+         MSSC192       MSSC20        MSSC202       MSSC203       MSSC21        MSSC22        MSSC23        MSSC230                  
+         MSSC24        MSSC240       MSSC241       MSSC25        MSSC250       MSSC251       MSSC252       MSSC253                  
+         MSSC26        MSSC261       MSSC262       MSSC263       MSSC264       MSSC265       MSSC271       MSSC28                   
+         MSSC281       MSSC29        MSSC3         MSSC30        MSSC31        MSSC311       MSSC320       MSSC321                  
+         MSSC322       MSSC323       MSSC324       MSSC33        MSSC34        MSSC35        MSSC350       MSSC351                  
+         MSSC36        MSSC361       MSSC37        MSSC38        MSSC381       MSSC39        MSSC40        MSSC400                  
+         MSSC41        MSSC410       MSSC42        MSSC421       MSSC422       MSSC43        MSSC44        MSSC444                  
+         MSSC45        MSSC46        MSSC460       MSSC461       MSSC47        MSSC48        MSSC49        MSSC50                   
+         MSSC50B       MSSC500       MSSC501       MSSC502       MSSC503       MSSC504       MSSC505       MSSC506                  
+         MSSC51        MSSC52        MSSC520       MSSC53        MSSC54        MSSC540       MSSC541       MSSC55                   
+         MSSC550       MSSC551       MSSC552       MSSC553       MSSC554       MSSC555       MSSC556       MSSC56                   
+         MSSC560       MSSC57        MSSC58        MSSC60        MSSC601       MSSC602       MSSC61        MSSC62                   
+         MSSC63        MSSC631       MSSC65        MSSC66        MSSC660       MSSC661       MSSC662       MSSC663                  
+         MSSC664       MSSC665       MSSC67        MSSC670       MSSC6700      MSSC671       MSSC672       MSSC68                   
+         MSSC69        MSSC70        MSSC700       MSSC71        MSSC72        MSSC73        MSSC730       MSSC75                   
+         MSSC750       MSSC750S      MSSC751       MSSC752       MSSC752N      MSSC753       MSSC76        MSSC761                  
+         MSSC77        MSSC770       MSSC770S      MSSC80        MSSC800       MSSC801       MSSC81        MSSC81M                  
+         MSSC81M1      MSSC83        MSSC84        MSSC840       MSSC85        MSSC86        MSSC87        MSSC870                  
+         MSSC88        MSSC89        MSSC90        MSSC900       MSSC9000      MSSC901       MSSC902       MSSC9020                 
+         MSSC903       MSSC904       MSSC905       MSSC91        MSSC92        MSSC93        MSSC998       RSCHF158                 
+         TZRT          TZRTAX01      TZRTPRA       TZVLGB1                                                                          
+                                                                                                                                    
+IEB144I  THERE ARE 0000074 UNUSED TRACKS IN OUTPUT DATA SET REFERENCED BY TO                                                        
+IEB149I  THERE ARE 0000070  UNUSED DIRECTORY BLOCKS IN OUTPUT DIRECTORY                                                             
+IEB147I  END OF JOB -00 WAS HIGHEST SEVERITY CODE                                                                                   
+                                                                                                                                    
+                                                                                                                                    
+IEF142I - STEP WAS EXECUTED - COND CODE 0000                                                                                        
+IEF285I   SYS94273.T072733.SV000.LISTCOPY.R0000001     SYSOUT                                                                       
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+IEF285I   A                                            KEPT                                                                         
+IEF285I   VOL SER NOS= 111111.                                                                                                      
+IEF285I   CBC1.LOAD                                    KEPT                                                                         
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+IEF285I   SYS94273.T072733.RV000.LISTCOPY.S0000002     SYSIN                                                                        
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+IEF285I   SYS94273.T072733.RV000.LISTCOPY.S0000002     DELETED                                                                      
+IEF285I   VOL SER NOS= MVT617.                                                                                                      
+IEF373I STEP /        / START 94273.0733                                                                                            
+IEF374I STEP /        / STOP  94273.0806 CPU   0MIN 00.00SEC MAIN 200K                                                              
+IEF375I  JOB /LISTCOPY/ START 94273.0730                                                                                            
+IEF376I  JOB /LISTCOPY/ STOP  94273.0806 CPU   0MIN 00.65SEC                                                                        

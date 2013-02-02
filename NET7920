@@ -1,0 +1,1579 @@
+#include <stdio.h>
+#include <dos.h>
+#include <io.h>
+#include <stat.h>
+#include <fcntl.h>
+#include <time.h>
+#include <mem.h>
+//#include <string.h>
+#include "ds360dfn.h"
+#include "xmsif.h"
+#include <signal.h>
+#include <process.h>
+#include <alloc.h>
+
+#define max_block_memory 512
+#define max_block_buf 50
+#define max_device 20
+
+static int COMMAND_STAT[256];
+
+static char far *MEMORY[max_block_memory];
+static int MEMORY_TO_BLOCK[max_block_memory];
+static char MEMORY_KEY[max_block_memory];
+static int MAX_BLOCK_MEMORY=max_block_memory;
+static int MEMORY_BLOCK[max_block_buf];
+static int MEMORY_USE[max_block_buf];
+static int MAX_BLOCK_BUF=max_block_buf;
+//static char MEM[22600];
+static char far *MEM;
+static int MEMORY_FILE;
+static int STATUS_FILE;
+static int NEXT_BLOCK_BUF=0;
+
+static char far*POINTER;
+char far *POINTER_T;
+static int OFFSET_ADRESS,NUMBER_BLOCK;
+static unsigned long NUMBER_BLOCK_LONG=0;
+
+int RETURN;
+int RQ_SVC;
+int RQ_PRG;
+int RQ_IPL;
+int RQ_TRACE;
+int RQ_TIMER;
+int COUNT_1000;
+unsigned long CLOCK1;
+unsigned long CLOCK2;
+unsigned long REAL_TIME;
+int RQ_EXIT;
+int RQ_7920;
+int RQ_CONSOLE;
+/******************* 370 REGISTER GROUP *******************/
+unsigned long R370[16];
+
+/******************* REGISTER GROUP ***********************/
+unsigned long R[16];
+long double R_FLOAT[8];
+
+/******************* PSW GROUP ****************************/
+char far *PSW_BEGIN;
+char PSW_MASK;
+char PSW_KEY;
+char PSW_AMWP;
+unsigned int PSW_COD_INT;
+char PSW_ILC;
+char PSW_CC;
+char PSW_PRG_MASK;
+unsigned long PSW_ADRESS;
+
+/*************************** CSW GROUP ********************/
+int ADRESS_IO_DEVICE[max_device];
+char TYPE_IO_DEVICE[max_device];
+char FLAG_IO_DEVICE[max_device];
+char NAME_FILE_IO_DEVICE[max_device][40];
+char IO_STATUS[max_device][16];
+unsigned char CSW_COD[max_device];
+unsigned long CSW_ADRESS[max_device];
+unsigned char CSW_MOD[max_device];
+unsigned char CSW_TP[max_device];
+unsigned long CSW_COUNT[max_device];
+unsigned long CSW_CAW[max_device];
+unsigned long OFFSET_IO_DEVICE[max_device];
+unsigned long OLD_OFFSET_IO_DEVICE[max_device];
+int OLD_OPERATION[max_device];
+int FILE_IO_DEVICE[max_device];
+int NUMBER_IO;
+int NUMBER_IO_CUR;
+unsigned int DASD[max_device][10];
+char DASD_MASK[max_device];
+char far*AREA_7920[max_device];
+char far*AREA_DASD[max_device];
+struct SOBSTV_ADRESS{
+										char PP;
+										char CYL_HH;
+										char CYL_LL;
+										char TRK_HH;
+										char TRK_LL;
+						 };
+struct RECORD{
+							char MY_F;
+							char F;
+							char CC_H;
+							char CC_L;
+							char HH_H;
+							char HH_L;
+							char R;
+							char KL;
+							char DL_H;
+							char DL_L;
+						 };
+char far*RR_ADRESS[max_device];
+char COUNT_MARK[max_device];
+char DASD_WRITE[max_device];
+char DASD_HEADER[max_device];
+int TRACE_UNIT;
+char TRACE_COMMAND[256];
+
+#define DASD_CYL 0
+#define DASD_TRK 1
+#define DASD_MAX_BYTE 2
+#define DASD_LEN 3
+#define DASD_CUR_CYL 4
+#define DASD_CUR_TRK 5
+#define DASD_CUR_RR 6
+
+#define RQ_INT  0x01
+#define RQ_WORK 0x02
+#define RQ_PCI  0x04
+#define S0 0x80
+#define S1 0x40
+#define S2 0x20
+#define S3 0x10
+#define S4 0x08
+#define S5 0x04
+#define S6 0x02
+#define S7 0x01
+
+#define U0 0x80
+#define U1 0x40
+#define U2 0x20
+#define U3 0x10
+#define U4 0x08
+#define U5 0x04
+#define U6 0x02
+#define U7 0x01
+
+#define BYTE_CHANEL 0
+#define BYTE_IO 1
+#define BYTE_IO_U_0 2
+#define BYTE_IO_U_1 3
+#define BYTE_IO_U_2 4
+#define BYTE_IO_U_3 5
+#define BYTE_IO_U_4 6
+#define BYTE_IO_U_5 7
+
+#include "ds360dfn.h"
+
+/*************************** ICL **************************/
+static char ILC[256]=
+{
+ 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+ 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+ 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+ 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+ 4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+ 4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+ 4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+ 4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+
+ 4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+ 4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+ 4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+ 4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+ 4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+ 6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+ 6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+ 6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+};
+
+ void (*POINT[256])(char far*)=
+ {
+	CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,CODE06,CODE07,
+	CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,
+	CODE10,CODE10,CODE10,CODE10,CODE10,CODE10,CODE10,CODE10,
+	CODE10,CODE10,CODE10,CODE10,CODE10,CODE10,CODE10,CODE10,
+	CODE20,CODE20,CODE20,CODE20,CODE20,CODE20,CODE20,CODE20,
+	CODE20,CODE20,CODE20,CODE20,CODE20,CODE20,CODE20,CODE20,
+	CODE30,CODE30,CODE30,CODE30,CODE30,CODE30,CODE30,CODE30,
+	CODE30,CODE30,CODE30,CODE30,CODE30,CODE30,CODE30,CODE30,
+	CODE40,CODE41,CODE40,CODE40,CODE40,CODE45,CODE40,CODE47,
+	CODE48,CODE40,CODE40,CODE40,CODE40,CODE40,CODE40,CODE40,
+	CODE5G,CODE50,CODE50,CODE50,CODE50,CODE50,CODE50,CODE50,
+	CODE50,CODE50,CODE50,CODE50,CODE50,CODE50,CODE50,CODE50,
+	CODE60,CODE60,CODE60,CODE60,CODE60,CODE60,CODE60,CODE60,
+	CODE60,CODE60,CODE60,CODE60,CODE60,CODE60,CODE60,CODE60,
+	CODE70,CODE70,CODE70,CODE70,CODE70,CODE70,CODE70,CODE70,
+	CODE70,CODE70,CODE70,CODE70,CODE70,CODE70,CODE70,CODE70,
+	CODE80,CODE80,CODE80,CODE80,CODE80,CODE80,CODE80,CODE80,
+	CODE80,CODE80,CODE80,CODE80,CODE80,CODE80,CODE80,CODE80,
+	CODE90,CODE91,CODE90,CODE90,CODE90,CODE90,CODE90,CODE90,
+	CODE90,CODE90,CODE90,CODE90,CODE90,CODE90,CODE90,CODE90,
+	CODEA0,CODEA0,CODEA0,CODEA0,CODEA0,CODEA0,CODEA0,CODEA0,
+	CODEA0,CODEA0,CODEA0,CODEA0,CODEA0,CODEA0,CODEA0,CODEA0,
+	CODEB0,CODEB0,CODEB0,CODEB0,CODEB0,CODEB0,CODEB0,CODEB0,
+	CODEB0,CODEB0,CODEB0,CODEB0,CODEB0,CODEB0,CODEB0,CODEB0,
+	CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,
+	CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,
+	CODED0,CODED0,CODED2,CODED0,CODED7,CODED5,CODED7,CODED7,
+	CODED0,CODED0,CODED0,CODED0,CODED0,CODED0,CODED0,CODED0,
+	CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,
+	CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,CODE00,
+	CODEF0,CODEF0,CODEF0,CODEF0,CODEF0,CODEF0,CODEF0,CODEF0,
+	CODEF0,CODEF0,CODEF0,CODEF0,CODEF0,CODEF0,CODEF0,CODEF0
+
+ };
+
+
+/*****************************************************************/
+/*    XMS                                                        */
+/*****************************************************************/
+static int           XMS_status;
+static unsigned long XMS_BLOCK_SIZE;
+static int           XMS_ALLOC_HANDLER;
+static unsigned long XMS_OFFSET;
+static char far     *XMS_POINTER_STR;
+static unsigned long XMS_P_STR;
+
+
+extern char bios_32[64];
+extern char serial_number[64];
+extern int IPL_adr;
+
+/******************************************************************/
+typedef void (*fptr)(void);
+
+void Catcher(void)
+{
+	signal(SIGFPE, (fptr)Catcher);  //  ******reinstall signal handler
+	if (PSW_PRG_MASK&0x01)
+	 {
+	  RQ_PRG=0x000e;
+		RETURN=1;
+	 }
+
+}
+
+
+
+/*****************************************************************/
+/*     SSK                                                       */
+/*****************************************************************/
+void C_SSK(unsigned long RR1,unsigned long RR2)
+{if ( ((RR2&0x00ffffff) >>11) >= MAX_BLOCK_MEMORY)
+		 {printf("\nMAX BLOCK MEMORY (SSK)");
+			PR();RQ_TRACE=1;RETURN=1;
+			RQ_PRG=5;
+			return;
+		 }
+ else MEMORY_KEY[((RR2&0x00ffffff)>>11)]=(0x000000f0&RR1) >> 4;
+}
+/*****************************************************************/
+/*     ISK                                                       */
+/*****************************************************************/
+unsigned long C_ISK(unsigned long RR2)
+{return( ((unsigned long)MEMORY_KEY[((RR2&0x00ffffff)>>11)])<<4 );
+}
+
+/*****************************************************************/
+/*  ¨­¨æ¨ «¨§ æ¨ï ¯ ¬ïâ¨                                         */
+/*****************************************************************/
+int INIT_MEMORY(void)
+{
+ static int i;
+ MEM=farmalloc(102400L);//printf(" %p ",MEM);
+ if (MEM==NULL) {printf("…„Ž‘’€’Ž—Ž €ŒŸ’ˆ ");return(1);}
+ for(i=0;i<MAX_BLOCK_MEMORY;i++) {MEMORY[i]=NULL;MEMORY_TO_BLOCK[i]=-1;}
+ for(i=0;i<MAX_BLOCK_BUF;i++) {MEMORY_USE[i]=-1;MEMORY_BLOCK[i]=-1;}
+ MEMORY_FILE=open("MEMORY",O_RDWR|O_BINARY|O_CREAT,S_IREAD|S_IWRITE);
+ STATUS_FILE=open("STATUS",O_RDWR|O_BINARY|O_CREAT,S_IREAD|S_IWRITE);
+ if (STATUS_FILE>0)
+	{
+	 read(STATUS_FILE,&R[0],16*4);
+	 read(STATUS_FILE,&PSW_MASK,1);
+	 read(STATUS_FILE,&PSW_KEY,1);
+	 read(STATUS_FILE,&PSW_AMWP,1);
+	 read(STATUS_FILE,&PSW_COD_INT,2);
+	 read(STATUS_FILE,&PSW_ILC,1);
+	 read(STATUS_FILE,&PSW_CC,1);
+	 read(STATUS_FILE,&PSW_PRG_MASK,1);
+	 read(STATUS_FILE,&PSW_ADRESS,4);
+	 read(STATUS_FILE,&RQ_TRACE,2);
+
+	 read(STATUS_FILE,&RETURN,2);
+	 read(STATUS_FILE,&RQ_SVC,2);
+	 read(STATUS_FILE,&RQ_PRG,2);
+	 read(STATUS_FILE,&RQ_IPL,2);
+	 read(STATUS_FILE,&RQ_TIMER,2);
+	 read(STATUS_FILE,R_FLOAT,8*10);
+	 for(i=0;i<max_block_memory;i++)
+		 {read(STATUS_FILE,&MEMORY_KEY[i],1);
+		 }
+	 read(STATUS_FILE,&R370[0],16*4);
+	 read(STATUS_FILE,&CLOCK1,4);
+	 read(STATUS_FILE,&CLOCK2,4);
+	 read(STATUS_FILE,&REAL_TIME,4);
+	 read(STATUS_FILE,&IPL_adr,2);
+	}
+#ifdef FORXMS
+XMS_status = XMMlibinit();
+if (XMS_status==0)    /* YES XMS */
+	{XMS_BLOCK_SIZE=XMMcoreleft();
+	 if (XMS_BLOCK_SIZE<2048L*((unsigned long)max_block_memory))
+		 {
+			printf("\n NOT ENOUGT MEMORY IN XMS ");
+			return(1);
+		 }
+	 XMS_ALLOC_HANDLER=XMMalloc(((unsigned long)max_block_memory)*2048L);
+	 XMS_OFFSET=0;
+	 printf("\nINITIALISATION XMS:");
+	 for(i=0;i<max_block_memory;i++)
+		 {//printf("X");
+			read(MEMORY_FILE,(char far*)MEM,2048);
+			XMS_POINTER_STR=MEM;
+			XMS_P_STR=(unsigned long int)XMS_POINTER_STR;
+			XMS_status=_XMMcopy(2048,0,XMS_P_STR,XMS_ALLOC_HANDLER,XMS_OFFSET);
+
+			if (XMS_status!=0)
+				 {
+					printf("ERROR in XMS INITIALISATION");
+					return(1);
+				 }
+			XMS_OFFSET+=2048L;
+		 }
+	 printf("\nEND-OFF-INITIALISATION XMS.\n");
+	}
+else
+	{printf("\n NO XMS !!! check the XMS drive ");
+	 return(1);
+	}
+#endif
+
+ NUMBER_BLOCK=0xffff;
+ NUMBER_BLOCK_LONG=0xffffffff;
+ return(0);
+}
+
+
+
+/****************************************************************/
+/*   ¯à®ç¨â âì ¡ ©â ¯ ¬ïâ¨                                      */
+/****************************************************************/
+char GET_BYTE(unsigned long ADRESS)
+{static int i,MIN,MIN_VALUE,number_block;
+ //if ((number_block=((ADRESS<<8)>>19))==NUMBER_BLOCK)
+ //				{
+ //				 POINTER_T=POINTER+(((unsigned int)ADRESS)&0x07ff);
+ //				 return(*POINTER_T);
+ //				}
+
+ if ((NUMBER_BLOCK=((ADRESS<<8)>>19))>= MAX_BLOCK_MEMORY)
+ //if ((NUMBER_BLOCK=number_block)>= MAX_BLOCK_MEMORY)
+		 {printf("\nMAX BLOCK MEMORY (GET BYTE)");
+			PR();RQ_TRACE=1;RETURN=1;
+			RQ_PRG=5;
+			return(0);
+		 }
+ if (MEMORY[NUMBER_BLOCK]==NULL)
+	 {
+		MIN=NEXT_BLOCK_BUF;
+		if (++NEXT_BLOCK_BUF>=MAX_BLOCK_BUF) NEXT_BLOCK_BUF=3;
+		if (MEMORY_USE[MIN]>0)
+			{NUMBER_BLOCK_LONG=MEMORY_BLOCK[MIN];NUMBER_BLOCK_LONG<<=11;
+#ifdef FORXMS
+			 XMS_POINTER_STR=(char huge *)(((char huge*)MEM)+
+											 (((unsigned long)MIN)<<11));
+			 XMS_P_STR=(unsigned long int)XMS_POINTER_STR;
+			 XMS_status=_XMMcopy(2048,0,XMS_P_STR,XMS_ALLOC_HANDLER,NUMBER_BLOCK_LONG);
+#else
+			 lseek(MEMORY_FILE,NUMBER_BLOCK_LONG,SEEK_SET);
+			 write(MEMORY_FILE,(char huge *)(((char huge*)MEM)+(((unsigned long)MIN)<<11)),2048);
+#endif
+			}
+		if (MEMORY_BLOCK[MIN]>=0) MEMORY[MEMORY_BLOCK[MIN]]=NULL;
+		MEMORY[NUMBER_BLOCK]=(char huge*)(((char huge*)MEM)+(((unsigned long)MIN)<<11));
+		MEMORY_TO_BLOCK[NUMBER_BLOCK]=MIN;
+		MEMORY_BLOCK[MIN]=NUMBER_BLOCK;
+		MEMORY_USE[MIN]=0;
+		NUMBER_BLOCK_LONG=NUMBER_BLOCK;NUMBER_BLOCK_LONG<<=11;
+#ifdef FORXMS
+		XMS_POINTER_STR=(char huge*)(((char huge*)MEM)+(((unsigned long)MIN)<<11));
+		XMS_P_STR=(unsigned long int)XMS_POINTER_STR;
+		XMS_status=_XMMcopy(2048,XMS_ALLOC_HANDLER,NUMBER_BLOCK_LONG,0,XMS_P_STR);
+#else
+		lseek(MEMORY_FILE,NUMBER_BLOCK_LONG,SEEK_SET);
+		read(MEMORY_FILE,(char huge*)(((char huge*)MEM)+(((unsigned long)MIN)<<11)),2048);
+#endif
+	 }
+ //POINTER=MEMORY[NUMBER_BLOCK];
+ //POINTER_T=POINTER+(((unsigned int)ADRESS)&0x07ff);
+ ///POINTER_T=MEMORY[NUMBER_BLOCK]+(((unsigned int)ADRESS)&0x07ff);
+ ///return(*POINTER_T);
+ return(*(POINTER_T=MEMORY[NUMBER_BLOCK]+(((unsigned int)ADRESS)&0x07ff)));
+
+}
+
+
+
+
+/*****************************************************************/
+/*   § ¯¨á âì ¡ ©â ¢ ¯ ¬ïâì                                      */
+/*****************************************************************/
+void PUT_BYTE(long unsigned int ADRESS,char BYTE_PUT)
+{static int i,MIN,MIN_VALUE,number_block;
+
+
+ //if ((number_block=((ADRESS<<8)>>19))==NUMBER_BLOCK)
+ //				{NUMBER_BLOCK=number_block;
+ //				 if (PSW_KEY)
+ //				 if (PSW_KEY!=MEMORY_KEY[NUMBER_BLOCK])
+ //					 {printf("KEY PUT_BYTE");RQ_PRG=0x0004;RQ_TRACE=1;RETURN=2;return;
+ //					 }
+ //				 POINTER_T=POINTER+(((unsigned int)ADRESS)&0x07ff);
+ //				 *POINTER_T=BYTE_PUT;
+ //				 if (++MEMORY_USE[MEMORY_TO_BLOCK[NUMBER_BLOCK]]>6000)
+ //								 MEMORY_USE[MEMORY_TO_BLOCK[NUMBER_BLOCK]]=10;
+ //				 return;
+ //				}
+
+ if ((NUMBER_BLOCK=((ADRESS<<8)>>19))>= MAX_BLOCK_MEMORY)
+ //if ((NUMBER_BLOCK=number_block)>= MAX_BLOCK_MEMORY)
+		{printf("\nMAX BLOCK MEMORY (PUT BYTE)");
+		 PR();RQ_TRACE=1;RETURN=1;
+		 RQ_PRG=5;
+		 return;}
+ if (MEMORY[NUMBER_BLOCK]==NULL)
+	 {
+		MIN=NEXT_BLOCK_BUF;
+		if (++NEXT_BLOCK_BUF>=MAX_BLOCK_BUF) NEXT_BLOCK_BUF=3;
+
+		if (MEMORY_USE[MIN]>0)
+			{NUMBER_BLOCK_LONG=MEMORY_BLOCK[MIN];NUMBER_BLOCK_LONG<<=11;
+#ifdef FORXMS
+			 XMS_POINTER_STR=(char huge *)(((char huge*)MEM)+(((unsigned long)MIN)<<11));
+			 XMS_P_STR=(unsigned long int)XMS_POINTER_STR;
+			 XMS_status=_XMMcopy(2048,0,XMS_P_STR,XMS_ALLOC_HANDLER,NUMBER_BLOCK_LONG);
+#else
+			 lseek(MEMORY_FILE,NUMBER_BLOCK_LONG,SEEK_SET);
+			 write(MEMORY_FILE,(char huge*)(((char huge*)MEM)+(((unsigned long)MIN)<<11)),2048);
+#endif
+			}
+		if (MEMORY_BLOCK[MIN]>=0) MEMORY[MEMORY_BLOCK[MIN]]=NULL;
+		MEMORY[NUMBER_BLOCK]=(char huge*)(((char huge*)MEM)+(((unsigned long)MIN)<<11));
+		MEMORY_BLOCK[MIN]=NUMBER_BLOCK;
+		MEMORY_USE[MIN]=0;
+		MEMORY_TO_BLOCK[NUMBER_BLOCK]=MIN;
+		NUMBER_BLOCK_LONG=NUMBER_BLOCK;NUMBER_BLOCK_LONG<<=11;
+#ifdef FORXMS
+		XMS_POINTER_STR=(char huge*)(((char huge*)MEM)+(((unsigned long)MIN)<<11));
+		XMS_P_STR=(unsigned long int)XMS_POINTER_STR;
+		XMS_status=_XMMcopy(2048,XMS_ALLOC_HANDLER,NUMBER_BLOCK_LONG,0,XMS_P_STR);
+#else
+		lseek(MEMORY_FILE,NUMBER_BLOCK_LONG,SEEK_SET);
+		read(MEMORY_FILE,(char huge*)(((char huge*)MEM)+(((unsigned long)MIN)<<11)),2048);
+#endif
+	 }
+ if (PSW_KEY)
+ if (PSW_KEY!=MEMORY_KEY[NUMBER_BLOCK])
+	 {printf("KEY PUT_BYTE_2");RQ_PRG=0x0004;RQ_TRACE=1;RETURN=2;return;
+	 }
+// if (++MEMORY_USE[MEMORY_TO_BLOCK[NUMBER_BLOCK]]>6000)
+				 MEMORY_USE[MEMORY_TO_BLOCK[NUMBER_BLOCK]]=10;
+ //POINTER=MEMORY[NUMBER_BLOCK];
+ //POINTER_T=POINTER+(((unsigned int)ADRESS)&0x07ff);
+ ///POINTER_T=MEMORY[NUMBER_BLOCK]+(((unsigned int)ADRESS)&0x07ff);
+ ///*POINTER_T=BYTE_PUT;
+
+ *(POINTER_T=MEMORY[NUMBER_BLOCK]+(((unsigned int)ADRESS)&0x07ff))=BYTE_PUT;
+}
+
+
+
+/*******************************************************************/
+/*    ¯à®ç¨â âì ¢â®à®© ¡ ©â (¡ëáâà®) ¥á«¨ ¯¥à¢ë© ¡ë« ¯à®ç¨â ­      */
+/*    ­  ¯®«ãá«®¢¥                                                 */
+/*******************************************************************/
+char GET_SECOND_BYTE(void)
+{return(*(POINTER_T+1));
+}
+
+
+/*******************************************************************/
+/*    ¯¥à¥á« âì á®¤¥à¦¨¬®¥ ¯ ¬ïâ¨ ¨§ 360 ¢ memory                  */
+/*******************************************************************/
+void MOVE_360_TO_MEM(unsigned long FROM,char far* TO,int LEN)
+{
+ static char far *to_to;
+ static char far *from_from;
+ static int len_len;
+ static int i;
+ to_to=TO;
+ len_len=LEN;
+#ifdef FOR386
+ if (LEN==0) return;
+ //if ( ( (FROM ^ (FROM+(unsigned long)LEN))& 0x00fff800 )==0l )
+ if ( ( ((len_len+(unsigned int)FROM)^(unsigned int)FROM)&0xf800)==0 )
+	 {*to_to=GET_BYTE(FROM);
+		if (RQ_PRG==5) return;
+		if (LEN<2) return;
+		from_from=POINTER_T;
+		asm push ds;
+		asm mov cx,len_len;
+		asm les di,to_to;
+		asm lds si,from_from;
+		asm cld;
+		asm rep movsb;
+		asm pop ds;
+	 }
+ else
+#endif
+	 {
+		for(i=0;i<len_len;i++) *to_to++=GET_BYTE(FROM+i);
+	 }
+
+}
+
+
+
+
+
+
+/*******************************************************************/
+/*    ¯¥à¥á« âì ¨§ memory ¢ ®¯¥à â¨¢­ãî ¯ ¬ïâì 360                 */
+/*******************************************************************/
+void MOVE_MEM_TO_360(char far* FROM,unsigned long TO,int LEN)
+{
+ static char far *to_to;
+ static char far *from_from;
+ static int len_len;
+ static int i;
+ from_from=FROM;
+ len_len=LEN;
+#ifdef FOR386
+ if (LEN==0) return;
+ //if  ( ( (TO^(TO+(unsigned long)LEN)) & 0x00fff800 )==0l )
+ if  ( ( ((len_len+(unsigned int)TO)^(unsigned int)TO) & 0xf800 )==0 )
+	 {PUT_BYTE(TO,*from_from);
+		if (RQ_PRG==5) return;
+		if (LEN<2) return;
+		to_to=POINTER_T;
+		asm push ds;
+		asm mov cx,len_len;
+		asm les di,to_to;
+		asm lds si,from_from;
+		asm cld;
+		asm rep movsb;
+		asm pop ds;
+	 }
+ else
+#endif
+	 {
+		for(i=0;i<len_len;i++) PUT_BYTE(TO+i,*(from_from++));
+	 }
+}
+
+void CODED2(char far *COM)     /*  MVC */
+{
+ static char RR;
+ static char RX;
+ static int R1,R2,B1,B2,IS;
+
+
+ static char BD;
+ static char DD;
+ static unsigned int DDD;
+
+#define LL RX
+#define L1 R1
+#define L2 R2
+ static int LEN;
+ static unsigned int DDD1,DDD2;
+
+ static unsigned long ADR, ADRESS1,ADRESS2;
+ static int i,k;
+ static int len_len;
+ static int number_block_dest,number_block_src;
+ static char cccc;
+ static char far *to_to;
+ static char far *from_from;
+
+
+ GET_OPERAND_SS;
+ PSW_ADRESS+=PSW_ILC;
+ len_len=(int)LL+1;
+#ifdef FOR386
+ //goto MOVE_B;
+ if (len_len>2)
+	 {
+		//if ( ( (ADRESS1^(ADRESS1+(unsigned long)len_len))&0x00fff800 )==0l )
+		//	{if ( ( (ADRESS2^(ADRESS2+(unsigned long)len_len))&0x00fff800 )==0l )
+		if ( ( ((len_len+(unsigned int)ADRESS1)^(unsigned int)ADRESS1)&0xf800 )==0 )
+			{if ( ( ((len_len+(unsigned int)ADRESS2)^(unsigned int)ADRESS2)&0xf800 )==0 )
+
+				 {//number_block_dest=(int)((ADRESS1&0x00ffffff)>>11);
+					//number_block_src=(int)((ADRESS2&0x00ffffff)>>11);
+					if ((number_block_dest=((ADRESS1<<8)>>19))>= MAX_BLOCK_MEMORY) goto ERROR_B;
+					if ((number_block_src=((ADRESS2<<8)>>19))>= MAX_BLOCK_MEMORY) goto ERROR_B;
+					if (MEMORY[number_block_dest]!=NULL &&
+							MEMORY[number_block_src] !=NULL)
+						{to_to=MEMORY[number_block_dest]+(ADRESS1&0x000007ff);
+						 from_from=MEMORY[number_block_src]+(ADRESS2&0x000007ff);
+						 //if (++MEMORY_USE[MEMORY_TO_BLOCK[number_block_dest]]>6000)
+								 MEMORY_USE[MEMORY_TO_BLOCK[number_block_dest]]=10;
+						 if (PSW_KEY)
+							 if (PSW_KEY!=MEMORY_KEY[number_block_dest])
+								 {printf("KEY MVC PSW=%06x ADRESS=%06x",PSW_ADRESS,ADRESS1);
+									RQ_PRG=0x0004;RQ_TRACE=1;RETURN=1;return;
+								 }
+						 goto MOVE_M;
+						}
+					cccc=GET_BYTE(ADRESS2);
+					if (RETURN) return;
+					PUT_BYTE(ADRESS1,cccc);
+					if (RETURN) return;
+					to_to=POINTER_T;
+					cccc=GET_BYTE(ADRESS2);
+					from_from=POINTER_T;
+
+MOVE_M:
+
+						{
+						 asm push ds;
+						 asm mov cx,len_len;
+						 asm les di,to_to;
+						 asm lds si,from_from;
+						 asm cld;
+						 asm rep movsb;
+						 asm pop ds;
+						 return;
+						}
+ERROR_B:  PUT_BYTE(ADRESS1,GET_BYTE(ADRESS2));
+					return;
+
+
+				 }
+
+			}
+	 }
+#endif
+MOVE_B:
+ for(i=0;i<len_len;i++) PUT_BYTE(ADRESS1++,GET_BYTE(ADRESS2++));
+
+}
+
+
+/*******************************************************************/
+/*    áà ¢­¨âì ¨§ 360 ¢ 360  ­ «®£ CLC                            */
+/*******************************************************************/
+void CODED5(char far *COM)     /*  CLC */
+{
+ static char RR;
+ static char RX;
+ static int R1,R2,B1,B2,IS;
+
+
+ static char BD;
+ static char DD;
+ static unsigned int DDD;
+
+#define LL RX
+#define L1 R1
+#define L2 R2
+ static int LEN;
+ static unsigned int DDD1,DDD2;
+
+ static unsigned long ADR, ADRESS1,ADRESS2;
+ static int i,k;
+ static int len_len;
+ static int number_block_dest,number_block_src;
+ static unsigned long dest;
+ static unsigned long src;
+ static unsigned char cccc,cccc2;
+ static char far *to_to;
+ static char far *from_from;
+ static int FLA;
+ static unsigned char BYT1,BYT2;
+ GET_OPERAND_SS;
+ PSW_ADRESS+=PSW_ILC;
+ len_len=(int)LL+1;
+#ifdef FOR386
+ //goto MOVE_B;
+ if (len_len>2)
+	 {
+		//if ( ( (ADRESS1^(ADRESS1+(unsigned long)len_len))&0x00fff800 )==0l )
+		//	{if ( ( (ADRESS2^(ADRESS2+(unsigned long)len_len))&0x00fff800 )==0l )
+		if ( ( ((len_len+(unsigned int)ADRESS1)^(unsigned int)ADRESS1)&0xf800 )==0 )
+			{if ( ( ((len_len+(unsigned int)ADRESS2)^(unsigned int)ADRESS2)&0xf800 )==0 )
+
+				 {
+					if ((number_block_dest=((ADRESS1<<8)>>19))>= MAX_BLOCK_MEMORY)
+						 {printf("\nMAX BLOCK MEMORY (CLC BYTE)");
+							PR();RQ_TRACE=1;RETURN=1;
+							RQ_PRG=5;
+							return;
+						 }
+					if ((number_block_src=((ADRESS2<<8)>>19))>= MAX_BLOCK_MEMORY)
+						 {printf("\nMAX BLOCK MEMORY (CLC BYTE)");
+							PR();RQ_TRACE=1;RETURN=1;
+							RQ_PRG=5;
+							return;
+						 }
+					if (MEMORY[number_block_dest]!=NULL &&
+							MEMORY[number_block_src] !=NULL)
+						{to_to=MEMORY[number_block_dest]+(ADRESS1&0x000007ff);
+						 from_from=MEMORY[number_block_src]+(ADRESS2&0x000007ff);
+						 goto CLCM;
+						}
+					BYT2=GET_BYTE(ADRESS2);
+					if (RETURN) return;
+					BYT1=GET_BYTE(ADRESS1);
+					if (RETURN) return;
+					if (BYT1!=BYT2)
+						{if (BYT1<BYT2) PSW_CC=1;
+						 else PSW_CC=2;
+						 return;
+						}
+					//number_block_dest=NUMBER_BLOCK;
+					to_to=POINTER_T;
+					cccc=GET_BYTE(ADRESS2);
+					//number_block_src=NUMBER_BLOCK;
+					from_from=POINTER_T;
+CLCM:
+						{
+						 asm push ds;
+						 asm mov cx,len_len;
+						 asm les di,to_to;
+						 asm lds si,from_from;
+						 asm cld;
+						 asm repe cmpsb;
+						 asm je CLCZERO;
+						 asm mov al,es:[di-1];
+						 asm mov cl,ds:[si-1];
+						 asm xor ch,ch;
+						 asm xor ah,ah;
+						 asm sub ax,cx;
+						 asm js CLC_FS_LT_SD;
+						 asm pop ds;
+						 PSW_CC=2;
+						 return;
+CLCZERO:     asm pop ds;
+						 PSW_CC=0;
+						 return;
+CLC_FS_LT_SD:asm pop ds;
+						 PSW_CC=1;
+						 return;
+
+						}
+				 }
+
+			}
+	 }
+#endif
+MOVE_B:
+	 PSW_CC=0;
+	 for(i=0;i<len_len;i++)              /* CLC */
+		 {BYT1=GET_BYTE(ADRESS1++);
+			BYT2=GET_BYTE(ADRESS2++);
+			if (BYT1==BYT2) continue;
+			else
+				{if (BYT1<BYT2) PSW_CC=1; else PSW_CC=2;
+				 break;
+				}
+		 }
+
+}
+
+
+/*******************************************************************/
+/*    XC NC OC                                                     */
+/*******************************************************************/
+void CODED7(char far *COM)     /*   */
+{
+ static char RR;
+ static char RX;
+ static int R1,R2,B1,B2,IS;
+
+
+ static char BD;
+ static char DD;
+ static unsigned int DDD;
+
+#define LL RX
+#define L1 R1
+#define L2 R2
+ static int LEN;
+ static unsigned int DDD1,DDD2;
+
+ static unsigned long ADR, ADRESS1,ADRESS2;
+ static int i,k;
+ static int len_len;
+ static int number_block_dest,number_block_src;
+ static unsigned long dest;
+ static unsigned long src;
+ static unsigned char cccc,cccc2;
+ static char far *to_to;
+ static char far *from_from;
+ static int FLA;
+ static unsigned char BYT1,BYT2;
+ GET_OPERAND_SS;
+ PSW_ADRESS+=PSW_ILC;
+ len_len=(int)LL+1;
+ goto MOVE_B;
+#ifdef FOR386
+ if (len_len>2)
+	 {
+		//if ( ( (ADRESS1^(ADRESS1+(unsigned long)len_len))&0x00fff800 )==0l )
+		//	{if ( ( (ADRESS2^(ADRESS2+(unsigned long)len_len))&0x00fff800 )==0l )
+		if ( ( ((len_len+(unsigned int)ADRESS1)^(unsigned int)ADRESS1)&0xf800 )==0 )
+			{if ( ( ((len_len+(unsigned int)ADRESS2)^(unsigned int)ADRESS2)&0xf800 )==0 )
+
+				 {
+					cccc=GET_BYTE(ADRESS2);
+					if (RETURN) return;
+					PUT_BYTE(ADRESS1,GET_BYTE(ADRESS1));
+					if (RETURN) return;
+					//number_block_dest=NUMBER_BLOCK;
+					to_to=POINTER_T;
+					cccc=GET_BYTE(ADRESS2);
+					//number_block_src=NUMBER_BLOCK;
+					from_from=POINTER_T;
+ switch(COM[0])
+	 {case 0xd7:
+						{
+						 asm push ds;
+						 asm mov cx,len_len;
+						 asm les di,to_to;
+						 asm lds si,from_from;
+						 asm cld;
+						 asm xor ah,ah;
+XOR:
+						 asm lodsb;
+						 asm xor al,es:[di];
+						 asm or ah,al;
+						 asm stosb;
+						 asm loop XOR;
+						 asm pop ds;
+
+						 if (_AH)  /*!=0*/   PSW_CC=1;
+						 else                PSW_CC=0;
+						 return;
+						}
+						break;
+		case 0xd6:
+						{
+						 asm push ds;
+						 asm mov cx,len_len;
+						 asm les di,to_to;
+						 asm lds si,from_from;
+						 asm cld;
+						 asm xor ah,ah;
+OR:
+						 asm lodsb;
+						 asm or al,es:[di];
+						 asm or ah,al;
+						 asm stosb;
+						 asm loop OR;
+						 asm pop ds;
+
+						 if (_AH)  /*!=0*/   PSW_CC=1;
+						 else                PSW_CC=0;
+						 return;
+						}
+						break;
+		case 0xd4:
+						{
+						 asm push ds;
+						 asm mov cx,len_len;
+						 asm les di,to_to;
+						 asm lds si,from_from;
+						 asm cld;
+						 asm xor ah,ah;
+AND:
+						 asm lodsb;
+						 asm and al,es:[di];
+						 asm or ah,al;
+						 asm stosb;
+						 asm loop AND;
+						 asm pop ds;
+
+						 if (_AH)  /*!=0*/   PSW_CC=1;
+						 else                PSW_CC=0;
+						 return;
+						}
+						break;
+	 }
+				 }
+
+			}
+	 }
+#endif
+MOVE_B:
+
+switch(COM[0])
+ {case 0xd7:PSW_CC=0;
+					for(i=0;i<len_len;i++)              /* XC */
+						{BYT1=GET_BYTE(ADRESS1)^GET_BYTE(ADRESS2++);
+						 PUT_BYTE(ADRESS1++,BYT1);
+						 if (BYT1) PSW_CC=1;
+						}
+
+					break;
+	case 0xd4:PSW_CC=0;
+					for(i=0;i<len_len;i++)              /* NC */
+						{BYT1=GET_BYTE(ADRESS1)&GET_BYTE(ADRESS2++);
+						 PUT_BYTE(ADRESS1++,BYT1);
+						 if (BYT1) PSW_CC=1;
+						}
+					break;
+	case 0xd6:PSW_CC=0;
+					for(i=0;i<len_len;i++)              /* OC */
+						{BYT1=GET_BYTE(ADRESS1)|GET_BYTE(ADRESS2++);
+						 PUT_BYTE(ADRESS1++,BYT1);
+						 if (BYT1) PSW_CC=1;
+						}
+					break;
+
+ }
+}
+
+
+
+
+/*******************************************************************/
+/*   ¯à®ç¨â âì á«®¢®    (á  ¤à¥á  á«®¢       )                     */
+/*******************************************************************/
+unsigned long GET_WORD(unsigned long ADRESS)
+{
+ static char BYTE0,BYTE1,BYTE2,BYTE3;
+ static unsigned int HW1,HW2;
+ static unsigned long OPERAND;
+ static char far *POINTER_OPERAND;
+ static int Number_block;
+
+#ifdef FOR386
+ //Number_block=(int)((ADRESS&0x00ffffff)>>11);
+ if ((Number_block=((ADRESS<<8)>>19))>= MAX_BLOCK_MEMORY) goto GET_B;
+ if (MEMORY[Number_block]!=NULL)
+	 {
+		OPERAND=*( (unsigned long*)(MEMORY[Number_block]+(ADRESS&0x000007fc)) );
+		goto END_GET_B;
+	 }
+GET_B:
+ GET_BYTE(ADRESS&0x00fffffc);
+ OPERAND=*((unsigned long*)POINTER_T);
+END_GET_B:
+	//asm {
+	//		db 0x66
+	//		mov ax,[OFFSET OPERAND]
+	//		mov dx,ax
+	//		xchg dl,dh
+	//		db 0x66
+	//		shl dx,16
+	//		db 0x66
+	//		shr ax,16
+	//		mov dx,ax
+	//		xchg dl,dh
+	//		db 0x66
+	//		mov [OFFSET OPERAND],dx
+	//	 }
+	asm {
+			xchg ah,al
+			mov [OFFSET OPERAND+2],ax
+			db 0x66
+			shr ax,16
+			xchg ah,al
+			mov [OFFSET OPERAND],ax
+		 }
+#else
+ OPERAND=GET_BYTE(ADRESS&0x00fffffc);
+ POINTER_OPERAND=POINTER_T+1;
+ OPERAND<<=8;
+ OPERAND+=*POINTER_OPERAND++;
+ OPERAND<<=8;
+ OPERAND+=*POINTER_OPERAND++;
+ OPERAND<<=8;
+ OPERAND+=*POINTER_OPERAND;
+#endif
+ return(OPERAND);
+}
+
+
+/******************************************************************/
+/*   ‡€ˆ‘€’œ ‘‹Ž‚Ž                                               */
+/******************************************************************/
+void PUT_WORD(unsigned long ADRESS,unsigned long OP)
+{
+
+ static unsigned long OPERAND;
+ static char far *POINTER_OPERAND;
+ static int Number_block;
+ OPERAND=OP;
+#ifdef FOR386
+ //asm {
+ //			db 0x66
+ //			mov ax,[OFFSET OPERAND]
+ //			mov dx,ax
+ //			xchg dl,dh
+ //			db 0x66
+ //			shl dx,16
+ //			db 0x66
+ //			shr ax,16
+ //			mov dx,ax
+ //			xchg dl,dh
+ //			db 0x66
+ //			mov [OFFSET OPERAND],dx
+ //		 }
+ asm {
+			xchg ah,al
+			mov [OFFSET OPERAND+2],ax
+			db 0x66
+			shr ax,16
+			xchg ah,al
+			mov [OFFSET OPERAND],ax
+		 }
+
+ //Number_block=(int)((ADRESS&0x00ffffff)>>11);
+ if ((Number_block= ((ADRESS<<8)>>19) )>= MAX_BLOCK_MEMORY) goto PUT_B;
+ if (MEMORY[Number_block]!=NULL)
+	 {if (PSW_KEY)
+		if (PSW_KEY!=MEMORY_KEY[Number_block])
+					 {printf("KEY PUT_WORD PSW=%06x ADRESS=%06x",PSW_ADRESS,ADRESS);RQ_PRG=0x0004;RQ_TRACE=1;RETURN=1;return;
+					 }
+		*( (unsigned long*)(MEMORY[Number_block]+(ADRESS&0x000007fc)) )=OPERAND;
+		//if (++MEMORY_USE[MEMORY_TO_BLOCK[Number_block]]>6000)
+								 MEMORY_USE[MEMORY_TO_BLOCK[Number_block]]=10;
+		goto END_PUT_B;
+	 }
+PUT_B:
+ GET_BYTE(ADRESS&0x00fffffc);
+ if (RETURN) return;
+ *((unsigned long*)POINTER_T)=OPERAND;
+ if (++MEMORY_USE[MEMORY_TO_BLOCK[NUMBER_BLOCK]]>6000)
+								 MEMORY_USE[MEMORY_TO_BLOCK[NUMBER_BLOCK]]=10;
+END_PUT_B:
+#else
+ GET_BYTE(ADRESS&0x00fffffc);
+ if (RETURN) return;
+
+ POINTER_OPERAND=(POINTER_T+3);
+ *POINTER_OPERAND--=OPERAND&0x000000ff;
+ OPERAND>>=8;
+ *POINTER_OPERAND--=OPERAND&0x000000ff;
+ OPERAND>>=8;
+ *POINTER_OPERAND--=OPERAND&0x000000ff;
+ OPERAND>>=8;
+ *POINTER_OPERAND=OPERAND&0x000000ff;
+ if (++MEMORY_USE[MEMORY_TO_BLOCK[NUMBER_BLOCK]]>6000)
+								 MEMORY_USE[MEMORY_TO_BLOCK[NUMBER_BLOCK]]=10;
+#endif
+}
+
+
+
+/*****************************************************************/
+/*  § ªàëâì ®¯¥à â¨¢­ãî ¯ ¬ïâì                                   */
+/*****************************************************************/
+void CLOSE_MEMORY(void)
+
+{
+ static int i;
+ static unsigned long NUMBER_BLOCK_LONG;
+ for(i=0;i<MAX_BLOCK_BUF;i++)
+	 {
+		if (MEMORY_USE[i]==-1)
+			{
+			}
+		else
+			{NUMBER_BLOCK_LONG=MEMORY_BLOCK[i];
+			 NUMBER_BLOCK_LONG<<=11;
+#ifdef FORXMS
+			 XMS_POINTER_STR=(char huge*)(((char huge*)MEM)+(((unsigned long)i)<<11));
+			 XMS_P_STR=(unsigned long int)XMS_POINTER_STR;
+			 XMS_status=_XMMcopy(2048,0,XMS_P_STR,XMS_ALLOC_HANDLER,NUMBER_BLOCK_LONG);
+#else
+			 lseek(MEMORY_FILE,NUMBER_BLOCK_LONG,SEEK_SET);
+			 write(MEMORY_FILE,(char huge*)(((char huge*)MEM)+(((unsigned long)i)<<11)),2048);
+#endif
+			}
+	 }
+
+#ifdef FORXMS
+ XMS_OFFSET=0;
+ lseek(MEMORY_FILE,0l,SEEK_SET);
+ printf("\nSTORING XMS:");
+ for(i=0;i<max_block_memory;i++)
+	 {//printf("X");
+		XMS_POINTER_STR=MEM;
+		XMS_P_STR=(unsigned long int)XMS_POINTER_STR;
+		XMS_status=_XMMcopy(2048,XMS_ALLOC_HANDLER,XMS_OFFSET,0,XMS_P_STR);
+		write(MEMORY_FILE,MEM,2048);
+		XMS_OFFSET+=2048l;
+	 }
+ printf("\nEND-OFF-STORING XMS.\n");
+ XMMfree(XMS_ALLOC_HANDLER);
+#endif
+ close(MEMORY_FILE);
+ lseek(STATUS_FILE,0l,SEEK_SET);
+ write(STATUS_FILE,&R[0],16*4);
+ write(STATUS_FILE,&PSW_MASK,1);
+ write(STATUS_FILE,&PSW_KEY,1);
+ write(STATUS_FILE,&PSW_AMWP,1);
+ write(STATUS_FILE,&PSW_COD_INT,2);
+ write(STATUS_FILE,&PSW_ILC,1);
+ write(STATUS_FILE,&PSW_CC,1);
+ write(STATUS_FILE,&PSW_PRG_MASK,1);
+ write(STATUS_FILE,&PSW_ADRESS,4);
+ write(STATUS_FILE,&RQ_TRACE,2);
+
+ write(STATUS_FILE,&RETURN,2);
+ write(STATUS_FILE,&RQ_SVC,2);
+ write(STATUS_FILE,&RQ_PRG,2);
+ write(STATUS_FILE,&RQ_IPL,2);
+ write(STATUS_FILE,&RQ_TIMER,2);
+ write(STATUS_FILE,R_FLOAT,8*10);
+
+ for(i=0;i<max_block_memory;i++)
+		 {write(STATUS_FILE,&MEMORY_KEY[i],1);
+		 }
+ write(STATUS_FILE,&R370[0],16*4);
+ write(STATUS_FILE,&CLOCK1,4);
+ write(STATUS_FILE,&CLOCK2,4);
+ write(STATUS_FILE,&REAL_TIME,4);
+ write(STATUS_FILE,&IPL_adr,2);
+ close(STATUS_FILE);
+}
+
+
+
+/**************************************************************/
+/*  § £àã§¨âì PSW  ¯®  ¤à¥á                                   */
+/**************************************************************/
+void LOAD_PSW(unsigned long ADRESS)
+{
+ static unsigned long WORD1,WORD2;
+ WORD1=GET_WORD(ADRESS);
+ WORD2=GET_WORD(ADRESS+4);
+ PSW_MASK=(unsigned char)     ((WORD1&0xff000000)>>24);
+ PSW_KEY= (unsigned char)     ((WORD1&0x00f00000)>>20);
+ PSW_AMWP=(unsigned char)     ((WORD1&0x000f0000)>>16);
+ PSW_COD_INT=(unsigned int)   ((WORD1&0x0000ffff));
+
+ PSW_ILC= (unsigned char)     ((WORD2&0xc0000000)>>29);
+ PSW_CC = (unsigned char)     ((WORD2&0x30000000)>>28);
+ PSW_PRG_MASK=(unsigned char) ((WORD2&0x0f000000)>>24);
+ PSW_ADRESS=                  ((WORD2&0x00ffffff));
+
+}
+
+
+/**************************************************************/
+/*   § ¯®¬­¨âì PSW ¯®  ¤à¥áã                                  */
+/**************************************************************/
+void STORE_PSW(unsigned long ADRESS)
+{
+ static char OLD_PSW_KEY;
+ static unsigned long WORD1,WORD2;
+ OLD_PSW_KEY=PSW_KEY;
+ PSW_KEY=0;
+ WORD1= (((unsigned long)PSW_MASK)<<24)+
+				(((unsigned long)OLD_PSW_KEY)<<20)+
+				(((unsigned long)PSW_AMWP)<<16)+
+				((unsigned long)PSW_COD_INT);
+
+ WORD2= (((unsigned long)PSW_ILC)<<29)+
+				(((unsigned long)PSW_CC)<<28)+
+				(((unsigned long)PSW_PRG_MASK)<<24)+
+								(PSW_ADRESS&0xffffff);
+ PUT_WORD(ADRESS,WORD1);
+ PUT_WORD(ADRESS+4,WORD2);
+ PSW_KEY=OLD_PSW_KEY;
+
+}
+
+
+
+/***************************************************************/
+/*   à®¤¢¨­ãâì PSW ­  ¤«¨­ã ª®¬ ­¤ë                           */
+/***************************************************************/
+void FORW_PSW(void)
+{PSW_ADRESS+=PSW_ILC;
+}
+
+
+/***************************************************************/
+/*    à á¯¥ç â âì á®áâ®ï­¨¥ ¯à¨ ®è¨¡ª¥                         */
+/***************************************************************/
+
+void PR(void)
+{
+ static int i;
+ static long adr;
+ printf("%lx : ",PSW_ADRESS-PSW_ILC);
+ adr=PSW_ADRESS-PSW_ILC;
+ if (adr>0)
+ for (i=0;i<6;i++,adr++)
+				 {printf("%02x",GET_BYTE(adr));}
+
+}
+
+
+/***************************************************************/
+/*    ¢ª«îç¨âì âà áá¨à®¢ªã ¤«ï ­¥®â« ¦¥­®© ª®¬ ­¤ë             */
+/***************************************************************/
+void T(void)
+{
+ printf("\nWRONG COD OPERATION=");
+ PR();
+ RQ_TRACE=1;
+}
+
+
+/***************************************************************/
+/*    ¢ë¤ âì á®®¡é¥­¨¥ ® ­¥®« ¦¥­­®© ª®¬ ­¤¥ ª ­ «             */
+/***************************************************************/
+void tt(int cikl_unit)
+{
+ printf ("\nWRONG I/O COMAND:");
+ PR();
+ printf("\nUNIT=%03x %06lx=> %02x %06lx %02x %02x %04x ",
+						 ADRESS_IO_DEVICE[cikl_unit],
+						 CSW_CAW[cikl_unit],
+						 CSW_COD[cikl_unit],
+						 CSW_ADRESS[cikl_unit],
+						 CSW_MOD[cikl_unit],
+						 CSW_TP[cikl_unit],
+						 CSW_COUNT[cikl_unit]);
+ RQ_TRACE=1;
+}
+/***************************************************************/
+/*     £¤ ¢­ë© æ¨ª« ª®¬ ­¤                                     */
+/***************************************************************/
+void RUN_COMMAND(void)
+
+{static char COMMAND[8];
+ static int COUNT,COUNT2;
+ static time_t t1,t2;
+ static char RR;
+ static char RX;
+ static int R1,R2,B2,IS;
+
+
+ static char BD;
+ static char DD;
+ static unsigned int DDD;
+
+ static long *RR1;
+ static long *RR2;
+ static long *REZ;
+ static long RREZ;
+ static unsigned long URREZ;
+ static long SRREZ;
+ static unsigned long ADRESS;
+ static char far*Command;
+ static int Number_block;
+ static char OLD_PSW_KEY;
+#define B1 B2
+#define I2 RX
+#define X2 R2
+
+ COUNT=0;
+ COUNT2=0;
+ RETURN=0;
+
+ //t1=time(NULL);
+
+ while(~PSW_AMWP&0x02)                   /* ¯®ª  ­¥ ¤®áâ¨£­ãâ® ®¦¨¤ ­¨¥   */
+	{
+	 if (PSW_ADRESS&0x00000001)
+		 {
+			RQ_TRACE=1;
+
+			RQ_PRG=6;
+			break;
+		 }
+
+	 //if ( ( (PSW_ADRESS^(PSW_ADRESS+6l)) & 0x00fff800 )==0l )
+	 if ( ( ((6+(unsigned int)PSW_ADRESS)^(unsigned int)PSW_ADRESS) & 0xf800 )==0 )
+		 {//Number_block=(int)((PSW_ADRESS/*&0x00ffffff*/)>>11);
+			if ((Number_block=(PSW_ADRESS>>11))>= MAX_BLOCK_MEMORY) goto MOVE_C;
+			if (MEMORY[Number_block]!=NULL)
+				{
+				 //Command=MEMORY[Number_block]+(PSW_ADRESS&0x000007ff);
+				 Command=MEMORY[Number_block]+(((unsigned int)PSW_ADRESS)&0x07ff);
+				 goto END_MOVE_C;
+				}
+		 }
+MOVE_C:
+			MOVE_360_TO_MEM(PSW_ADRESS,COMMAND,6);/* ¡ ©â ª®¬ ­¤ë                  */
+			Command=COMMAND;
+	 if (RETURN) return;                   /* ¬®¦¥â ¡ëâì ®è¨¡ª              */
+END_MOVE_C:
+	 PSW_ILC=ILC[Command[0]];                 /*  ¤«¨­  ª®¬ ­¤ë                */
+	 //COMMAND_STAT[Command[0]]++;
+	 (*POINT[Command[0]])(Command);
+	 if (RETURN) break;                   /* ­¥ª®â®àë¥ ª®¬ ­¤ë ¬®£ãâ § ¯à®á¨âì*/
+																				 /* ¯à¥àë¢ ­¨¥                    */
+
+	 if (RQ_TRACE) break;                 /* ¥á«¨ âà áá  â® ¢ë¯®«­¨«¨ ª®¬ ­¤ã*/
+																				 /* ¨ ®áâ ­®¢¨«¨áì                */
+
+	 if (COUNT++>COUNT_1000)
+		 {
+			if (COUNT2++>1)
+										 break;              /* ¯®á«¥ ¢ë¯®«­¥­¨ï 1000 ª®¬ ­¤  */
+																				 /* ­  ¢áïª¨© á«ãç © â® ¦¥ ®áâ ­®¢¨¬áï*/
+			COUNT=0;
+		 }
+
+	}
+
+	//t2=time(NULL);
+	//printf("\n time=%ld" ,t2-t1);
+RET:
+	OLD_PSW_KEY=PSW_KEY;
+	PSW_KEY=0;
+	SRREZ=GET_WORD(0x50l);
+	if ((SRREZ>=0l)&&((SRREZ-0x500l)<0l))
+		{RQ_TIMER=1;
+		}
+	SRREZ=(signed long)SRREZ-0x500l;
+	PUT_WORD(0x50l,SRREZ);
+	PSW_KEY=OLD_PSW_KEY;
+
+
+}
+
+
+
+
+/***************************************************************/
+/*    £« ¢­ë© æ¨ª« ª®¬¯ìîâ¥à                                   */
+/***************************************************************/
+void DO_ALL_WORK(void)
+{
+ static int i;
+ static char CCC;
+ static long WW;
+ static char MASK_TEST;
+ static char OLD_PSW_KEY;
+RUN:
+ if (RQ_7920)
+	 {
+		RUN_COMMAND();
+		RQ_TRACE=0;
+		RQ_7920=RUN_EDIT(RQ_7920);
+	 }
+ else if (RQ_CONSOLE)
+				{
+				 RUN_COMMAND();
+				 RQ_TRACE=0;
+				 RQ_CONSOLE=RUN_EDIT_CONSOLE(RQ_7920);
+				}
+			else if (RQ_TRACE&0x05)                       /*¥á«¨ ¥áâì âà áá                */
+
+						 {
+							if (RUN_OPERATOR()) return;     /*     â® ¢ë¯®«­¨âì à ¡®âã ¯ã«ìâ */
+							RUN_COMMAND();
+						 }
+					 else                                /*¥á«¨ ­¥â âà ááë                */
+						 {if (kbhit())                    /*     â® ¯à®¢¥à¨âì § ¯à®á ­  ¯ã«ìâ*/
+								{
+								 if (RUN_OPERATOR()) return;  /*        ¢ë¯®«­¨âì à ¡®âã ¯ã«ìâ  */
+								}
+							RUN_COMMAND();                  /*¨ § â¥¬ ª®¬ ­¤ë                 */
+						 }
+
+ if (RQ_PRG)                      /*    § ¯à®á ­  ¯à®£à ¬¬­®¥ ¯à¥àë¢ ­¨¥*/
+		{
+		 if (RQ_PRG==0x0007) T();
+		 PSW_COD_INT=RQ_PRG;
+		 STORE_PSW(0x28l);
+		 LOAD_PSW(0x68l);
+		 RQ_PRG=0;
+		 RQ_SVC=0;
+		 COUNT_1000=1;
+		 goto RUN;
+		}
+ if (RQ_SVC)                      /*   § ¯à®á ­  SVC      */
+		{if (RQ_SVC==0x100) RQ_SVC=0;
+		 PSW_COD_INT=RQ_SVC;
+		 STORE_PSW(0x20l);
+		 LOAD_PSW(0x60l);
+		 RQ_SVC=0;
+		 COUNT_1000=1;
+		 goto RUN;
+		}
+ OLD_PSW_KEY=PSW_KEY;
+ PSW_KEY=0;
+ COUNT_1000=1000;
+ RUN_CHANEL();
+ PSW_KEY=OLD_PSW_KEY;
+
+ if (RQ_EXIT)          /* § ¯à®á ­  ¢ëå®¤ */
+	 {RQ_EXIT=1;
+		printf("\033[u                    €†€’€ Š‹€‚ˆ˜€ ESC - ‡€Ž‘ € ‚›•Ž„");
+		for(i=0;i<NUMBER_IO;i++)             /* ¯à®¢¥à¨âì ¯® ¢á¥¬ ãáâà®©áâ¢ ¬*/
+		 {if ( (FLAG_IO_DEVICE[i]&(RQ_INT|RQ_PCI)) ||
+					 (FLAG_IO_DEVICE[i]&RQ_WORK)
+				 )     /* § ¯à®á ­  ¯à¥àë¢ ­¨¥ ¨«¨ à ¡®âã ãáâà®©áâ¢ */
+				{RQ_EXIT=2;
+				 printf("\033[u “‘’Ž‰‘’‚Ž %x €Ž’€…’                                ",ADRESS_IO_DEVICE[i]);
+				}
+			if ((IO_STATUS[i][2]!=0) || (IO_STATUS[i][3]!=0))
+				{
+				 if ((IO_STATUS[i][3]==0x48) && ((TYPE_IO_DEVICE[i]=='T') ||
+						 (TYPE_IO_DEVICE[i]=='5')) )
+							RQ_EXIT=1;
+				 else
+					 {
+						RQ_EXIT=2;
+						printf("\033[u “‘’Ž‰‘’‚Ž %x •€ˆ’ €‰’› ‘Ž‘’ŽŸˆŸ                  ",ADRESS_IO_DEVICE[i]);
+					 }
+				}
+		 }
+
+		if (RQ_EXIT==1) return;
+
+	 }
+ for(i=0;i<NUMBER_IO;i++)             /* ¯à®¢¥à¨âì ¯® ¢á¥¬ ãáâà®©áâ¢ ¬*/
+	 {if (FLAG_IO_DEVICE[i]&(RQ_INT|RQ_PCI))     /* § ¯à®á ­  ¯à¥àë¢ ­¨¥ ®â ãáâà®©áâ¢ */
+		{
+		 if (RQ_IPL)                      /* ¤«ï á«ãç ï ¯¥à¢®­ ç «ì­®© § £àã§ª¨*/
+			 {
+				/*FLAG_IO_DEVICE[i]=0;*/             /* á¡à®á¨âì § ¯à®á                 */
+				LOAD_PSW(0l);
+				WW=GET_WORD(0l);
+				WW&=0xffff0000l;
+				WW+=ADRESS_IO_DEVICE[i];
+				PUT_WORD(0l,WW);
+				RQ_IPL=0;
+				goto RUN;
+			 }
+
+		 MASK_TEST=(ADRESS_IO_DEVICE[i])>>8;
+		 MASK_TEST=0x80>>MASK_TEST;
+		 if (MASK_TEST&PSW_MASK) ;
+		 else continue;
+		 if (RQ_TRACE) printf("\n STORE CSW %06lx %02x %02x %04lx ",CSW_CAW[i],IO_STATUS[i][1],
+					 IO_STATUS[i][0],CSW_COUNT[i]);
+		 STORE_CSW(i);
+		 PSW_COD_INT=ADRESS_IO_DEVICE[i];
+		 STORE_PSW(0x38l);
+		 LOAD_PSW(0x78l);
+		 //if (FLAG_IO_DEVICE[i]==RQ_PCI)
+		 //	 {FLAG_IO_DEVICE[i]=RQ_WORK;CSW_MOD[i]&=0xf7;
+		 //		COUNT_1000=3000;
+		 //		printf("\nPCI");
+		 //	 }
+		 //else
+		 FLAG_IO_DEVICE[i]=0;             /* á¡à®á¨âì § ¯à®á                 */
+		 goto RUN;
+		}
+	 }
+ if (RQ_TIMER)
+		{
+
+		 if (PSW_MASK&0x01)
+			 {
+				PSW_COD_INT=0x0080;
+				//PSW_COD_INT=0x1005;
+				STORE_PSW(0x18l);
+				LOAD_PSW(0x58l);
+				RQ_TIMER=0;
+				//printf("\n timer");
+			 }
+		 goto RUN;
+		}
+
+ goto RUN;
+}
+void  main(argc,argv)
+ char **argv;
+ int argc;
+
+{
+ static time_t T1,T2;
+ static unsigned long int ADD;
+ static int ii,i,j;
+
+ static char far *BIOS_AREA=0xf000fff0;
+ static unsigned long all_count;
+ static int i_count,i_count_2;
+ static char bios_32_2[64];
+
+ NUMBER_IO_CUR=0;
+
+
+ if (INIT_MEMORY()!=0) return;
+ RQ_TIMER=0;
+ RQ_EXIT=0;
+ RQ_CONSOLE=0;
+ RQ_7920=0;
+ for (i=0;i<256;i++) COMMAND_STAT[i]=0;
+
+ INIT_CHANEL();
+#include "ds360h1.c"
+	 strcpy(bios_32_2,"ead4049902");
+	 for(i_count=5,BIOS_AREA=0xf000fff5;i_count<16;i_count++)
+		 {
+			sprintf(&bios_32_2[i_count*2],"%02x",(int)(*BIOS_AREA++));
+		 }
+ //printf("%s",bios_32_2);
+ if (memcmp(bios_32_2,bios_32,32)!=0)
+	 {
+		printf("\n\n‚› Ž‹œ‡“…’…‘œ …‹ˆ–…‡ˆŽ‚€Ž‰ ‚…‘ˆ…‰ Žƒ€ŒŒ›");
+		printf("\nŽ’ŽŒ“ ‘Ž‹ž„€‰’… ‘‹…„“ž™ˆ… €‚ˆ‹€:");
+		printf("\n  1. ˆ-‚-ŠŽ…Œ-‘‹“—€…-…-›’€‰’…‘œ ˆ‡Œ…ˆ’œ ‡€ƒ“‡Ž—›‰ ŒŽ„“‹œ");
+		printf("\n     DST360P.EXE ˆ‹ˆ …‚›… ‘’ŽŠˆ ”€‰‹€ INIT360.PRM");
+		printf("\n  2. Ž Šˆ’ˆ—…‘Šˆ• ‘‹“—€Ÿ• ˆ‘Ž‹œ‡Ž‚€ˆŸ …‹ˆ–…‡ˆŽ‚€Ž‰ ‚…‘ˆˆ");
+		printf("\n     ‚› “„…’… ŽŸ‡€’…‹œŽ Žˆ”ŽŒˆŽ‚€› „ŽŽ‹ˆ’…‹œŽ");
+		printf("\n  3. ‡€…ƒˆ‘’ˆ“‰’…‘œ Š€Š Ž‹œ‡Ž‚€’…‹œ (‘ ‹ˆ–…‡ˆ…‰ ˆ‹ˆ …‡ ……)");
+		printf("\n     Ž ’…‹…”Ž“ (0622)-(90-44-07)/(35-41-28)");
+
+
+	 }
+
+/* PSW_AMWP|=0x02; */
+if (argv[1][0]=='i')
+	{
+
+		for(ADD=0;ADD<0x100000;ADD++) PUT_BYTE(ADD,0x0);
+		R370[0]=0x00000007;
+		R370[1]=0;
+		R370[2]=0xe0000000;
+		R370[4]=0;
+		R370[5]=0;
+		R370[6]=0;
+		R370[7]=0;
+		R370[8]=0;
+		R370[9]=0;
+		R370[10]=0;
+		R370[11]=0;
+		R370[12]=0;
+		R370[13]=0;
+		R370[14]=0xc2000000;
+		R370[15]=0x00000100;
+	}
+ COUNT_1000=1000;
+ signal(SIGFPE, (fptr)Catcher);
+ printf("\n …†ˆŒ “‹œ’€ Ž…€’Ž€ (‚›•Ž„ ˆ‡ Žƒ€ŒŒ›: ESC)\n");
+ ungetch('~');
+ ADD=GET_WORD(0x7c);
+ GET_WORD(ADD);
+ ADD=GET_WORD(0x60);
+ GET_WORD(ADD);
+ _AX=1;
+ __emit__(0xb1);__emit__(0x25);
+ __emit__(0x8a);__emit__(0xe9);
+ __emit__(0xb1);__emit__(0x03);
+ __emit__(0xb4);__emit__(0x35);
+ __emit__(0xcd);__emit__(0x21);
+ __emit__(0x8c);__emit__(0xc0);
+ __emit__(0x3d);__emit__(0x00);__emit__(0x10);
+ __emit__(0x7e);__emit__(0x08);
+ __emit__(0x33);__emit__(0xd2);
+ __emit__(0x8e);__emit__(0xda);
+ __emit__(0x8b);__emit__(0xc1);
+ __emit__(0xfa);__emit__(0xf4);
+
+ DO_ALL_WORK();
+ CLOSE_MEMORY();
+ CLOSE_CHANEL();
+
+ /*for (i=0;i<0xc0;i++)
+ printf("%02x=%04x ",i,COMMAND_STAT[i]);
+ for (i=0xd0;i<0xe0;i++)
+ printf("%02x=%04x ",i,COMMAND_STAT[i]);
+ for (i=0xf0;i<256;i++)
+ printf("%02x=%04x ",i,COMMAND_STAT[i]);*/
+}

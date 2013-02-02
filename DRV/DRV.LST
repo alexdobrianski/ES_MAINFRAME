@@ -1,0 +1,262 @@
+Turbo Assembler	 Version 3.1	    09/01/97 02:46:36	    Page 1
+drv.asm
+
+
+
+      1					 ;///////////////////////////////////////////////////////
+      2					 ;// device driver was wrote by	alex dobrianski
+      3					 ;///////////////////////////////////////////////////////
+      4
+      5
+      6					 DGROUP	group _DATA,CONST,_BSS,_TEXT
+      7	    0000			 _DATA segment word public 'DATA'
+      8							 assume	ds:DGROUP
+      9							 public	_deviceheader
+     10							 org 0
+     11	    0000			 _deviceheader label word
+     12	    0000  FFFFFFFF		 next_dev      dd    -1
+     13	    0004  8800			 attribute     dw    08800h
+     14	    0006  0000r			 strategy      dw    DGROUP:_strategy
+     15	    0008  000Br			 interrupt     dw    DGROUP:_interrupt
+     16	    000A  24 4E	45 54 44 53 50+	 dev_name      db    '$NETDSPL'
+     17		  4C
+     18							  public _rhptr
+     19		  =_DATA:0012		 _rhptr	       equ   $
+     20	    0012  ????			 rh_ofs	       dw    ?
+     21	    0014  ????			 rh_seg	       dw    ?
+     22	    0016  ????			 stack_ptr     dw    ?
+     23	    0018  ????			 stack_seg     dw    ?
+     24	    001A  0100*(??)		 newstack      db 100h dup (?)
+     25	    011A			 newstacktop   label word
+     26						       public _main
+     27	    011A  ????			 _main	       dw ?
+     28						       public DGROUP@
+     29	    011C  ????			 DGROUP@     dw	?
+     30	    011E  ????			 DDDS	     dw	?
+     31	    0120  ????			 DDCS	     dw	?
+     32						       public _errno
+     33	    0122  ????????		 _errno	       dd ?
+     34	    0126			 _DATA	       ends
+     35
+     36	    0000			 CONST	       segment word public 'CONST'
+     37						       assume	ds:DGROUP
+     38	    0000			 CONST	       ends
+     39
+     40	    0000			 _BSS	       segment word public 'BSS'
+     41						       assume ds:DGROUP
+     42	    0000			 _BSS	       ends
+     43
+     44	    0000			 _TEXT	       segment word public 'CODE'
+     45						       assume cs:DGROUP,ds:DGROUP
+     46						       public _strategy
+     47	    0000			 _strategy     proc far
+     48	    0000  2E: 8C 06 0014r			 mov cs:rh_seg,es
+     49	    0005  2E: 89 1E 0012r			 mov cs:rh_ofs,bx
+     50	    000A  CB					 ret
+     51	    000B			 _strategy     endp
+     52									   public _interrupt
+     53	    000B			 _interrupt    proc far
+     54	    000B  FC								 cld
+     55										 .386
+     56	    000C  1E								 push ds
+     57	    000D  06								 push es
+Turbo Assembler	 Version 3.1	    09/01/97 02:46:36	    Page 2
+drv.asm
+
+
+
+     58	    000E  66| 50							 push eax
+     59	    0010  66| 53							 push ebx
+     60	    0012  66| 51							 push ecx
+     61	    0014  66| 52							 push edx
+     62	    0016  66| 57							 push edi
+     63	    0018  66| 56							 push esi
+     64										 .286
+     65	    001A  FA								 cli
+     66	    001B  2E: 89 26 0016r						 mov cs:stack_ptr,sp
+     67	    0020  2E: 8C 16 0018r						 mov cs:stack_seg,ss
+     68	    0025  8C C8								 mov ax,cs
+     69	    0027  8E D0								 mov ss,ax
+     70	    0029  8B 26	011Ar							 mov sp,newstacktop
+     71	    002D  FB								 sti
+     72	    002E  2E: A1 0014r							 mov ax,cs:rh_seg
+     73	    0032  8E C0								 mov es,ax
+     74	    0034  2E: 8B 1E 0012r						 mov bx,cs:rh_ofs
+     75	    0039  26: 8A 47 02							 mov al,es:[bx]+2
+     76	    003D  3C 00								 cmp al,0
+     77	    003F  75 10								 jne NO0
+     78	    0041  0E								 push cs
+     79	    0042  58								 pop ax
+     80	    0043  2E: A3 0120r							 mov cs:DDCS,ax
+     81	    0047  1E								 push ds
+     82	    0048  58								 pop ax
+     83	    0049  2E: A3 011Cr							 mov cs:DGROUP@,ax
+     84	    004D  2E: A3 011Er							 mov cs:DDDS,ax
+     85	    0051  2E: A1 011Cr		 NO0:					 mov ax,cs:DGROUP@
+     86	    0055  50								 push ax
+     87	    0056  1F								 pop  ds
+     88	    0057  2E: A1 0014r							 mov ax,cs:rh_seg
+     89	    005B  8E C0								 mov es,ax
+     90	    005D  2E: 8B 1E 0012r						 mov bx,cs:rh_ofs
+     91	    0062  26: 8A 47 02							 mov al,es:[bx]+2
+     92	    0066  D0 C0								 rol al,1
+     93	    0068  BF 008Cr							 lea di,cmdtab
+     94	    006B  B4 00								 mov ah,0
+     95	    006D  03 F8								 add di,ax
+     96	    006F  FF 15								 call word ptr[di]
+     97	    0071  FA								 cli
+     98	    0072  2E: 8E 16 0018r						 mov ss,cs:stack_seg
+     99	    0077  2E: 8B 26 0016r						 mov sp,cs:stack_ptr
+    100	    007C  FB								 sti
+    101										 .386
+    102	    007D  66| 5E							 pop esi
+    103	    007F  66| 5F							 pop edi
+    104	    0081  66| 5A							 pop edx
+    105	    0083  66| 59							 pop ecx
+    106	    0085  66| 5B							 pop ebx
+    107	    0087  66| 58							 pop eax
+    108	    0089  07								 pop es
+    109	    008A  1F								 pop ds
+    110										 .286
+    111	    008B  CB								 ret
+    112										 EXTRN _init:near
+    113										 EXTRN _mediacheck:near
+    114										 EXTRN _getbpb:near
+Turbo Assembler	 Version 3.1	    09/01/97 02:46:36	    Page 3
+drv.asm
+
+
+
+    115																    +
+    116					 EXTRN _ioctlinput:near
+    117										 EXTRN _input:near
+    118										 EXTRN _ndinput:near
+    119										 EXTRN _inputstatus:near
+    120										 EXTRN _inputflush:near
+    121										 EXTRN _output:near
+    122										 EXTRN _outputverify:near
+    123																    +
+    124					 EXTRN _outputstatus:near
+    125										 EXTRN _outputflush:near
+    126										 EXTRN _ioctloutput:near
+    127										 EXTRN _deviceopen:near
+    128										 EXTRN _deviceclose:near
+    129										 EXTRN _removeable:near
+    130										 EXTRN _outputbusy:near
+    131										 EXTRN _badcommand:near
+    132										 EXTRN _generioctl:near
+    133										 EXTRN _getdevice:near
+    134										 EXTRN _ioctlquery:near
+    135										 EXTRN _removeable:near
+    136
+    137										 EXTRN _readlong:near
+    138										 EXTRN _readlongprefetch:near
+    139										 EXTRN _seek:near
+    140										 EXTRN _play:near
+    141										 EXTRN _stopplay:near
+    142	    008C			 CMDTAB		label word
+    143	    008C  0000e								 dw DGROUP:_init	 ;0
+    144	    008E  0000e								 dw DGROUP:_mediacheck	       ;1
+    145	    0090  0000e								 dw DGROUP:_getbpb	   ;2
+    146	    0092  0000e								 dw DGROUP:_ioctlinput	      ;3
+    147	    0094  0000e								 dw DGROUP:_input    ;4
+    148	    0096  0000e								 dw DGROUP:_ndinput	   ;5
+    149	    0098  0000e								 dw DGROUP:_inputstatus	     ;6
+    150	    009A  0000e								 dw DGROUP:_inputflush	;7
+    151	    009C  0000e								 dw DGROUP:_output   ;8
+    152	    009E  0000e								 dw DGROUP:_outputverify       ;9
+    153	    00A0  0000e								 dw DGROUP:_outputstatus ;a
+    154	    00A2  0000e								 dw DGROUP:_outputflush	;b
+    155	    00A4  0000e								 dw DGROUP:_ioctlinput	;c
+    156	    00A6  0000e								 dw DGROUP:_deviceopen	 ;d
+    157	    00A8  0000e								 dw DGROUP:_deviceclose	  ;e
+    158	    00AA  0000e														    +
+    159					 dw DGROUP:_removeable	;f
+    160	    00AC  0000e								 dw DGROUP:_outputbusy	 ;10
+    161	    00AE  0000e								 dw DGROUP:_badcommand	;11
+    162	    00B0  0000e								 dw DGROUP:_badcommand	 ;12
+    163	    00B2  0000e								 dw DGROUP:_getdevice	;13
+    164	    00B4  0000e								 dw DGROUP:_ioctlquery	  ;14
+    165	    00B6			 exit:
+    166	    00B6			 _interrupt	endp
+    167	    00B6			 _TEXT		ends
+    168							end
+Turbo Assembler	 Version 3.1	    09/01/97 02:46:36	    Page 4
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "09/01/97"
+??FILENAME			  Text	 "drv	  "
+??TIME				  Text	 "02:46:35"
+??VERSION			  Number 030A
+@CPU				  Text	 0707H
+@CURSEG				  Text	 _TEXT
+@FILENAME			  Text	 DRV
+@WORDSIZE			  Text	 2
+ATTRIBUTE			  Word	 _DATA:0004
+CMDTAB				  Word	 _TEXT:008C
+DDCS				  Word	 _DATA:0120
+DDDS				  Word	 _DATA:011E
+DEV_NAME			  Byte	 _DATA:000A
+DGROUP@				  Word	 _DATA:011C
+EXIT				  Near	 _TEXT:00B6
+INTERRUPT			  Word	 _DATA:0008
+NEWSTACK			  Byte	 _DATA:001A
+NEWSTACKTOP			  Word	 _DATA:011A
+NEXT_DEV			  Dword	 _DATA:0000
+NO0				  Near	 _TEXT:0051
+RH_OFS				  Word	 _DATA:0012
+RH_SEG				  Word	 _DATA:0014
+STACK_PTR			  Word	 _DATA:0016
+STACK_SEG			  Word	 _DATA:0018
+STRATEGY			  Word	 _DATA:0006
+_BADCOMMAND			  Near	 _TEXT:---- Extern
+_DEVICECLOSE			  Near	 _TEXT:---- Extern
+_DEVICEHEADER			  Word	 _DATA:0000
+_DEVICEOPEN			  Near	 _TEXT:---- Extern
+_ERRNO				  Dword	 _DATA:0122
+_GENERIOCTL			  Near	 _TEXT:---- Extern
+_GETBPB				  Near	 _TEXT:---- Extern
+_GETDEVICE			  Near	 _TEXT:---- Extern
+_INIT				  Near	 _TEXT:---- Extern
+_INPUT				  Near	 _TEXT:---- Extern
+_INPUTFLUSH			  Near	 _TEXT:---- Extern
+_INPUTSTATUS			  Near	 _TEXT:---- Extern
+_INTERRUPT			  Far	 _TEXT:000B
+_IOCTLINPUT			  Near	 _TEXT:---- Extern
+_IOCTLOUTPUT			  Near	 _TEXT:---- Extern
+_IOCTLQUERY			  Near	 _TEXT:---- Extern
+_MAIN				  Word	 _DATA:011A
+_MEDIACHECK			  Near	 _TEXT:---- Extern
+_NDINPUT			  Near	 _TEXT:---- Extern
+_OUTPUT				  Near	 _TEXT:---- Extern
+_OUTPUTBUSY			  Near	 _TEXT:---- Extern
+_OUTPUTFLUSH			  Near	 _TEXT:---- Extern
+_OUTPUTSTATUS			  Near	 _TEXT:---- Extern
+_OUTPUTVERIFY			  Near	 _TEXT:---- Extern
+_PLAY				  Near	 _TEXT:---- Extern
+_READLONG			  Near	 _TEXT:---- Extern
+_READLONGPREFETCH		  Near	 _TEXT:---- Extern
+_REMOVEABLE			  Near	 _TEXT:---- Extern
+_RHPTR				  Number _DATA:0012
+Turbo Assembler	 Version 3.1	    09/01/97 02:46:36	    Page 5
+Symbol Table
+
+
+
+_SEEK				  Near	 _TEXT:---- Extern
+_STOPPLAY			  Near	 _TEXT:---- Extern
+_STRATEGY			  Far	 _TEXT:0000
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  CONST				  16  0000 Word	  Public  CONST
+  _BSS				  16  0000 Word	  Public  BSS
+  _DATA				  16  0126 Word	  Public  DATA
+  _TEXT				  16  00B6 Word	  Public  CODE
+

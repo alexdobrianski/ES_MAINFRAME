@@ -1,0 +1,105 @@
+//CFESLI JOB '2:5030/269.12','fidonet',CLASS=C,MSGCLASS=R,TIME=1440
+// EXEC ASMFC
+//ASM.SYSPRINT DD SYSOUT=R
+CONVFILE CSECT                                                          CFE00010
+         STM   R14,R12,12(R13)     COXPAHàTú PEÉàCTPõ                   CFE00020
+         USING CONVFILE,R15        (R15)------>*                        CFE00030
+         B     START               ..                                   CFE00040
+         DC    AL1(NOTEL)          ..                                   CFE00050
+NOTE     DC    C'(c) ROST, KOHBEPTEP îAâãOB Ñãü ECãà'                   CFE00060
+NOTEL    EQU   *-NOTE              ..                                   CFE00070
+START    DS    0H                  ..                                   CFE00080
+         LR    R12,R15             ..                                   CFE00090
+         DROP  R15                 (R15)<------*                        CFE00100
+         USING CONVFILE,R12        (R12)------>*                        CFE00110
+         LA    R3,SA               (R3)  --> CURR.SA                    CFE00120
+         ST    R13,4(R3)           CURR.SA --> PREV.SA                  CFE00130
+         ST    R3,8(R13)           PREV.SA --> CURR.SA                  CFE00140
+         LR    R13,R3              (R13) --> CURR.SA                    CFE00150
+BLKSIZE  EQU   6,0,C'#'                                                 CFE00160
+PTBUFI   EQU   7,0,C'#'                                                 CFE00170
+PTBUFO   EQU   8,0,C'#'                                                 CFE00180
+PTAREA   EQU   9,0,C'#'                                                 CFE00190
+PTDCB    EQU   10,0,C'#'                                                CFE00200
+*                                                                       CFE00210
+         LA    PTDCB,FROM                                               CFE00220
+         USING IHADCB,PTDCB                                             CFE00230
+         OPEN  (FROM,(INPUT),TO,(OUTPUT))                               CFE00240
+         USING IHADCB,PTDCB                                             CFE00250
+         LA    PTDCB,TO                                                 CFE00260
+         TM    DCBOFLGS,X'10'      OPEN áABEPòàãOCú ìCèEòHO ?           CFE00270
+         BNO   NOTFILE1            HET,                                 CFE00280
+         LA    PTDCB,FROM                                               CFE00290
+         TM    DCBOFLGS,X'10'      OPEN áABEPòàãOCú ìCèEòHO ?           CFE00300
+         BNO   NOTFILE2            HET,                                 CFE00310
+LL01     GETMAIN R,LV=32768,SP=1                                        CFE00320
+LL02     LR    PTAREA,R1                                                CFE00330
+         USING IOBUF,PTAREA        (PTARAE)------>*                     CFE00340
+         LA    PTBUFO,RCDSIZE                                           CFE00350
+         LA    PTBUFI,RCDDATA                                           CFE00360
+*                                                                       CFE00370
+LOOP     DS    0H                                                       CFE00380
+         READ  ECB1,SF,FROM,(PTBUFI),'S'                                CFE00390
+         CHECK ECB1                                                     CFE00400
+         LH    BLKSIZE,DCBLRECL                                         CFE00410
+         STH   BLKSIZE,RCDSIZE                                          CFE00420
+         LA    BLKSIZE,2(BLKSIZE)       L'ÑAHHõX + L'ÑECKPàèTOP         CFE00430
+         WRITE ECB2,SF,TO,(PTBUFO),(BLKSIZE)                            CFE00440
+         CHECK ECB2                                                     CFE00450
+         B     LOOP                                                     CFE00460
+*                                                                       CFE00470
+EOF      DS 0H                                                          CFE00480
+         CLOSE (FROM,,TO)                                               CFE00490
+*        FREEMAIN R,LV=32768,SP=1,A=(PTAREA)                            CFE00500
+         XR    R15,R15                                                  CFE00510
+         L     13,4(13)                                                 CFE00520
+         L     R14,12(R13)                                              CFE00530
+         LM    R0,R12,20(R13)                                           CFE00540
+         BR    R14                                                      CFE00550
+*                                                                       CFE00560
+SYNAD    DS   0H                                                        CFE00570
+         ABEND 6900                                                     CFE00580
+NOTCORE  DS    0H                                                       CFE00590
+         ABEND 6100         HET, ABOCT                                  CFE00600
+NOTFILE1 DS    0H                                                       CFE00610
+         ABEND 6601         HET, ABOCT                                  CFE00620
+*                                                                       CFE00630
+NOTFILE2 DS    0H                                                       CFE00640
+         ABEND 6602         HET, ABOCT                                  CFE00650
+*                                                                       CFE00660
+         LTORG ,                                                        CFE00670
+*                                                                       CFE00680
+SA       DS    18F                                                      CFE00690
+*                                                                       CFE00700
+FROM     DCB   DDNAME=FROM,DSORG=PS,MACRF=(R),                         +CFE00710
+               RECFM=U,BLKSIZE=32760,LRECL=0,                          +CFE00720
+               BUFNO=0,SYNAD=SYNAD,EODAD=EOF                            CFE00730
+*                                                                       CFE00740
+TO       DCB   DDNAME=TO,DSORG=PS,MACRF=(W),                           +CFE00750
+               RECFM=U,BLKSIZE=32760,LRECL=0                            CFE00760
+*                                                                       CFE00770
+R0       EQU   0,0,C'#'                                                 CFE00780
+R1       EQU   1,0,C'#'                                                 CFE00790
+R2       EQU   2,0,C'#'                                                 CFE00800
+R3       EQU   3,0,C'#'                                                 CFE00810
+R4       EQU   4,0,C'#'                                                 CFE00820
+R5       EQU   5,0,C'#'                                                 CFE00830
+R6       EQU   6,0,C'#'                                                 CFE00840
+R7       EQU   7,0,C'#'                                                 CFE00850
+R8       EQU   8,0,C'#'                                                 CFE00860
+R9       EQU   9,0,C'#'                                                 CFE00870
+R10      EQU   10,0,C'#'                                                CFE00880
+R11      EQU   11,0,C'#'                                                CFE00890
+R12      EQU   12,0,C'#'                                                CFE00900
+R13      EQU   13,0,C'#'                                                CFE00910
+R14      EQU   14,0,C'#'                                                CFE00920
+R15      EQU   15,0,C'#'                                                CFE00930
+*                                                                       CFE00940
+IOBUF    DSECT                                                          CFE00950
+RCDSIZE  DS       H'0'                                                  CFE00960
+RCDDATA  DS       (32760)X'00'                                          CFE00970
+*                                                                       CFE00980
+         DCBD DSORG=PS,DEVD=DA                                          CFE00990
+*                                                                       CFE01000
+         END                                                            CFE01010
+//

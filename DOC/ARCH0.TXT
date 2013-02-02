@@ -1,0 +1,44 @@
+We make your small system work better
+Questions About the Mainframe Emulation Product
+{What response does it give to a STIDP instruction?
+{How does it deviate in behaviour from the description
+ of that model found in the applicable IBM 
+
+{What execution modes are available?
+{Basic Control (360)?
+{Extended Control (370)?
+
+{ESA?
+{For each of these modes, what limitations are there from IBM
+\rquote s published specifications?
+{Do you emulate channels?  
+what deviations and limitations does this emulation have?
+{Do you emulate expanded store?
+{Do you emulate dataspaces?
+{Is the emulated real memory lkmited to the size of native physical memory,
+or can it be virtualized?
+{Do you emulate disks at the device level,
+ the driver level, or file level?
+{What models of IBM disks do you emulate?
+{What are the space overheads on the native disk in this emulation?
+{Do you load the operating system by IPL emulation,
+ or by an external loader?
+{How do you prepare the emulated disk for the first IPL, 
+i.e. what is the operating system install procedure?
+{What operating systems and releases have the emulator run successfully:
+{DOS-like?
+{VM-like?
+{MVS-like?
+{Other? 
+{Which of these operating systems do you believe to be royalty-free?
+{Which of these operating systems have you discussed licensing with its vendor?
+{What special hardware or software requirements are there to run the emulator?
+What is the minimum platform to run the emulator on?
+{What is a \ldblquote realistic\rdblquote  platform to run it on?
+{What is the effective speed of the emulated machine on the 
+\ldblquote realistic\rdblquote  qlatform?
+{Is the floating-point hardware emulated on native fmoating point hardware,
+ or with integer arithmetic?
+{Does the floating-point emulation reproduce exactly the results of the
+ emulated model, or are differences introduced due 
+to the native platform\rquote s resources?

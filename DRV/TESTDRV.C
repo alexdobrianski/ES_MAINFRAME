@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <io.h>
+#include <string.h>
+#include <fcntl.h>
+#include <sys\stat.h>
+void main()
+{
+ int iFile;
+ char ttt[200]  ={"Xtext11111111111111111111111111111"};
+ char ttt2[200] ={"2222222222222222222222222222"};
+ unsigned long ADr;
+ printf("\nstring(init)=%s",ttt2);
+ iFile=open("$NETDSPL",O_BINARY|O_RDONLY);
+ if (iFile>0)
+ {
+
+  ttt2[0]=2;
+  *((int*)&ttt2[1])=100;
+  *((int*)&ttt2[3])=20;
+
+  read(iFile,ttt2,40);
+  printf("\nstring in mem=%s\nEnter new string:",ttt2);
+
+  gets(ttt);
+
+  ttt[0]=1;
+  *((int*)&ttt[1])=100;
+  *((int*)&ttt[3])=20;
+
+  read(iFile,ttt,40);
+
+  ttt2[0]=2;
+  *((int*)&ttt2[1])=100;
+  *((int*)&ttt2[3])=20;
+
+  read(iFile,ttt2,40);
+  printf("\nstring in mem now=%s",ttt2);
+
+  ttt[0]=4;
+  read(iFile,ttt,20);
+  printf("\nstring in mem (read10)=%s",ttt);
+
+
+  gets(ttt);
+  ttt[0]=3;
+  read(iFile,ttt,20);
+
+  ttt[0]=4;
+  read(iFile,ttt,20);
+  printf("\nstring in mem (read10)=%s",ttt);
+
+  ttt[0]=5;
+  read(iFile,ttt,20);
+  ADr = *(unsigned long*)ttt;
+  printf("\nadr = %lx ",ADr);
+
+
+  close(iFile);
+ }
+ else printf("\file not found");
+}

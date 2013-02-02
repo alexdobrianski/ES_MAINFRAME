@@ -1,0 +1,498 @@
+
+
+                     Contents
+
+       Introduction
+
+    1. Software installation
+
+    2. The parameter's file INIT360.PRM
+
+    3. Working files
+
+    4. Starting of the emulator and it's options
+       4.a Control panel emulation
+       4.b Comsole emulation
+       4.c Display (terminal) emulation
+
+
+    5. Software and data transferration from IBM360 into emulator
+       5.a Disk preperation
+       5.b Data transforation from disks
+       5.c Data transforation from tapes
+       5.d Prefix generation program (for IBM360)
+       5.e Transformation from binary file into tape emulation file
+           format
+
+              Introduction
+
+         IBM360 Emulator was designed  for simulation of a  IBM360/370
+    mainframe on IBMPC 386/486 computer.  Herein word "simulation"  is
+    meaning - "FULL SOFTWARE EMULATION" of mainframe computers.
+
+         Source code was designed to  use on 386/486 computer but  has
+    preprocessor  mode  for  Kernigan  and  Richi compatables compiler
+    (UNIX for example).
+
+         Version 1.5 january 1995 has included:
+
+         CPU IBM360 - all commands;
+
+         CPU IBM370 - in  part;
+
+         Disks -  29MB (2314), 100MB, 200MB;
+
+         Types 2401,2415 etc.
+
+         Printer 1403 and reader 2501
+
+         Display subsystem
+
+         Console 1052
+
+         Disks and tapes has emulated by binary files with internal
+         structure like TM for tapes and AM for disks.
+
+         Displays has emulated by the CON: device of IBMPC and by
+    NETBIOS in LAN.
+
+         Printer and reader has emulated by sequential files.
+
+         Bugs and defference in emulator and IBM360/370:
+
+         Some errors in DTA in IBM370 mode.
+
+         Float point has relised as double float point.
+
+         Timer is working in takt with commantds, not independently.
+
+         Comparator has not realased.
+
+         Clock has 10% unsinxronisation with PC clock.
+
+         Speed has tested on 486DX2 66MHz computer - has achived
+    300.000 op/sec.
+
+
+                  1. Software installation
+
+        Create any directory and copy files DST360P.EXE and
+    INIT360.PRM into this directory. For instance:
+
+    C:>md 360<ENTER>
+    C:>cd 360<ENTER>
+    C:\360>copy a:*.* c:\360\*.*<ENTER>  <--in case of driver A:
+
+    After copying emulator is ready to start. You can start it by:
+
+    C:\360>dst360p
+
+                2. The parameter's file INIT360.PRM
+
+    File INIT360.PRM consist information about devices of mainfraim
+    computer.
+
+    For example:
+
+==========================BEGIN OF THE FILE=====================
+SERIAL NUMBER=SDRIT1OEGY0
+DATE OF REGISTRATION=Thu Sep 15 11:27:01 1994
+REGISTRATION REASON:NOTEBOOK EVEREX DSSOFT
+*************************************************************
+LN=ead404990230322f31392f383800fc000006a1f800306934
+ALL LINES BEFOR THIS LINE CAN NOT BE CHANGED WITH OUT PERMISSION
+ANY CHANGING IN ITS CAN BE RESULT OF UNPREDICTED SITUATION IN EMULATOR
+*************************************************************
+IO=01F,CONS,XXX.01F
+IO=00C,RDR ,LISTCOPY.00C
+IO=00A,rdr ,IPL.000
+IO=00E,PRN ,PRINTER.OUT
+*************************************************************
+*2311(7.25MB) CYL=203 TRK=9 BYTE=3625 MAX=4000
+*5061(29MB)   CYL=203 TRK=20 BYTE=7294 MAX=8000
+*    (200MB)  CYL=818 TRK=20 BYTE=13030 MAX=14000
+*************************************************************
+IO=232,DASD/CYL=203/TRK=20/BYTE=7294/MAX=8000,C:\DISK\MVT617.DSK
+*IO=284,TAPE,C:\TAPE\CBC1.TAP
+IO=0C0,7920,XXX.0C0
+*IO=0C1,7920,XXX.0C1
+IO=00D,PRN ,XXX.00D
+=================================END OF THE FILE================
+
+         First nine lines can not be changed with out special
+    permission.
+
+    All another lines are comments (with * in first position) or a
+    device definitions. Format of device definition is:
+
+    IO=xxx,yyyy[disk-parametres],file-name
+
+    Where:
+==>>xxx      - Unit adress (three letters)
+==>>yyyy     - Unit type (fore letters):
+
+        CONS - comsole typewriter 1052. ATTENTION: console must
+    be first device in the device list.
+
+        RDR  - reader 2502/2520/1442 etc.
+               String from input file expand to 80 bytes (or
+               cuted to 80 bytes) translated into EBCDIC and
+               passed to emulator as a perforation card.
+
+        rdr  - the same unit but with out translation into EBCDIC.
+               File must be in EBCDIC code and with 80 byte length of
+               the string. This type of unit is usefull for
+               System Independed Unilities.
+
+
+        PRN  - varios printers.
+               Strings translated from EBCDIC into  ASCII and puted
+               into output file.
+
+        prn  - the same printers but without translation from EBCDIC
+               into ASCII
+
+        7920 -  display
+
+        TAPE -  tapes  2401/2415 etc.
+
+
+        DASD - disks
+
+
+==>>[disk-parametres] - parameters of DASD  unit
+                        All parameters started with simbol '/':
+
+      /CYL=NNN     - max capacity of DASD cylinders
+      /TRK=NNN     - max capacity of DASD tracks
+      /BYTE=NNNN   - bytes on the track
+      /MAX=NNNN    - max byte on the track (including AM and etc.)
+
+    For different types of DASD:
+
+    ====================================================
+    DASD       capacity    CYL     TRK     BYTE   MAX
+    ====================================================
+    2311       7.25MB      203     10      3625  4000
+    2314/5061  29.MB       203     20      7296  8000
+    5067.02    100.MB      414     20     13030 14000
+    5067.--    200.MB      818     20     13030 14000
+    5063       317.MB     1024     30     13030 14000
+    ====================================================
+
+         As you see you can use defferent value of CYL TRK BYTE or
+    MAX. The main note /MAX must be more then 300 bytes of /BYTE
+    parametr.
+
+==>>file-name - the name of emulated unit file. All letters MUST BE
+                CAPITAL
+
+
+
+                      3. Working files
+
+
+     DS360MKD.EXE - a execute module for a creating a DASD unit file
+     DS360MKD.DSK - a module for a creating a DASD unit file
+     DS360MKD.C   - source code of a DS360MKD.EXE
+     DS360TAP.C   - source code of a convertor binary files(tape
+                    image) into TAPE file
+     DS360TAP.EXE - a execute module of a convertor
+     DST360P.EXE  - the IBM360  EMULATOR.
+     DST360P.HLP  - a help file
+     INIT360.PRM  - the parameters file
+     MEMORY       - an image of a IBM360 memory
+     STATUS       - internal variables
+     TYPE.284     - a status of a tape unit
+     XXX.01F      - a hardcopy of a console. A console hardcopy file
+                    every
+                    time appended. Recomendation: delete it when you
+                    does not needed hardcopy.
+     XXX.0C0      - a buffer of a dysplay
+     PRINTER.OUT  - an output printer file
+
+          4. Start of the IBM360 emulator and it's options
+
+    For start type the name of the module end press enter key:
+
+    C:\360>dst360p<ENTER>
+
+         Without parameters..
+                                 ----------------------
+                                 |          DST360P   |
+                     ----------  |                    |
+                     |  XMS   |  |   ---------------  |
+         MEMORY ---> |        |  |   |  CPU IBM360 | <------ STATUS
+                     | RAM360 |  |   _______________  |
+                     | 1024Š/ |  |                    |
+                     | XXXXK  |  |                    |
+                     ----------  |                    |
+         INIT360.PRM----------------> UNITs           |
+                                 |--------------------|
+                                 | DISK | TAPE | RDR  |
+                                 ----------------------
+                    -------------->         A       A
+                    |                       |       |
+           C:\DISK\MVT617.DSK               |       |
+                               C:\TAPE\TAPE1.TYP    |
+                                                    |
+                                                   LISTCOPY.00C
+
+
+         After starting, file INIT360.PRM will read.   The Emulator
+    initialize units, load into extended memory IBM360 RAM, load
+    registers and veriables from STATUS file and send a message on CON
+    device:
+
+
+=========================BEGIN OF THE THE MESSAGE=================
+INITIALISATION XMS:
+END-OFF-INITIALISATION XMS.
+
+ UNIT=01f  TYPE=C
+ UNIT=00c  TYPE=R
+ UNIT=00a  TYPE=r
+ UNIT=00e  TYPE=P
+ UNIT=232  TYPE=D  CYL=cb TRK=14 BYTE=7294 MAX=8000
+ UNIT=0c0  TYPE=7
+ UNIT=00d  TYPE=P
+
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³                                                                             ³
+³ Emulator               Ver.1.5                                              ³
+³                                                                             ³
+³                                                                             ³
+³  for AT/386 /486                                                     IBM360 ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³ CSW Û ± Û Û Û ± ± Û Û Û ± ± Û Û ± Û Û Û Û ± Û ± ± ± Û ± ± Û Û ± ± Û ± Û Û   ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³ PSW Û Û Û ± ± Û Û Û Û ± Û Û Û Û Û Û Û ± Û ± Û ± Û Û Û ± ± Û ± ± ± Û ± ± Û   ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³                                                       ÉÍ»ÉÍ»ÉÍ»      ÉÍÍÍ»  ³
+³ SERIAL NUMBER=SDRIT1OEGY0               IPL Adress    ºXººXººXº      ºIPLº  ³
+³                                                       ÈÍ¼ÈÍ¼ÈÍ¼      ÈÍÍÍ¼  ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+ CONTROL PANEL (EXIT: ESC)
+
+ SWITCH TO TERMINAL OR CONSOLE
+==> F1 01f C 00         XXX.01F
+==> F2 0c0 7 00         XXX.0C0
+ FN - SWITCH TO, TAB - CONTROL PANEL, (ESC - EXIT)
+========================END OF THE MESSAGE===========================
+
+         Thus, after a  start you are  in a mode  of a switching  to a
+    terminal, to a cosole or to a control panel.  By pressing ESC  you
+    are going into a control panel mode:
+
+
+========================BEGIN OF THE MESSAGE=========================
+CONTROL PANEL (EXIT: ESC)
+========================END OF THE  MESSAGE==========================
+
+         Switching betwing a CONSOLE, a CONTROL PANEL and TERMINALs is
+    under herein rule and can be recognized by colors:
+    GREEN - displays; WHITE on BLACK - a control panel; BLACK on
+    WHITE - a console.
+
+    1.CONTROL PANEL -> F1 - HELP
+    |               -> - another mode of control panel
+    |       A   --> i  - LOAD IPL ---> 232<ENTER>-------------------|
+    |       |   --> F10 -switching to CONSOLE or terminals          |
+    V       |           |                                           |
+  ESC-Exit  |           |-->F1 [CONSOLE]---->ESC  EXIT    -----|    |
+            |           |        A     |---->TAB = REQUEST--|  |    |
+            |           |        |--------------------------|  |    |
+            |           |                                      |    |
+            |           |-->F2 [DISPLAY ]------>ESC  EXIT  ----|    |
+            |                                                  |    |
+            |-------------------------------------------------------|
+
+
+    Exit from the Emulator is only from CONTROL PANEL mode:
+
+========================BEGIN OF THE MESSAGE=========================
+Pressed-ESC: EXIT request
+Are you sure? (Y/N)<Y>
+ Wait Please
+
+                  PRESSED ESC - EXIT REQUEST
+STORING XMS:
+END-OFF-STORING XMS.
+========================END OF THE MESSAGE===========================
+
+         Sametimes you need initialize RAM and reset IBM360 processor.
+    For this ability you can start the Emulator with one parameter:
+
+    C:\360>dst360p i<ENTER>
+
+         In  this  case  you  can  delete  files  STATUS  and  MEMORY.
+    Parameter i recreate both files.
+
+
+
+
+                      4.a Control Panel emulation
+
+         In Control Panel Mode any keys pressing is enterpreted as a
+    command. Permissible commands:
+
+     ESC   - close RAM,    units and exit from the Emulator
+     Q     - close RAM and exit without storeing  unit status
+     I     - IPL
+     D     - display RAM
+     X     - display RAM in Hex format
+     R     - display registers and PSW
+     TAB   - REQUEST on console (CONSOLE MUST BE FIRST DEVICE IN A
+             DEVICE LIST IN INIT360.PRM)
+     F10   - switch to terminal or console
+     B     - display float point registers
+     W     - store word in RAM
+     S     - stop trace
+     <ENTER>- in trace mode execute next comand
+     T     - tern on trace
+     F     - forward to next trace command
+     F9    - generate interrupt (READY)
+     F5    - display status of units
+     F4    - tern off status of units (opposit F5)
+
+    Control panel mode is owerlapped Console mode: all string of
+    console output will displayed on screen. Besides there is command
+    <TAB> - for REQUEST emulation on console.
+
+    Control Panel Mode can be recognized by color - string is WHITE on
+    BLACK bakground.
+
+               4.b Console emulation
+
+         Into Console emulation mode you can switch from Control panel
+    by pressing F10 key and choiceing needed unit.
+
+         After switching on the screen you can see preveouse  hardcopy
+    contents.
+
+         You can see that the color was chenged- to BLACK on WHITE.
+
+         To emulate REQUEST use TAB key.
+
+         For exit Console Mode press ESC.
+
+                     4.c Display (terminal) emulation
+
+         Switching  to  Display  (terminal)  mode  is  same  that   is
+    switching into Console Mode-  press F10 and after  choiseing unit.
+    Screen will change color to GREEN.
+
+         ESC - exit from Display (Terminal) emulation.
+
+
+       5. Software's transferring from IBM360 into emulator
+
+        Software transferring can be executed by tapes. By using tapes
+    you can unload DASD or library into a sequential file on a
+    tape. After unloading you can transfer binary file into 386/486
+    computer and restore it on a emulated DASD. Befor this operation
+    you need to prepare emulated disk.
+
+       5.a Disk preperation
+
+
+      You can create emulated DASD file by DS360MKD programm. The
+    DS360MKD programm used file DS360MKD.DSK as an example of 0 record
+    of DASD. For a starting type:
+
+
+ ds360MKD <FILE-OUT> <CYL> <TRK> <BYTE> <MAX_BYTE> <VOL-NAME 6 digits>
+
+    Where:
+
+    <FILE-OUT>  - Emulated DASD file name
+    <CYL>       - Numbers of DASD cylinders
+    <TRK>       - Numbers of DASD tracks
+    <BYTE>      - Capacity of the track
+    <MAX_BYTE>  - Maximum bytes on the track
+    <VOL-NAME>  - Volume name
+
+
+
+
+                    5.b Transforation of the DASD
+
+         Dump DASD by A System Independed Utility.  A sequential  file
+    after this operation did not consist an information about  records
+    lenght.  Therefore add to an every record a special prefix with  a
+    record length.
+
+         Only  file  with  this  prefixes  can  be  move  to  personal
+    computer.
+
+         Next  step  is  to  convert  file  into  a Tape emilated file
+    format.  Source code of this programm is DS360TAP.C:
+
+    DS360TAP <in-file> <out-file>
+
+     INPUT BLKSIZE (5 digits!!!!):11111
+     INPUT LRECL (5 digits!!!!):11111
+     INPUT RECFM (VS)-LOAD LIB (FB)-SOURCE:VS
+     INPUT TAPE LABEL (FILE ONLY==2) :NL
+
+         Programm  create  output  file  as  ekvivalent  of  tape   on
+    IBM360/370.  You can choise tape with NL or SL. Any way file  will
+    be as a LABEL=2.
+
+         At  last  you  can  start  under  emulator  the  same  System
+    Independed Utility and restore file from tape.
+
+                5.c Transfering file by tape.
+
+         You  have  the  same  situation  as  with  a  DASD  when  you
+    transferring files  by another  utility.  File  is sequential  but
+    without records  length.  That  is why  you need  to add an length
+    prefix befor any record.  Only file with this prefixes can be move
+    on PC. You can use the same programm DS360TAP to convert the  file
+    with prefixes into a tape emulated file format.
+
+    DS360TAP <in-file> <out-file>
+
+     INPUT BLKSIZE (5 digits!!!!):03604  <-from tape list
+     INPUT LRECL (5 digits!!!!):03600  <--from tape list
+                              =====
+     INPUT RECFM (VS)-LOAD LIB (FB)-SOURCE:FB <--from tape list
+     INPUT TAPE LABEL (FILE ONLY==2) (SL) (NL):SL
+
+    As a risult created file with tape emulated file format with
+    volume name 111111 and file with the name A with LABEL=1
+
+
+
+       5.c Record length prefix programm on IBM360
+
+      You can write this programm by different ways. Common rules you
+    can se in this example:
+
+    Source file:
+    <rec-1-len=200>
+    <rec-2-len-1200>
+    <rec-3-len-333>
+    <TM>
+
+
+    Destination file:
+    <Prefix=200><rec-1-len=200>
+    <Prefix=1200><rec-2-len-1200>
+    <Prefix=333><rec-3-len-333>
+    <TM>
+
+    All prefixes must be 2-bytes
+
+
+
+               5.d Converting from binary file into a tape
+                          emulated file format
+
+    Programm make TM, convert records and add special information to
+    correct tape emulation.
+
+    Source code is in DS360TAP.C file.
+
+

@@ -1,0 +1,176 @@
+                                                                                                                                    
+                                                                                                                                    
+//RDR      JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC RDR                                                                                                                 
+XXIEFPROC  EXEC PGM=IEFIRC,                    READER FIRST LOAD       ,00010000                                                    
+XX       REGION=54K,                          READER BASIC REGION      ,00020060                                                    
+XX       PARM='80103005001024905010SYSDA   E00001A'   DEFAULT OPTIONS  ,00030000                                                    
+XX*            BPPTTTOOOMMMIIICCCRLSSSSSSSSAAAAEFH   PARM FIELD         00040000                                                    
+***       B    PROGRAMMER NAME AND ACCOUNT NUMBER NOT NEEDED            00050000                                                    
+***            PROGRAM CAN BE ROLLED OUT                                00060000                                                    
+***       PP   PRIORITY=01                                              00070000                                                    
+***       TTT  JOB STEP INTERVAL=30 MINUTES                             00080000                                                    
+***       OOO  PRIMARY SYSOUT SPACE=50 TRACKS                           00090000                                                    
+***       MMM  SECONDARY SYSOUT SPACE=10 TRACKS                         00100000                                                    
+***       III  READER/INTERPRETER DISPATCHING PRIORITY=249              00110000                                                    
+***       CCC  JOB STEP DEFAULT REGION=50K                              00120060                                                    
+***       R    DISPLAY AND EXECUTE COMMANDS=1                           00130000                                                    
+***       L    BYPASS LABEL OPTION=0                                    00140000                                                    
+***       SSSSSSSS  SYSOUT UNIT NAME=SYSDA                              00150000                                                    
+***       AAAA COMMAND AUTHORITY FOR MCS=E000-ALL COMMANDS              00160000                                                    
+***            MUST BE AUTHORIZED                                       00170000                                                    
+***       EF   JCL AND ALLOCATION MESSAGE LEVEL DEFAULTS=01             00180000                                                    
+***       H    DEFAULT MSGCLASS                                         00190000                                                    
+//IEFPROC.IEFRDER DD UNIT=00C                                                                                                       
+X/IEFRDER   DD  UNIT=5010,                       INPUT TAPE            ,00200000                                                    
+XX             LABEL=(,NL),                      UNLABELED             ,00210000                                                    
+XX             VOLUME=SER=SYSIN,                 VOLUME NAME           ,00220000                                                    
+XX             DISP=OLD,                         OLD DATA SET          ,00230000                                                    
+XX             DCB=(BLKSIZE=80,LRECL=80,BUFL=80,BUFNO=1,RECFM=F)        00240000                                                    
+XXIEFPDSI   DD  DSNAME=SYS1.PROCLIB,DISP=SHR     PROCEDURE LIBRARY      00250000                                                    
+XXIEFDATA   DD  UNIT=SYSDA,                      SPOOL DEVICE          ,00260000                                                    
+XX             SPACE=(80,(500,500),RLSE,CONTIG),     AMOUNT            ,00270000                                                    
+XX          DCB=(BLKSIZE=80,LRECL=80,BUFL=80,BUFNO=2,RECFM=F,DSORG=PS)  00280000                                                    
+                                                                                                                                    
+                                                                                                                                    
+//MYFIRST JOB MSGLEVEL=1                                                                                                            
+// EXEC PL1LFCLG                                                                                                                    
+XXPL1L   EXEC  PGM=IEMAA,PARM='LOAD,NODECK,MAP,LIST',REGION=52K         00010000                                                    
+XXSYSPRINT DD  SYSOUT=A                                                 00020000                                                    
+XXSYSLIN   DD  DSNAME=&&LOADSET,DISP=(MOD,PASS),UNIT=SYSSQ,            *00030000                                                    
+XX             SPACE=(80,(250,100))                                     00040000                                                    
+XXSYSUT3  DD  DSNAME=&&SYSUT3,UNIT=SYSDA,SPACE=(80,(250,250)),         *00050000                                                    
+XX             DCB=BLKSIZE=80                                           00060000                                                    
+XXSYSUT1   DD  DSNAME=&&SYSUT1,UNIT=SYSDA,SPACE=(1024,(60,60),,CONTIG),*00070000                                                    
+XX             SEP=(SYSUT3,SYSLIN),DCB=BLKSIZE=1024                     00080000                                                    
+//PL1L.SYSIN DD *                                                                                                                   
+IEF236I ALLOC. FOR MYFIRST  PL1L                                                                                                    
+IEF237I 132   ALLOCATED TO SYSPRINT                                                                                                 
+IEF237I 132   ALLOCATED TO SYSLIN                                                                                                   
+IEF237I 132   ALLOCATED TO SYSUT3                                                                                                   
+IEF237I 132   ALLOCATED TO SYSUT1                                                                                                   
+IEF237I 132   ALLOCATED TO SYSIN                                                                                                    
+                                                                                                                                    
+                                                                                                                                    
+                                                                                                            PAGE      1             
+OC EC  PL1  58-02.79                                   DATE 10.12.97 (344)                                                          
+PL1 -- COMPILER OPTIONS SPECIFIED ARE AS FOLLOWS -                                                                                  
+     LOAD,NODECK,MAP,LIST                                                                                                           
+IEM3904I THE FOLLOWING STRING NOT IDENTIFIED AS A KEYWORD-  MAP                                                                     
+              MPD:PROCEDURE OPTIONS(MAIN);                                                                  PAGE      2             
+   STMT LEVEL NEST                                                                                                                  
+     1                  MPD:PROCEDURE OPTIONS(MAIN);                                                                                
+     2     1            P:/*GET LIST(R);*/                                                                                          
+                          A= 1.0000;                                                                                                
+     3     1              GOTO P;                                                                                                   
+     4     1              N=1;                                                                                                      
+     5     1              F= 1+R;                                                                                                   
+                          /*PUT LIST(R);*/                                                                                          
+     6     1            Q: A= A*F;                                                                                                  
+                           /*PUT LIST(N,A);*/                                                                                       
+     7     1               N=N+1;                                                                                                   
+                           /*IF N<20 THEN GOTO Q;                                                                                   
+                           ELSE GOTO P;*/                                                                                           
+     8     1             END MPD;                                                                                                   
+              MPD:PROCEDURE OPTIONS(MAIN);                                                                  PAGE      3             
+          STORAGE REQUIREMENTS.                                                                                                     
+          ----------------------                                                                                                    
+          THE STORAGE AREA FOR THE PROCEDURE LABELLED MPD IS 200 BYTES LONG.                                                        
+          THE PROGRAM CSECT IS NAMED MPD      AND IS 148 BYTES LONG.                                                                
+          THE STATIC  CSECT IS NAMED ****MPDA AND IS 75 BYTES LONG.                                                                 
+*STATISTICS*     SOURCE RECORDS =       13,PROG TEXT STMNTS =       08,OBJECT BYTES =      148                                      
+              MPD:PROCEDURE OPTIONS(MAIN);                                                                  PAGE      4             
+                          STATIC INTERNAL STORAGE MAP                                                                               
+000038  00000000              A..   MPD                                                                                             
+000030  00000000              A..   IHESAFA                                                                                         
+000040  4110000000000001      CONSTANTS                                                                                             
+000048  9C0F80                DED                                                                                                   
+              MPD:PROCEDURE OPTIONS(MAIN);                                                                  PAGE      5             
+  OBJECT LISTING                                                                                                                    
+                                                              * STATEMENT NUMBER  7                                                 
+* STATEMENT NUMBER  1                                         000078  92 07 D 063               MVI   99(13),X'07'                  
+                                                              00007C  48 E0 D 0A4               LH    14,N                          
+* PROCEDURE                             MPD                   000080  5A E0 B 044               A     14,C..04CC                    
+                                                              000084  40 E0 D 0A4               STH   14,N                          
+* REAL ENTRY                            MPD                                                                                         
+000000  47 F0 F 010               B     16(0,15)              * STATEMENT NUMBER  8                                                 
+000004                            DC    AL1(3)                000088  92 08 D 063               MVI   99(13),X'08'                  
+000005                            DC    C'MPD'                00008C  58 F0 B 030               L     15,A..IHESAFA                 
+000008  000000C8                  DC    F'200'                000090  05 EF                     BALR  14,15                         
+00000C  00000000                  DC    A(SI.)                                                                                      
+000010  90 EB D 00C               STM   14,11,12(13)          * END PROCEDURE                         MPD                           
+000014  58 B0 F 00C               L     11,12(0,15)                                             END                                 
+000018  58 00 F 008               L     0,8(0,15)                                                                                   
+00001C  58 F0 B 020               L     15,32(0,11)                                                                                 
+000020  05 EF                     BALR  14,15                                                                                       
+000022  05 A0                     BALR  10,0                                                                                        
+                                                                                                                                    
+* PROLOGUE BASE                                                                                                                     
+000024  41 90 D 0A8               LA    9,168(0,13)                                                                                 
+000028                    CL.5    EQU   *                                                                                           
+000028  50 DC 0 000               ST    13,PR..MPD(12)                                                                              
+00002C  92 00 D 062               MVI   98(13),X'00'                                                                                
+000030  92 01 D 063               MVI   99(13),X'01'                                                                                
+000034  92 C0 D 000               MVI   0(13),X'C0'                                                                                 
+000038  41 A0 A 018               LA    10,CL.3                                                                                     
+                                                                                                                                    
+* PROCEDURE BASE                                                                                                                    
+00003C                    CL.3    EQU   *                                                                                           
+                                                                                                                                    
+* APPARENT ENTRY                        MPD                                                                                         
+                                                                                                                                    
+* STATEMENT NUMBER  2                                                                                                               
+                                                                                                                                    
+* STATEMENT LABEL                       P                                                                                           
+00003C  92 02 D 063               MVI   99(13),X'02'                                                                                
+000040  D2 03 D 0A0 B 040         MVC   A(4),C..0400                                                                                
+                                                                                                                                    
+* STATEMENT NUMBER  3                                                                                                               
+000046  92 03 D 063               MVI   99(13),X'03'                                                                                
+00004A  47 F0 A 000               B     P                                                                                           
+                                                                                                                                    
+* STATEMENT NUMBER  4                                                                                                               
+00004E  92 04 D 063               MVI   99(13),X'04'                                                                                
+000052  D2 01 D 0A4 B 046         MVC   N(2),C..04EC+2                                                                              
+                                                                                                                                    
+* STATEMENT NUMBER  5                                                                                                               
+000058  92 05 D 063               MVI   99(13),X'05'                                                                                
+00005C  78 00 B 040               LE    0,C..0434                                                                                   
+000060  7A 00 D 098               AE    0,R                                                                                         
+000064  70 00 D 09C               STE   0,F                                                                                         
+                                                                                                                                    
+* STATEMENT NUMBER  6                                                                                                               
+                                                                                                                                    
+* STATEMENT LABEL                       Q                                                                                           
+000068  92 06 D 063               MVI   99(13),X'06'                                                                                
+00006C  78 00 D 0A0               LE    0,A                                                                                         
+000070  7C 00 D 09C               ME    0,F                                                                                         
+000074  70 00 D 0A0               STE   0,A                                                                                         
+              MPD:PROCEDURE OPTIONS(MAIN);                                                                  PAGE      6             
+    COMPILER DIAGNOSTICS.                                                                                                           
+                                                                                                                                    
+ WARNINGS.                                                                                                                          
+    IEM0764I          ONE OR MORE FIXED BINARY ITEMS OF PRECISION 15 OR LESS HAVE BEEN GIVEN HALFWORD STORAGE. THEY                 
+                      ARE FLAGGED '*********' IN THE XREF/ATR LIST.                                                                 
+                                                                                                                                    
+ END OF DIAGNOSTICS.                                                                                                                
+AUXILIARY STORAGE WILL NOT BE USED FOR DICTIONARY WHEN SIZE =  48K                                                                  
+COMPILE TIME        2.75 MINS                                                                                                       
+ELAPSED TIME        0.23 MINS                                                                                                       
+                                                                                                                                    
+                                                                                                                                    
+IEF142I - STEP WAS EXECUTED - COND CODE 0008                                                                                        
+IEF285I   SYS97344.T011247.SV000.MYFIRST.R0000001      SYSOUT                                                                       
+IEF285I   VOL SER NOS= MVT619.                                                                                                      
+IEF285I   SYS97344.T011247.RV000.MYFIRST.LOADSET       PASSED                                                                       
+IEF285I   VOL SER NOS= MVT619.                                                                                                      
+IEF285I   SYS97344.T011247.RV000.MYFIRST.SYSUT3        DELETED                                                                      
+IEF285I   VOL SER NOS= MVT619.                                                                                                      
+IEF285I   SYS97344.T011247.RV000.MYFIRST.SYSUT1        DELETED                                                                      
+IEF285I   VOL SER NOS= MVT619.                                                                                                      
+IEF285I   SYS97344.T011247.RV000.MYFIRST.S0000002      SYSIN                                                                        
+IEF285I   VOL SER NOS= MVT619.                                                                                                      
+IEF285I   SYS97344.T011247.RV000.MYFIRST.S0000002      DELETED                                                                      
+IEF285I   VOL SER NOS= MVT619.                                                                                                      
+IEF373I STEP /PL1L    / START 97344.0112                                                                                            
+IEF374I STEP /PL1L    / STOP  97344.0113 CPU   2MIN 53.39SEC MAIN  52K                                                              

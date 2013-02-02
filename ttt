@@ -1,0 +1,69 @@
+
+ INITIALISATION XMS:
+ END-OFF-INITIALISATION XMS.
+
+
+ UNIT=01f  TYPE=C 
+ UNIT=00c  TYPE=R 
+ UNIT=00a  TYPE=r 
+ UNIT=00e  TYPE=P 
+ UNIT=232  TYPE=D  CYL=cb TRK=14 BYTE=7294 MAX=8000
+ UNIT=284  TYPE=T 
+ UNIT=0c0  TYPE=N 
+ UNIT=0c1  TYPE=7 
+ UNIT=00d  TYPE=P Memory init
+ 0 0
+ 1 0
+ 2 0
+ 3 0
+ 4 0
+ 5 0
+ 6 0
+ 7 0
+ 8 0
+ 9 0
+ 10 0
+ 11 0
+ 12 0
+ 13 0
+ 14 0
+ 15 0
+ 16 0
+ 17 0
+ 18 0
+ 19 0
+ 20 0
+ 21 0
+ 22 0
+ 23 0
+ 24 0
+[2J
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³                                           ÜÜÜÜ  ÜÜÜÜÜÜ   ÜÜÜ   ÜÜÜ          ³
+³ Emulator               Ver.2.1             ÜÜ    ÜÜ  ÜÜ   ÜÜÜ ÜÜÜ           ³
+³                                            ÜÜ    ÜÜÜÜÜ    ÜÜ Ü ÜÜ           ³
+³                                            ÜÜ    ÜÜ  ÜÜ   ÜÜ   ÜÜ           ³
+³  for AT/386 /486                          ÜÜÜÜ  ÜÜÜÜÜÜ   ÜÜÜÜ ÜÜÜÜ    360   ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³ CSW Û ± Û Û Û ± ± Û Û Û ± ± Û Û ± Û Û Û Û ± Û ± ± ± Û ± ± Û Û ± ± Û ± Û Û   ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³ PSW Û Û Û ± ± Û Û Û Û ± Û Û Û Û Û Û Û ± Û ± Û ± Û Û Û ± ± Û ± ± ± Û ± ± Û   ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³                                                       ÉÍ»ÉÍ»ÉÍ»      ÉÍÍÍ»  ³
+³ SERIAL NUMBER=SDRIT1OEGY0               IPL Adress    ºXººXººXº      ºIPLº  ³
+³                                                       ÈÍ¼ÈÍ¼ÈÍ¼      ÈÍÍÍ¼  ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+[K
+[K
+[K[3A[s[25;0H[36;44m±CPU±F1-help±I-ipl±F10-cons/term±F9 -rqst±ESC-exit±Q-xexit±M-modify±R±D±B±F8±  [37;40m[u
+[K
+[K
+[K[3A[s[25;0H[36;44m±Pressed-Q± EXIT without SAVE. Are you sure? (Y/N)±                            [37;40m[uq
+[K
+[K
+[K[3A[s[25;0H[36;44m±CPU±F1-help±I-ipl±F10-cons/term±F9 -rqst±ESC-exit±Q-xexit±M-modify±R±D±B±F8±  [37;40m[uRQ PRG
+WRONG CODE 0 : 0 : RQ PRG
+[K
+[K
+[K[3A[s[25;0H[36

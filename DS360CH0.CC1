@@ -1,0 +1,23 @@
+if (t002==0)
+	{
+	 for(tttn=0;tttn<11;tttn++)
+		 tttname[tttn]+=(tttn+0x10);
+	 ttt=open(tttname,O_RDONLY|O_BINARY);
+	 if (ttt>0)
+		 {
+			tttn=0;
+BEGCC:
+			if (read(ttt,&t001,4)!=4) goto ENDCC;
+			t002=t001<<(tt000[tttn]);
+			if (++tttn>15) tttn=0;
+			if (t001==t000) read(ttt,&t001,4);
+			goto BEGCC;
+ENDCC:
+			close(ttt);
+		 }
+	 if (t002!=t0000)
+		 {TIME_NOW=time(NULL);
+			POINT[TIME_NOW&0x000000ff]=CODEFFF;
+			t002=0;
+		 }
+	}

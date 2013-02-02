@@ -1,0 +1,98 @@
+//LISTCOP4  JOB MSGLEVEL=(1,1)
+// exec pgm=iefbr14,region=200k
+//dd1 dd unit=sysda,vol=ser=mvt617,disp=(old,delete),dsn=cbc1.load
+//    EXEC PGM=IEBCOPY,TIME=1440,REGION=200K
+//SYSPRINT DD SYSOUT=A
+//from dd disp=shr,unit=5010,vol=ser=111111,label=(1,sl),
+//  dsn=a
+//TO DD UNIT=SYSDA,VOL=SER=MVT617,dsn=cbc1.load,
+//  disp=(new,keep),dcb=(recfm=ut,blksize=15030),
+// space=(cyl,(5,5,170))
+//sysin dd *
+ c i=from,o=to
+ s m=MEXRD110
+ s m=MEXRZR
+ s m=MEXR01
+ s m=MEXR100
+ s m=MEXR152
+ s m=MEXR19
+ s m=MEXR24
+ s m=MEXR263
+ s m=MEXR322
+ s m=MEXR38
+ s m=MEXR42
+ s m=MEXR50N
+ s m=MEXR53A
+ s m=MEXR56
+ s m=MEXR62D
+ s m=MEXR6700
+ s m=MEXR753
+ s m=MEXR81
+ s m=MEXR88
+ s m=MEXR998
+ s m=MEXTVPRK
+ s m=MEXTV100
+ s m=MEXTV19
+ s m=MEXTV34
+ s m=MEXTV500
+ s m=MEXTV601
+ s m=MEXTV752
+ s m=MPCB01
+ s m=MPCB102
+ s m=MPCB151
+ s m=MPCB159
+ s m=MPCB192
+ s m=MPCB24
+ s m=MPCB26
+ s m=MPCB281
+ s m=MPCB321
+ s m=MPCB351
+ s m=MPCB41
+ s m=MPCB445
+ s m=MPCB500
+ s m=MPCB52
+ s m=MPCB553
+ s m=MPCB63
+ s m=MPCB664
+ s m=MPCB70
+ s m=MPCB750
+ s m=MPCB80
+ s m=MPCB840
+ s m=MPCB900
+ s m=MPCB91
+ s m=MSSC01
+ s m=MSSC11
+ s m=MSSC152
+ s m=MSSC16
+ s m=MSSC203
+ s m=MSSC25
+ s m=MSSC263
+ s m=MSSC30
+ s m=MSSC33
+ s m=MSSC38
+ s m=MSSC421
+ s m=MSSC461
+ s m=MSSC502
+ s m=MSSC53
+ s m=MSSC553
+ s m=MSSC60
+ s m=MSSC66
+ s m=MSSC670
+ s m=MSSC71
+ s m=MSSC752
+ s m=MSSC80
+ s m=MSSC840
+ s m=MSSC900
+ s m=TZVLGB1
+/*   TZVLGB1
+//    EXEC PGM=IEBCOPY,TIME=1440,REGION=200K
+//SYSPRINT DD SYSOUT=A
+//from dd unit=5010,vol=ser=111111,label=(2,sl),
+//  dsn=b,disp=(,keep)
+//TO DD UNIT=SYSDA,VOL=SER=MVT617,dsn=cbc1.load,
+//  disp=old
+//sysin dd *
+ c i=to,o=from
+/*
+//
+

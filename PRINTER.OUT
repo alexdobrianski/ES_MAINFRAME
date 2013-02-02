@@ -1,0 +1,67 @@
+                                                                                                                                    
+//RDR      JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC RDR                                                                                                                 
+XXIEFPROC  EXEC PGM=IEFIRC,                    READER FIRST LOAD       ,00010000                                                    
+XX       REGION=54K,                          READER BASIC REGION      ,00020060                                                    
+XX       PARM='80103005001024905010SYSDA   E00001A'   DEFAULT OPTIONS  ,00030000                                                    
+XX*            BPPTTTOOOMMMIIICCCRLSSSSSSSSAAAAEFH   PARM FIELD         00040000                                                    
+***       B    PROGRAMMER NAME AND ACCOUNT NUMBER NOT NEEDED            00050000                                                    
+***            PROGRAM CAN BE ROLLED OUT                                00060000                                                    
+***       PP   PRIORITY=01                                              00070000                                                    
+***       TTT  JOB STEP INTERVAL=30 MINUTES                             00080000                                                    
+***       OOO  PRIMARY SYSOUT SPACE=50 TRACKS                           00090000                                                    
+***       MMM  SECONDARY SYSOUT SPACE=10 TRACKS                         00100000                                                    
+***       III  READER/INTERPRETER DISPATCHING PRIORITY=249              00110000                                                    
+***       CCC  JOB STEP DEFAULT REGION=50K                              00120060                                                    
+***       R    DISPLAY AND EXECUTE COMMANDS=1                           00130000                                                    
+***       L    BYPASS LABEL OPTION=0                                    00140000                                                    
+***       SSSSSSSS  SYSOUT UNIT NAME=SYSDA                              00150000                                                    
+***       AAAA COMMAND AUTHORITY FOR MCS=E000-ALL COMMANDS              00160000                                                    
+***            MUST BE AUTHORIZED                                       00170000                                                    
+***       EF   JCL AND ALLOCATION MESSAGE LEVEL DEFAULTS=01             00180000                                                    
+***       H    DEFAULT MSGCLASS                                         00190000                                                    
+//IEFPROC.IEFRDER DD UNIT=00C                                                                                                       
+X/IEFRDER   DD  UNIT=5010,                       INPUT TAPE            ,00200000                                                    
+XX             LABEL=(,NL),                      UNLABELED             ,00210000                                                    
+XX             VOLUME=SER=SYSIN,                 VOLUME NAME           ,00220000                                                    
+XX             DISP=OLD,                         OLD DATA SET          ,00230000                                                    
+XX             DCB=(BLKSIZE=80,LRECL=80,BUFL=80,BUFNO=1,RECFM=F)        00240000                                                    
+XXIEFPDSI   DD  DSNAME=SYS1.PROCLIB,DISP=SHR     PROCEDURE LIBRARY      00250000                                                    
+XXIEFDATA   DD  UNIT=SYSDA,                      SPOOL DEVICE          ,00260000                                                    
+XX             SPACE=(80,(500,500),RLSE,CONTIG),     AMOUNT            ,00270000                                                    
+XX          DCB=(BLKSIZE=80,LRECL=80,BUFL=80,BUFNO=2,RECFM=F,DSORG=PS)  00280000                                                    
+                                                                                                                                    
+                                                                                                                                    
+//WTR      JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC WTR                                                                                                                 
+XXIEFPROC EXEC PGM=IEFSD080,                                           *00010000                                                    
+XX             REGION=20K,                                             *00020000                                                    
+XX             ROLL=(NO,NO),                                           *00030000                                                    
+XX             PARM='PA'                                                00040000                                                    
+//IEFPROC.IEFRDER DD UNIT=00E                                                                                                       
+X/IEFRDER  DD  UNIT=7030,                                              *00050000                                                    
+XX             VOLUME=(,,,35),                                         *00060000                                                    
+XX             DSNAME=SYSOUT,                                          *00070000                                                    
+XX             DISP=(NEW,KEEP),                                        *00080000                                                    
+XX             DCB=(BLKSIZE=133,LRECL=133,BUFL=133,BUFNO=2,RECFM=FM)    00090000                                                    
+                                                                                                                                    
+                                                                                                                                    
+//WTR      JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC WTR                                                                                                                 
+XXIEFPROC EXEC PGM=IEFSD080,                                           *00010000                                                    
+XX             REGION=20K,                                             *00020000                                                    
+XX             ROLL=(NO,NO),                                           *00030000                                                    
+XX             PARM='PA'                                                00040000                                                    
+//IEFPROC.IEFRDER DD UNIT=00E                                                                                                       
+X/IEFRDER  DD  UNIT=7030,                                              *00050000                                                    
+XX             VOLUME=(,,,35),                                         *00060000                                                    
+XX             DSNAME=SYSOUT,                                          *00070000                                                    
+XX             DISP=(NEW,KEEP),                                        *00080000                                                    
+XX             DCB=(BLKSIZE=133,LRECL=133,BUFL=133,BUFNO=2,RECFM=FM)    00090000                                                    
+                                                                                                                                    
+                                                                                                                                    
+//INIT     JOB MSGLEVEL=1                                                                                                           
+//STARTING EXEC INIT                                                                                                                
+XXIEFPROC  EXEC  PGM=IEFIIC,PARM='A,LIMIT=13'                           00010000                                                    
+COMPLETION CODE - SYSTEM=2F3  USER=0000                                                                                             
+IEF242I ALLOC. FOR INIT     INIT              AT ABEND                                                                              

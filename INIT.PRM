@@ -1,0 +1,24 @@
+SERIAL NUMBER=SDRIT1OEGY0
+DATE OF REGISTRATION=Thu Sep 15 11:27:01 1994
+REGISTRATION REASON:NOTEBOOK EVEREX DSSOFT
+*************************************************************
+LN=ead404990230322f31392f383800fc000006a1f800306934
+‚‘… ‘’OŠˆ ‚›˜… „AO‰ … ŒOƒ“’ ›’œ ˆ‡Œ……› …‡
+A‡…˜…ˆŸ A‡AO’—ˆŠA (0622)-(35-41-28)/(90-44-07)
+‹îO… ˆ• ˆ‡Œ……ˆ… ŒO†…’ ‚›‡‚A’œ ……„‘ŠA‡“…Œ›‰ …‡“‹œ’A’ ‚ AO’… Œ“‹Ÿ’OA
+*************************************************************SERIAL NUMBER=SDRIT1OEGY0
+DATE OF REGISTRATION=Thu Sep 15 10:46:24 1994
+REGISTRATION REASON:NOTEBOOK EVEREX DSSOFT
+*************************************************************
+LN=ead404990230322f31392f383800fc000006a1f800306934
+‚‘… ‘’OŠˆ ‚›˜… „AO‰ … ŒOƒ“’ ›’œ ˆ‡Œ……› …‡
+A‡…˜…ˆŸ A‡AO’—ˆŠA (0622)-(35-41-28)/(90-44-07)
+‹îO… ˆ• ˆ‡Œ……ˆ… ŒO†…’ ‚›‡‚A’œ ……„‘ŠA‡“…Œ›‰ …‡“‹œ’A’ ‚ AO’… Œ“‹Ÿ’OA
+*************************************************************
+IO=01F,CONS,XXX.01F
+IO=00C,RDR ,LISTD.00C
+IO=00A,rdr ,IPL.000
+IO=00E,PRN ,PRINTER.OUT
+IO=232,DASD,C:\SASHA\360\DISK\MVT617.DSK
+IO=0C0,7920,XXX.0C0
+IO=00D,PRN ,XXX.00D

@@ -1,0 +1,24 @@
+//MYFIRST JOB MSGLEVEL=1
+// EXEC PL1LFCLG
+//PL1L.SYSIN DD *
+    MPD:PROCEDURE OPTIONS(MAIN);
+    P:/*GET LIST(R);*/
+      A= 1.0000;
+      goto P;
+      N=1;
+      F= 1+R;
+      /*PUT LIST(R);*/
+    Q: A= A*F;
+       /*PUT LIST(N,A);*/
+       N=N+1;
+       /*IF N<20 THEN GOTO Q;
+       ELSE GOTO P;*/
+     END MPD;
+/*
+//GO.SYSIN DD *
+1 2 3
+/*
+//GO.SYSPRINT DD SYSOUT=A
+//go.sysudump dd sysout=a
+//
+
